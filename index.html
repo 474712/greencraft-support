@@ -677,7 +677,7 @@ const INTENT_PATTERNS = {
     en: ['safe','safety','protect','protection','glasses','gloves','helmet','boots','ppe','gear','danger','warning','caution','risk','hazard','injury','accident','guard','guideline','regulation','protective gear','protective'],
     zh: ['安全','保护','防护','护目镜','手套','头盔','安全鞋','防护装备','危险','警告','小心','受伤','事故','安全指南','安全规范'],
     de: ['sicherheit','sicher','schutz','brille','handschuhe','helm','stiefel','ausrüstung','gefahr','warnung','risiko','verletzung','nasses gras'],
-    fr: ['sécurité','sûr','protection','lunettes','gants','casque','bottes','équipement','danger','risque','blessure'],
+    fr: ['sécurité','protection','lunettes','gants','casque','bottes','équipement','=danger','risque','blessure'],
     es: ['seguridad','seguro','protección','gafas','guantes','casco','botas','equipo','peligro','riesgo','lesión','césped mojado'],
     it: ['sicurezza','sicuro','protezione','occhiali','guanti','casco','stivali','pericolo','rischio','erba bagnata'],
     nl: ['veiligheid','veilig','bescherming','bril','handschoenen','helm','laarzen','gevaar','risico','nat gras'],
@@ -703,14 +703,45 @@ const state = { lang:'zh', messages:[], activeCategory:'all', context:{ topic:nu
 // pattern 匹配策略缓存：每个 pattern 只判定一次"正则 or 包含"，后续直接用
 const _pStrategy = new Map();
 const _fCache = new Map(); // findFuzzy 英文词边界正则缓存
+
+// ── 输入归一化层：变音符折叠 + 常见拼写纠错（借鉴主流客服的打字/ASR 容错）──
+// 法/西/葡/意/德用户常省略变音符（démarre→demarre），折叠后两侧同口径匹配
+function _fold(s) { return /[\u00C0-\u024F\u1E00-\u1EFFß]/.test(s) ? s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss') : s; }
+const _foldCache = new Map();
+function _f(s) { let r = _foldCache.get(s); if (r === undefined) { r = _fold(s.toLowerCase()); _foldCache.set(s, r); } return r; }
+// 各语言高频拼写错误纠正表（仅当前 UI 语言生效，避免跨语言误改）
+const TYPO_MAP = {
+  en: [[/\bwont\b/g, "won't"], [/\bdoesnt\b/g, "doesn't"], [/\bcant\b/g, "can't"], [/\bisnt\b/g, "isn't"], [/\bmowwer\b/g, 'mower'], [/\blawnmover\b/g, 'lawnmower'], [/\bbatery\b/g, 'battery'], [/\bcharjer\b/g, 'charger'], [/\bgarantee\b/g, 'guarantee'], [/\bwarrenty\b/g, 'warranty'], [/\bmaintanance\b/g, 'maintenance'], [/\bbrokn\b/g, 'broken'], [/\bwoking\b/g, 'working'], [/\brecieve\b/g, 'receive']],
+  zh: [['割操机', '割草机'], ['修技剪', '修枝剪'], ['冲电器', '充电器'], ['保俢', '保修'], ['维俢', '维修'], ['故璋', '故障'], ['链据', '链锯'], ['草平机', '草坪机'], ['绿离机', '绿篱机']],
+  de: [[/\bnich\b/g, 'nicht'], [/\bkapput\b/g, 'kaputt'], [/\bgaratie\b/g, 'garantie'], [/\bfonktioniert\b/g, 'funktioniert'], [/ue/g, 'u'], [/oe/g, 'o'], [/ae/g, 'a']]
+};
+const _normCache = new Map(); // 同一文本在 5 个检测函数间复用归一化结果（key 含语言）
+function _normText(text) {
+  const key = state.lang + '|' + text;
+  let s = _normCache.get(key);
+  if (s !== undefined) return s;
+  s = _fold(String(text).toLowerCase());
+  const tm = TYPO_MAP[state.lang];
+  if (tm) for (const [a, b] of tm) s = (a instanceof RegExp) ? s.replace(a, b) : s.split(a).join(b);
+  if (_normCache.size > 500) _normCache.clear();
+  _normCache.set(key, s);
+  return s;
+}
+
 function _matchP(p, lower) {
+  p = _f(p); // 折叠变音符，与 _normText 后的输入同口径
   let s = _pStrategy.get(p);
   if (!s) {
-    const isAscii = /^[\x00-\x7F]+$/.test(p);
-    if (isAscii && p.length <= 3) {
-      s = { re: new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b') };
+    if (p[0] === '=') {
+      // 显式完整词匹配：pattern 以 = 开头时要求双侧词边界（防 'danger' 误中 'vidanger'）
+      s = { re: new RegExp('\\b' + p.slice(1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b') };
     } else {
-      s = { inc: true };
+      const isAscii = /^[\x00-\x7F]+$/.test(p);
+      if (isAscii && p.length <= 3) {
+        s = { re: new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b') };
+      } else {
+        s = { inc: true };
+      }
     }
     _pStrategy.set(p, s);
   }
@@ -718,7 +749,7 @@ function _matchP(p, lower) {
 }
 
 function detectIntent(text) {
-  const lower = text.toLowerCase(); const scores = {};
+  const lower = _normText(text); const scores = {};
   for (const [intent, patterns] of Object.entries(INTENT_PATTERNS)) {
     const lp = patterns[state.lang] || patterns['en']; let score = 0;
     for (const p of lp) { if (_matchP(p, lower)) score += p.length; }
@@ -729,7 +760,7 @@ function detectIntent(text) {
 }
 
 function detectProduct(text) {
-  const lower = text.toLowerCase(); const scores = {};
+  const lower = _normText(text); const scores = {};
   for (const [pid, patterns] of Object.entries(PRODUCT_KEYWORDS)) {
     const lp = patterns[state.lang] || patterns['en']; let score = 0;
     for (const p of lp) { if (_matchP(p, lower)) score += p.length * 2; }
@@ -751,9 +782,9 @@ const HANDOFF_PATTERNS = {
   pt: ['falar com uma pessoa','atendente','pessoa real','transferir para humano','atendimento humano','falar com alguém']
 };
 function detectHandoff(text) {
-  const lower = text.toLowerCase();
+  const lower = _normText(text);
   const lp = HANDOFF_PATTERNS[state.lang] || HANDOFF_PATTERNS['en'];
-  return lp.some(p => lower.includes(p));
+  return lp.some(p => lower.includes(_f(p)));
 }
 
 function findKBResponse(intent, product) {
@@ -774,12 +805,13 @@ function findKBResponse(intent, product) {
   return null;
 }
 
-function findFuzzy(intent, product, text) {
+// 带置信度的模糊匹配：返回 { a, q, score, conf }；conf=命中单元占条目问题单元的比例（0~1）
+function findFuzzyScored(intent, product, text) {
   const lang = state.lang; const kbSec = KB[intent];
   if (!kbSec || !product || !kbSec[product]) return null;
   const entries = kbSec[product][lang] || kbSec[product]['en'];
   if (!entries || !entries.length || typeof entries === 'string') return null;
-  const lower = text.toLowerCase();
+  const lower = _normText(text);
   const isCJK = /[\u4e00-\u9fa5]/.test(lower);
   // 预计算用户输入的中文 bigram 集合（仅中文字符相邻对）
   const tBigrams = new Set();
@@ -796,33 +828,35 @@ function findFuzzy(intent, product, text) {
     if (!re) { re = new RegExp('\\b' + esc(w)); _fCache.set(w, re); }
     return re.test(lower);
   };
-  let best = null, bestScore = 0;
+  let best = null, bestScore = 0, bestConf = 0, bestQ = '';
   for (const entry of entries) {
-    const q = entry.q.toLowerCase();
-    let score = 0, matched = 0, total = 0;
+    const q = _f(entry.q);
+    let score = 0, matched = 0, denom = 0;
     if (isCJK) {
       // 中文：将 q 的每个短语拆成字符 bigram，与用户输入 bigram 求交集
       const phrases = q.split(/\s+/).filter(p => p.length > 0);
       const qBigrams = new Set();
       for (const p of phrases) {
         for (let i = 0; i < p.length - 1; i++) qBigrams.add(p.substr(i, 2));
-        total += p.length;
       }
+      denom = qBigrams.size;
       for (const b of qBigrams) { if (tBigrams.has(b)) { score += 2; matched++; } }
     } else {
-      // 英文：词边界匹配，避免短词子串误匹配（如 'pro' 误中 'protective'）
+      // 拉丁语：词边界匹配，避免短词子串误匹配（如 'pro' 误中 'protective'）
       const words = q.split(/\s+/).filter(w => w.length > 2);
-      total = words.length;
+      denom = words.length;
       for (const w of words) {
         if (matchWord(w, lower)) { score += w.length; matched++; }
       }
     }
     // 覆盖率加成：命中词占比越高越可信（最高 +50%）
-    if (total > 0 && matched > 0) score *= (1 + (matched / total) * 0.5);
-    if (score > bestScore) { bestScore = score; best = entry.a; }
+    const conf = (denom > 0 && matched > 0) ? matched / denom : 0;
+    if (conf > 0) score *= (1 + conf * 0.5);
+    if (score > bestScore) { bestScore = score; best = entry.a; bestConf = conf; bestQ = entry.q; }
   }
-  return best;
+  return best == null ? null : { a: best, q: bestQ, score: bestScore, conf: bestConf };
 }
+function findFuzzy(intent, product, text) { const r = findFuzzyScored(intent, product, text); return r ? r.a : null; }
 
 function getProductName(pid) { const p = PRODUCTS.find(x => x.id === pid); return p ? (p.names[state.lang] || p.names['en']) : pid; }
 
@@ -845,8 +879,12 @@ function generateResponse(text, forcedIntent, forcedProduct) {
 const QUICK_REPLY_SETS = {
   zh: { welcome:['草坪机无法启动怎么办','修枝剪怎么保养','电池耗电太快','保修政策是什么'], troubleshoot:['电机有异响','电池续航短','刀片卡住不动'], maintenance:['刀片多久磨一次','冬季怎么存放','电池怎么保养'], parts:['刀片多少钱','更换电池怎么买','充电器兼容型号'], warranty:['怎么申请保修','保修范围有哪些','保修多久'] },
   en: { welcome:['My mower won\'t start','How to maintain my pruner?','Battery drains too fast','What is the warranty policy?'], troubleshoot:['Motor makes noise','Battery life short','Blades stuck'], maintenance:['How often to sharpen?','Winter storage tips','Battery care guide'], parts:['Blade price','Order a new battery','Compatible chargers'], warranty:['How to file a claim','Warranty coverage','Warranty duration'] },
-  de: { welcome:['Mein Mäher startet nicht','Wartung meiner Astschere','Akku zu schnell leer','Garantieinformationen'] },
-  fr: { welcome:['Ma tondeuse ne démarre pas','Entretien sécateur','Batterie se vide vite','Informations garantie'] }
+  de: { welcome:['Mein Mäher startet nicht','Wartung meiner Astschere','Akku zu schnell leer','Garantieinformationen'], troubleshoot:['Motor macht Geräusche','Akku-Laufzeit kurz','Klinge blockiert'], maintenance:['Wie oft schärfen?','Tipps zur Winterlagerung','Akku richtig pflegen'], parts:['Preis der Klinge','Neuen Akku bestellen','Kompatible Ladegeräte'], warranty:['Garantieanspruch stellen','Garantieumfang','Garantiedauer'] },
+  fr: { welcome:['Ma tondeuse ne démarre pas','Entretien sécateur','Batterie se vide vite','Informations garantie'], troubleshoot:['Le moteur fait du bruit','Autonomie faible','Lame bloquée'], maintenance:['Fréquence d\'affûtage ?','Stockage hivernal','Entretien de la batterie'], parts:['Prix de la lame','Commander une batterie','Chargeurs compatibles'], warranty:['Comment faire une réclamation','Couverture de garantie','Durée de garantie'] },
+  es: { welcome:['Mi cortacésped no arranca','¿Cómo mantener mi podadora?','La batería se agota rápido','¿Cuál es la política de garantía?'], troubleshoot:['El motor hace ruido','La batería dura poco','Cuchilla atascada'], maintenance:['¿Cada cuánto afilar?','Almacenamiento en invierno','Cuidado de la batería'], parts:['Precio de la cuchilla','Pedir batería nueva','Cargadores compatibles'], warranty:['Cómo reclamar la garantía','Cobertura de garantía','Duración de garantía'] },
+  it: { welcome:['Il mio tosaerba non si avvia','Come mantenere la potatrice?','La batteria si scarica in fretta','Qual è la politica di garanzia?'], troubleshoot:['Il motore fa rumore','La batteria dura poco','Lama bloccata'], maintenance:['Ogni quanto affilare?','Conservazione invernale','Cura della batteria'], parts:['Prezzo della lama','Ordinare una batteria','Caricabatterie compatibili'], warranty:['Come fare un reclamo','Copertura della garanzia','Durata della garanzia'] },
+  nl: { welcome:['Mijn maaier start niet','Hoe onderhoud ik mijn snoeischaar?','Accu loopt snel leeg','Wat is het garantiebeleid?'], troubleshoot:['Motor maakt lawaai','Accu snel leeg','Mes zit vast'], maintenance:['Hoe vaak slijpen?','Tips voor winteropslag','Accu onderhouden'], parts:['Prijs van het mes','Nieuwe accu bestellen','Compatibele opladers'], warranty:['Garantieclaim indienen','Garantiedekking','Garantieduur'] },
+  pt: { welcome:['Meu cortador não liga','Como manter minha podadora?','A bateria acaba rápido','Qual é a política de garantia?'], troubleshoot:['O motor faz barulho','A bateria dura pouco','Lâmina presa'], maintenance:['Com que frequência afiar?','Armazenamento no inverno','Cuidados com a bateria'], parts:['Preço da lâmina','Encomendar bateria nova','Carregadores compatíveis'], warranty:['Como fazer uma reclamação','Cobertura da garantia','Duração da garantia'] }
 };
 function getQuickReplies() { const sets = QUICK_REPLY_SETS[state.lang] || QUICK_REPLY_SETS['en']; const ctx = state.context; if (ctx.intent === 'troubleshoot') return sets.troubleshoot; if (ctx.intent === 'maintenance') return sets.maintenance; if (ctx.intent === 'parts') return sets.parts; if (ctx.intent === 'warranty') return sets.warranty; return sets.welcome; }
 
@@ -1174,25 +1212,192 @@ const ENHANCED_GREETINGS = {
 
 function makeTicket() { return 'GC-' + Date.now().toString(36).toUpperCase().slice(-6); }
 
+// ── 情绪识别（借鉴 Intercom 情绪路由：先安抚，再给方案）──
+const EMOTION_ANGRY = {
+  en: ['terrible','awful','frustrated','frustrating','angry','furious','ridiculous','unacceptable','worst','useless','disappointed','disappointing','waste of money','fed up','annoyed','annoying'],
+  zh: ['气死','太烂','垃圾','差劲','失望','愤怒','投诉','太差','受不了','什么破','坑人','气人','窝火','烦死','糟心','破玩意','恼火'],
+  de: ['schrecklich','furchtbar','frustriert','wütend','ärgerlich','enttäuscht','inakzeptabel','müll','katastrophe','genervt','sauer'],
+  fr: ['terrible','nul','frustré','en colère','furieux','inacceptable','déçu','décevant','ras-le-bol','énervé','horrible','mécontent'],
+  es: ['terrible','horrible','frustrado','enfadado','furioso','inaceptable','decepcionado','decepción','harto','basura','pesimo'],
+  it: ['terribile','orribile','frustrato','arrabbiato','furioso','inaccettabile','deluso','deludente','schifo','pessimo'],
+  nl: ['verschrikkelijk','vreselijk','gefrustreerd','boos','woedend','onacceptabel','teleurgesteld','slechtste','waardeloos'],
+  pt: ['terrível','horrível','frustrado','zangado','furioso','inaceitável','decepcionado','péssimo','lixo','indignado']
+};
+function detectEmotion(text) {
+  const lower = _normText(text);
+  const lp = EMOTION_ANGRY[state.lang] || EMOTION_ANGRY['en'];
+  if (lp.some(p => lower.includes(_f(p)))) return 'angry';
+  if (/!{2,}|！{2,}/.test(text)) return 'angry'; // 连续感叹号在售后语境视为情绪激动
+  return null;
+}
+const EMPATHY = {
+  en: 'I\'m really sorry for the frustration — let\'s get this fixed right away. 🛠️',
+  zh: '非常抱歉给您带来困扰，我马上帮您解决。🛠️',
+  de: 'Das tut mir wirklich leid — wir lösen das jetzt sofort. 🛠️',
+  fr: 'Je suis vraiment désolé pour ce désagrément — réglons cela tout de suite. 🛠️',
+  es: 'Lamento mucho las molestias — lo resolvemos ahora mismo. 🛠️',
+  it: 'Mi dispiace davvero per il disagio — risolviamo subito. 🛠️',
+  nl: 'Het spijt me zeer voor het ongemak — we lossen dit direct op. 🛠️',
+  pt: 'Lamento muito o transtorno — vamos resolver isso já. 🛠️'
+};
+// 情绪激动但无可识别意图 → 安抚 + 主动提供人工出口
+const EMPATHY_HANDOFF = {
+  en: 'I\'m really sorry this experience has been frustrating. If you\'d like, I can connect you to a **human specialist** right away — just type "human agent". Or tell me what happened and I\'ll fix it with you step by step. 🙋',
+  zh: '非常抱歉让您有了不好的体验。如果您愿意，我可以立即为您转接**人工专员**（输入"转人工"即可）；也可以告诉我具体发生了什么，我一步步帮您解决。🙋',
+  de: 'Es tut mir sehr leid, dass diese Erfahrung frustrierend war. Ich verbinde Sie gern sofort mit einem **menschenlichen Mitarbeiter** — tippen Sie einfach "Mitarbeiter". Oder schildern Sie mir, was passiert ist, und wir lösen es Schritt für Schritt. 🙋',
+  fr: 'Je suis vraiment désolé que cette expérience ait été frustrante. Je peux vous mettre en relation avec un **conseiller humain** immédiatement — tapez simplement "conseiller". Ou décrivez-moi ce qui s\'est passé et nous le résoudrons ensemble. 🙋',
+  es: 'Lamento mucho que esta experiencia haya sido frustrante. Si lo desea, le comunico de inmediato con un **especialista humano** — escriba "agente". O cuénteme qué ha pasado y lo resolvemos paso a paso. 🙋',
+  it: 'Mi dispiace molto che questa esperienza sia stata frustrante. Se vuoi, ti metto subito in contatto con un **operatore umano** — scrivi "operatore". Oppure raccontami cosa è successo e lo risolviamo passo dopo passo. 🙋',
+  nl: 'Het spijt me zeer dat deze ervaring frustrerend was. Ik kan u direct doorverbinden met een **menselijke medewerker** — typ gewoon "medewerker". Of vertel mij wat er is gebeurd en we lossen het stap voor stap op. 🙋',
+  pt: 'Lamento muito que esta experiência tenha sido frustrante. Se quiser, posso transferi-lo imediatamente para um **atendente humano** — basta digitar "atendente". Ou conte-me o que aconteceu e resolvemos passo a passo. 🙋'
+};
+
+// ── 寒暄独立意图（借鉴 Zendesk small talk：不污染 missCount 与故障上下文）──
+const SMALLTALK = {
+  greeting: { en: ['hello','hi','hey','good morning','good afternoon','good evening','hi there'], zh: ['你好','您好','在吗','在么','嗨','哈喽','喂'], de: ['hallo','guten tag','guten morgen','guten abend','servus'], fr: ['bonjour','salut','bonsoir','coucou'], es: ['hola','buenos días','buenas tardes','buenas'], it: ['ciao','buongiorno','buonasera','salve'], nl: ['hallo','goedemorgen','goedemiddag','goedenavond','hoi'], pt: ['olá','oi','bom dia','boa tarde','boa noite'] },
+  thanks: { en: ['thanks','thank you','thx','ty','many thanks','thank you very much'], zh: ['谢谢','感谢','多谢','谢了','谢谢你','非常感谢'], de: ['danke','vielen dank','dankeschön'], fr: ['merci','merci beaucoup'], es: ['gracias','muchas gracias'], it: ['grazie','grazie mille'], nl: ['bedankt','dank je','dank u','dankjewel'], pt: ['obrigado','obrigada','muito obrigado'] },
+  goodbye: { en: ['bye','goodbye','see you','have a nice day'], zh: ['再见','拜拜','拜','回见'], de: ['tschüss','auf wiedersehen','bis bald'], fr: ['au revoir','à bientôt','bonne journée'], es: ['adiós','hasta luego','chao'], it: ['arrivederci','a presto'], nl: ['doei','tot ziens','dag'], pt: ['adeus','tchau','até logo'] }
+};
+// 整句匹配（剥离首尾标点空白），且同时匹配当前语言与英语词表
+function detectSmalltalk(text) {
+  const t = _normText(text).replace(/^[\s!?。！？~～.,，、]+|[\s!?。！？~～.,，、]+$/g, '');
+  for (const [kind, langs] of Object.entries(SMALLTALK)) {
+    const lists = [langs[state.lang], langs['en']].filter(Boolean);
+    for (const lp of lists) for (const p of lp) { if (t === _f(p)) return kind; }
+  }
+  return null;
+}
+const SMALLTALK_REPLY = {
+  greeting: {
+    en: 'Hello! 👋 Great to see you. I can help with troubleshooting, maintenance, spare parts and warranty — what can I do for you today?',
+    zh: '您好！👋 很高兴见到您。我可以帮您排查故障、提供养护建议、查询配件与保修政策——请问有什么可以帮您？',
+    de: 'Hallo! 👋 Schön, dass Sie da sind. Ich helfe bei Fehlerbehebung, Wartung, Ersatzteilen und Garantie — womit kann ich Ihnen helfen?',
+    fr: 'Bonjour ! 👋 Ravi de vous voir. Je peux aider avec le dépannage, l\'entretien, les pièces détachées et la garantie — que puis-je faire pour vous ?',
+    es: '¡Hola! 👋 Encantado de atenderle. Puedo ayudar con averías, mantenimiento, repuestos y garantía — ¿en qué puedo ayudarle hoy?',
+    it: 'Ciao! 👋 Piacere di vederti. Posso aiutare con guasti, manutenzione, ricambi e garanzia — come posso aiutarti oggi?',
+    nl: 'Hallo! 👋 Leuk u te zien. Ik kan helpen met storingen, onderhoud, onderdelen en garantie — waarmee kan ik u vandaag helpen?',
+    pt: 'Olá! 👋 Prazer em atendê-lo. Posso ajudar com falhas, manutenção, peças e garantia — em que posso ajudar hoje?'
+  },
+  thanks: {
+    en: 'You\'re very welcome! 😊 Is there anything else I can help you with?',
+    zh: '不客气！😊 还有什么我可以帮您的吗？',
+    de: 'Sehr gerne! 😊 Kann ich sonst noch etwas für Sie tun?',
+    fr: 'Avec grand plaisir ! 😊 Puis-je vous aider pour autre chose ?',
+    es: '¡Con mucho gusto! 😊 ¿Puedo ayudarle en algo más?',
+    it: 'Prego! 😊 Posso aiutarti in qualcos\'altro?',
+    nl: 'Graag gedaan! 😊 Kan ik u nog ergens anders mee helpen?',
+    pt: 'De nada! 😊 Posso ajudar em mais alguma coisa?'
+  },
+  goodbye: {
+    en: 'Goodbye! 👋 Have a great day — I\'m here 24/7 whenever you need me.',
+    zh: '再见！👋 祝您愉快——我全天在线，需要时随时找我。',
+    de: 'Auf Wiedersehen! 👋 Einen schönen Tag noch — ich bin rund um die Uhr für Sie da.',
+    fr: 'Au revoir ! 👋 Bonne journée — je suis disponible 24h/24 dès que vous avez besoin de moi.',
+    es: '¡Adiós! 👋 Que tenga un buen día — estoy disponible 24/7 siempre que me necesite.',
+    it: 'Arrivederci! 👋 Buona giornata — sono qui 24 ore su 24 quando hai bisogno.',
+    nl: 'Tot ziens! 👋 Nog een fijne dag — ik ben 24/7 beschikbaar wanneer u mij nodig heeft.',
+    pt: 'Adeus! 👋 Tenha um ótimo dia — estou disponível 24/7 sempre que precisar.'
+  }
+};
+
+// ── 低置信度澄清式追问（借鉴 Rufus：不确定时先确认，不硬答）──
+const CONFIRM_WORDS = {
+  en: ['yes','yeah','yep','correct','exactly','right','sure','ok','okay'], zh: ['对','是的','没错','嗯','是','好','好的','可以','对的对的'],
+  de: ['ja','genau','richtig','stimmt','okay'], fr: ['oui','exact','voilà','d\'accord','ok'],
+  es: ['sí','si','exacto','correcto','vale','ok'], it: ['sì','si','esatto','corretto','ok'],
+  nl: ['ja','klopt','inderdaad','juist','oké','ok'], pt: ['sim','exato','correto','isso','ok']
+};
+const DENY_WORDS = {
+  en: ['no','nope','not really','wrong'], zh: ['不是','不对','不','没有','错了'],
+  de: ['nein','falsch','nicht ganz'], fr: ['non','pas vraiment','faux'],
+  es: ['no','no es eso'], it: ['no','non proprio'], nl: ['nee','niet echt'], pt: ['não','não é isso']
+};
+function _matchWordList(list, text) {
+  const t = _normText(text).replace(/^[\s!?。！？~～.,，、]+|[\s!?。！？~～.,，、]+$/g, '');
+  const lists = [list[state.lang], list['en']].filter(Boolean);
+  return lists.some(lp => lp.some(p => t === _f(p)));
+}
+const isConfirm = t => _matchWordList(CONFIRM_WORDS, t);
+const isDeny = t => _matchWordList(DENY_WORDS, t);
+const CONFIRM_ASK = {
+  en: 'Just to confirm — are you asking: "{q}"?\n\nReply **yes** and I\'ll give you the full answer right away; or add a few more details.',
+  zh: '想跟您确认一下：您是想问「{q}」吗？\n\n回复 **是**，我立即给出完整解答；也可以再补充描述一下。',
+  de: 'Nur zur Bestätigung — meinen Sie: „{q}"?\n\nAntworten Sie mit **ja** für die vollständige Antwort; oder beschreiben Sie es genauer.',
+  fr: 'Juste pour confirmer — voulez-vous dire : « {q} » ?\n\nRépondez **oui** pour la réponse complète ; ou précisez davantage.',
+  es: 'Para confirmar — ¿se refiere a: «{q}»?\n\nResponda **sí** y le doy la respuesta completa; o añada más detalles.',
+  it: 'Per conferma — intendi: «{q}»?\n\nRispondi **sì** per la risposta completa; oppure aggiungi dettagli.',
+  nl: 'Even ter bevestiging — bedoelt u: „{q}"?\n\nAntwoord **ja** voor het volledige antwoord; of geef meer details.',
+  pt: 'Só para confirmar — você quer dizer: «{q}»?\n\nResponda **sim** para a resposta completa; ou adicione mais detalhes.'
+};
+const DENY_ASK = {
+  en: 'Got it — that\'s not what you meant. Could you describe it a bit more? For example: which tool, and what exactly is happening?',
+  zh: '好的，是我理解偏了。能否再描述一下？比如：是什么工具、具体出现了什么情况？',
+  de: 'Verstanden — das war nicht gemeint. Können Sie es genauer beschreiben? Zum Beispiel: welches Gerät und was genau passiert?',
+  fr: 'Compris — ce n\'est pas ce que vous vouliez dire. Pouvez-vous préciser ? Par exemple : quel outil, et que se passe-t-il exactement ?',
+  es: 'Entendido — no era eso. ¿Puede describirlo con más detalle? Por ejemplo: qué herramienta y qué ocurre exactamente.',
+  it: 'Capito — non era quello che intendevi. Puoi descriverlo meglio? Ad esempio: quale attrezzo e cosa succede esattamente.',
+  nl: 'Begrepen — dat bedoelde u niet. Kunt u het iets meer beschrijven? Bijvoorbeeld: welk apparaat en wat er precies gebeurt.',
+  pt: 'Entendido — não era isso. Pode descrever com mais detalhes? Por exemplo: qual ferramenta e o que está acontecendo exatamente.'
+};
+
 function generateEnhancedResponse(text, forcedIntent, forcedProduct) {
-  // 转人工请求优先于一切意图判定（红线5：人工复核入口；评分点：转人工率）
+  // 1) 转人工请求优先于一切意图判定（红线5：人工复核入口；评分点：转人工率）
   if (!forcedIntent && detectHandoff(text)) {
-    state.context.missCount = 0;
+    state.context.missCount = 0; state.context.pending = null;
     const tpl = I18N.handoff[state.lang] || I18N.handoff['en'];
     return tpl.replace('{ticket}', makeTicket());
   }
 
-  const intent = forcedIntent || detectIntent(text) || state.context.intent;
-  const product = forcedProduct || detectProduct(text) || state.context.product;
+  // 2) 澄清确认回路：上一轮低置信度追问挂起中，本轮确认→补答；否认→重新收集
+  if (!forcedIntent && state.context.pending) {
+    const pend = state.context.pending;
+    if (isConfirm(text)) {
+      state.context.pending = null; state.context.missCount = 0;
+      state.context.intent = pend.intent; state.context.product = pend.product;
+      return pend.answer;
+    }
+    if (isDeny(text)) {
+      state.context.pending = null;
+      state.context.missCount = (state.context.missCount || 0) + 1;
+      if (state.context.missCount >= 2) { state.context.missCount = 0; return I18N.handoffHint[state.lang] || I18N.handoffHint['en']; }
+      return DENY_ASK[state.lang] || DENY_ASK['en'];
+    }
+    state.context.pending = null; // 用户改问新问题 → 放弃挂起，走正常流程
+  }
+
+  // 3) 本轮原始识别（不做上下文继承，用于寒暄/情绪独立判定）
+  const rawIntent = forcedIntent || detectIntent(text);
+  const rawProduct = forcedProduct || detectProduct(text);
+  const emotion = detectEmotion(text);
+
+  // 4) 寒暄与情绪路由：无意图无产品时独立应答，不污染 missCount 与故障上下文
+  if (!forcedIntent && !rawIntent && !rawProduct) {
+    const st = detectSmalltalk(text);
+    if (st) return SMALLTALK_REPLY[st][state.lang] || SMALLTALK_REPLY[st]['en'];
+    if (emotion === 'angry') return EMPATHY_HANDOFF[state.lang] || EMPATHY_HANDOFF['en'];
+  }
+
+  // 5) 上下文继承：短回答（如"草坪机"）自动接续上一轮意图
+  const intent = rawIntent || state.context.intent;
+  const product = rawProduct || state.context.product;
   state.context.intent = intent; state.context.product = product;
+  const empathy = emotion === 'angry' ? (EMPATHY[state.lang] || EMPATHY['en']) + '\n\n' : '';
+  // 情绪激动时以安抚语替换常规个性插入，避免双重铺垫
+  const wrap = (ans, it) => empathy ? empathy + ans : enhanceWithPersonality(ans, it);
 
   if (intent && product) {
-    const fuzzy = findFuzzy(intent, product, text);
-    if (fuzzy) { state.context.missCount = 0; return enhanceWithPersonality(fuzzy, intent); }
+    const fs = findFuzzyScored(intent, product, text);
+    if (fs) {
+      state.context.missCount = 0;
+      if (fs.conf >= 0.5 || fs.score >= 10) return wrap(fs.a, intent);
+      // 低置信度 → 澄清式追问，挂起等待用户确认（避免硬答错答）
+      state.context.pending = { answer: wrap(fs.a, intent), intent, product };
+      return (CONFIRM_ASK[state.lang] || CONFIRM_ASK['en']).replace('{q}', fs.q);
+    }
     const kb = findKBResponse(intent, product);
-    if (kb) { state.context.missCount = 0; return enhanceWithPersonality(kb, intent); }
+    if (kb) { state.context.missCount = 0; return wrap(kb, intent); }
   }
-  if (intent) { const kb = findKBResponse(intent, null); if (kb) { state.context.missCount = 0; return enhanceWithPersonality(kb, intent); } }
+  if (intent) { const kb = findKBResponse(intent, null); if (kb) { state.context.missCount = 0; return wrap(kb, intent); } }
   // 连续 2 轮未命中知识库 → 主动建议转人工（业务闭环出口）
   state.context.missCount = (state.context.missCount || 0) + 1;
   if (state.context.missCount >= 2) {
