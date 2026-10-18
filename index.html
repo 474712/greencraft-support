@@ -624,8 +624,8 @@ const KB = {
 
 const INTENT_PATTERNS = {
   troubleshoot: {
-    en: ['won\'t start','not starting','doesn\'t start','stopped working','not working','broken','broke','issue','problem','fault','error','not running','dead','no power','won\'t turn','not cutting','vibrat','noise','loud','smoke','spark','overheat','low power','weak','stall','jammed','stuck','not moving','not spinning','leaking','oil leak','stopped','stops','overheating'],
-    zh: ['无法启动','不能启动','启动不了','开不了','不动了','不工作了','坏了','出问题','故障','毛病','无法运转','不转了','声音大','异响','冒烟','过热','火花','没力气','卡住','抖动','震动','漏油','不转','转不动','风力小','风力变','没劲','不好用','不灵'],
+    en: ['won\'t start','not starting','doesn\'t start','stopped working','not working','broken','broke','issue','problem','fault','error','not running','dead','no power','won\'t turn','not cutting','vibrat','noise','loud','smok','spark','overheat','low power','weak','stall','jammed','stuck','not moving','not spinning','leaking','oil leak','stopped','stops','overheating','smoking','smoked'],
+    zh: ['无法启动','不能启动','启动不了','开不了','不动了','不工作了','坏了','出问题','故障','毛病','无法运转','不转了','声音大','异响','冒烟','过热','火花','没力气','卡住','抖动','震动','漏油','不转','转不动','风力小','风力变','没劲','不好用','不灵','停了','突然停','高低不平','不齐','割不动','剪不动'],
     de: ['startet nicht','funktioniert nicht','kaputt','defekt','problem','fehler','läuft nicht','kein strom','vibriert','rauch','überhitzt','schwach','steckt fest','springt nicht','geht nicht','verliert öl','ölleck','leckt','schneidet nicht','nicht mehr','überhitzung','bleibt stehen','beim mähen'],
     fr: ['ne démarre pas','ne fonctionne pas','cassé','problème','panne','erreur','pas de courant','vibre','bruit','fumée','bloqué','ne démarre','fuit','fuite','surchauffe','protection thermique'],
     es: ['no arranca','no funciona','roto','problema','fallo','error','sin corriente','vibra','ruido','humo','atascado','pierde aceite','fuga','gotea','poca potencia','poca fuerza','sin fuerza','sobrecalentamiento','protección térmica'],
@@ -700,11 +700,28 @@ const PRODUCT_KEYWORDS = {
 
 const state = { lang:'zh', messages:[], activeCategory:'all', context:{ topic:null, product:null, intent:null }, isTyping:false, conversationRound:0 };
 
+// pattern 匹配策略缓存：每个 pattern 只判定一次"正则 or 包含"，后续直接用
+const _pStrategy = new Map();
+const _fCache = new Map(); // findFuzzy 英文词边界正则缓存
+function _matchP(p, lower) {
+  let s = _pStrategy.get(p);
+  if (!s) {
+    const isAscii = /^[\x00-\x7F]+$/.test(p);
+    if (isAscii && p.length <= 3) {
+      s = { re: new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b') };
+    } else {
+      s = { inc: true };
+    }
+    _pStrategy.set(p, s);
+  }
+  return s.re ? s.re.test(lower) : lower.includes(p);
+}
+
 function detectIntent(text) {
   const lower = text.toLowerCase(); const scores = {};
   for (const [intent, patterns] of Object.entries(INTENT_PATTERNS)) {
     const lp = patterns[state.lang] || patterns['en']; let score = 0;
-    for (const p of lp) { if (lower.includes(p)) score += p.length; }
+    for (const p of lp) { if (_matchP(p, lower)) score += p.length; }
     if (score > 0) scores[intent] = score;
   }
   const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
@@ -715,7 +732,7 @@ function detectProduct(text) {
   const lower = text.toLowerCase(); const scores = {};
   for (const [pid, patterns] of Object.entries(PRODUCT_KEYWORDS)) {
     const lp = patterns[state.lang] || patterns['en']; let score = 0;
-    for (const p of lp) { if (lower.includes(p)) score += p.length * 2; }
+    for (const p of lp) { if (_matchP(p, lower)) score += p.length * 2; }
     if (score > 0) scores[pid] = score;
   }
   const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
@@ -762,10 +779,46 @@ function findFuzzy(intent, product, text) {
   if (!kbSec || !product || !kbSec[product]) return null;
   const entries = kbSec[product][lang] || kbSec[product]['en'];
   if (!entries || !entries.length || typeof entries === 'string') return null;
-  const lower = text.toLowerCase(); let best = null, bestScore = 0;
+  const lower = text.toLowerCase();
+  const isCJK = /[\u4e00-\u9fa5]/.test(lower);
+  // 预计算用户输入的中文 bigram 集合（仅中文字符相邻对）
+  const tBigrams = new Set();
+  if (isCJK) {
+    for (let i = 0; i < lower.length - 1; i++) {
+      if (/[\u4e00-\u9fa5]/.test(lower[i]) && /[\u4e00-\u9fa5]/.test(lower[i+1])) {
+        tBigrams.add(lower.substr(i, 2));
+      }
+    }
+  }
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const matchWord = (w, lower) => {
+    let re = _fCache.get(w);
+    if (!re) { re = new RegExp('\\b' + esc(w)); _fCache.set(w, re); }
+    return re.test(lower);
+  };
+  let best = null, bestScore = 0;
   for (const entry of entries) {
-    const qWords = entry.q.toLowerCase().split(/\s+/); let score = 0;
-    for (const w of qWords) { if (w.length > 2 && lower.includes(w)) score += w.length; }
+    const q = entry.q.toLowerCase();
+    let score = 0, matched = 0, total = 0;
+    if (isCJK) {
+      // 中文：将 q 的每个短语拆成字符 bigram，与用户输入 bigram 求交集
+      const phrases = q.split(/\s+/).filter(p => p.length > 0);
+      const qBigrams = new Set();
+      for (const p of phrases) {
+        for (let i = 0; i < p.length - 1; i++) qBigrams.add(p.substr(i, 2));
+        total += p.length;
+      }
+      for (const b of qBigrams) { if (tBigrams.has(b)) { score += 2; matched++; } }
+    } else {
+      // 英文：词边界匹配，避免短词子串误匹配（如 'pro' 误中 'protective'）
+      const words = q.split(/\s+/).filter(w => w.length > 2);
+      total = words.length;
+      for (const w of words) {
+        if (matchWord(w, lower)) { score += w.length; matched++; }
+      }
+    }
+    // 覆盖率加成：命中词占比越高越可信（最高 +50%）
+    if (total > 0 && matched > 0) score *= (1 + (matched / total) * 0.5);
     if (score > bestScore) { bestScore = score; best = entry.a; }
   }
   return best;
