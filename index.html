@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenCraft Pro | 园林电动工具智能客服</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #07120a; --bg-primary: #0c1f12; --bg-secondary: #132a1a;
+  --bg-tertiary: #1a3622; --bg-surface: #1f402b;
+  --gold: #c9a84c; --gold-light: #e8d48b; --gold-dark: #a08030;
+  --text-primary: #e8ead8; --text-secondary: #9aaa95; --text-muted: #5a6e5a;
+  --accent-green: #4a9e5c; --accent-red: #c44e4e; --accent-blue: #5b8fb9;
+  --border-subtle: rgba(201,168,76,0.12); --border-gold: rgba(201,168,76,0.3);
+  --shadow-gold: 0 0 40px rgba(201,168,76,0.08);
+  --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', 'Noto Sans SC', sans-serif;
+  --transition-fast: 0.2s cubic-bezier(0.4,0,0.2,1);
+  --transition-smooth: 0.4s cubic-bezier(0.25,0.1,0.25,1);
+  --transition-spring: 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text-primary); display:flex; justify-content:center; align-items:center; -webkit-font-smoothing:antialiased; }
+.bg-pattern { position:fixed; inset:0; pointer-events:none; z-index:0; background: radial-gradient(ellipse at 20% 20%, rgba(74,158,92,0.04) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.05) 0%, transparent 60%), radial-gradient(ellipse at 50% 50%, rgba(15,40,22,0.6) 0%, transparent 100%); }
+.bg-pattern::after { content:''; position:absolute; inset:0; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(201,168,76,0.015) 2px, rgba(201,168,76,0.015) 3px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(201,168,76,0.01) 2px, rgba(201,168,76,0.01) 3px); }
+.particles { position:fixed; inset:0; pointer-events:none; z-index:0; }
+.particle { position:absolute; border-radius:50%; background:var(--gold-light); animation: floatUp linear infinite; opacity:0; }
+@keyframes floatUp { 0% { transform:translateY(100vh) scale(0); opacity:0; } 10% { opacity:0.6; } 50% { opacity:0.3; } 90% { opacity:0; } 100% { transform:translateY(-10vh) scale(1.5); opacity:0; } }
+.app-shell { position:relative; z-index:1; width:100vw; height:100vh; max-width:1400px; display:flex; background:var(--bg-primary); box-shadow: 0 0 120px rgba(0,0,0,0.5), var(--shadow-gold); }
+.sidebar { width:310px; min-width:310px; background:var(--bg-secondary); border-right:1px solid var(--border-subtle); display:flex; flex-direction:column; padding:28px 22px; gap:24px; overflow-y:auto; }
+.sidebar-header { text-align:center; }
+.sidebar-header .logo-icon { width:48px; height:48px; margin:0 auto 12px; background:linear-gradient(135deg, var(--gold), var(--gold-dark)); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-size:22px; }
+.sidebar-header h1 { font-family:var(--font-display); font-size:22px; font-weight:600; color:var(--text-primary); letter-spacing:0.5px; }
+.sidebar-header .tagline { font-size:11px; color:var(--text-muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:4px; }
+.status-badge { display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--bg-tertiary); border-radius:var(--radius-sm); font-size:12px; }
+.status-dot { width:8px; height:8px; border-radius:50%; background:var(--accent-green); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100% { box-shadow:0 0 0 0 rgba(74,158,92,0.6); } 50% { box-shadow:0 0 0 8px rgba(74,158,92,0); } }
+.status-text { color:var(--text-secondary); }
+.status-online { color:var(--accent-green); font-weight:500; }
+.lang-selector-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+.lang-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.lang-btn { padding:8px 10px; border:1px solid var(--border-subtle); border-radius:var(--radius-sm); background:transparent; color:var(--text-secondary); cursor:pointer; font-family:var(--font-body); font-size:11px; font-weight:500; transition:all var(--transition-fast); text-align:center; }
+.lang-btn:hover { border-color:var(--border-gold); color:var(--gold-light); background:rgba(201,168,76,0.05); }
+.lang-btn.active { background:rgba(201,168,76,0.12); border-color:var(--gold); color:var(--gold-light); font-weight:600; }
+.quick-links h3 { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px; }
+.quick-link-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; transition:all var(--transition-fast); font-size:13px; color:var(--text-secondary); border:1px solid transparent; }
+.quick-link-item:hover { background:var(--bg-tertiary); border-color:var(--border-subtle); color:var(--text-primary); }
+.quick-link-item .icon { font-size:16px; width:24px; text-align:center; }
+.chat-main { flex:1; display:flex; flex-direction:column; min-width:0; }
+.chat-topbar { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; border-bottom:1px solid var(--border-subtle); background:var(--bg-primary); }
+.topbar-title { font-family:var(--font-display); font-size:18px; font-weight:600; color:var(--text-primary); }
+.topbar-subtitle { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.topbar-actions { display:flex; gap:8px; }
+.topbar-btn { width:36px; height:36px; border-radius:50%; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all var(--transition-fast); font-size:14px; }
+.topbar-btn:hover { border-color:var(--border-gold); color:var(--gold-light); background:rgba(201,168,76,0.06); }
+.messages-container { flex:1; overflow-y:auto; padding:24px 28px; display:flex; flex-direction:column; gap:16px; scroll-behavior:smooth; }
+.messages-container::-webkit-scrollbar { width:5px; } .messages-container::-webkit-scrollbar-track { background:transparent; } .messages-container::-webkit-scrollbar-thumb { background:var(--border-subtle); border-radius:10px; }
+.message-wrapper { display:flex; gap:10px; max-width:85%; animation:msgSlideIn 0.35s var(--transition-spring); }
+@keyframes msgSlideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+.message-wrapper.user { align-self:flex-end; flex-direction:row-reverse; }
+.message-wrapper.bot { align-self:flex-start; }
+.msg-avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:16px; }
+.msg-avatar.bot-avatar { background:linear-gradient(135deg, var(--bg-tertiary), var(--bg-surface)); border:1px solid var(--border-gold); }
+.msg-avatar.user-avatar { background:linear-gradient(135deg, var(--gold-dark), var(--gold)); color:#1a1a1a; }
+.msg-bubble { padding:14px 18px; border-radius:var(--radius-lg); font-size:13.5px; line-height:1.65; position:relative; }
+.msg-bubble.bot-bubble { background:var(--bg-tertiary); border:1px solid var(--border-subtle); border-top-left-radius:4px; color:var(--text-primary); }
+.msg-bubble.user-bubble { background:linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08)); border:1px solid rgba(201,168,76,0.25); border-top-right-radius:4px; color:var(--text-primary); }
+.msg-time { font-size:10px; color:var(--text-muted); margin-top:4px; }
+.msg-table { border-collapse:collapse; margin:8px 0; font-size:12.5px; max-width:100%; }
+.msg-table th, .msg-table td { border:1px solid var(--border-gold); padding:6px 10px; text-align:left; line-height:1.4; }
+.msg-table th { background:rgba(201,168,76,0.12); color:var(--gold-light); font-weight:600; white-space:nowrap; }
+.msg-table td { color:var(--text-primary); }
+.typing-indicator { display:flex; gap:4px; padding:14px 18px; background:var(--bg-tertiary); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); border-top-left-radius:4px; align-self:flex-start; animation:msgSlideIn 0.2s var(--transition-fast); }
+.typing-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); animation:typingBounce 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay:0.15s; } .typing-dot:nth-child(3) { animation-delay:0.3s; }
+@keyframes typingBounce { 0%,60%,100% { transform:translateY(0); opacity:0.4; } 30% { transform:translateY(-6px); opacity:1; } }
+.quick-replies { display:flex; flex-wrap:wrap; gap:8px; padding:0 28px 12px; }
+.quick-reply-btn { padding:8px 16px; border:1px solid var(--border-gold); background:rgba(201,168,76,0.06); color:var(--gold-light); border-radius:20px; cursor:pointer; font-family:var(--font-body); font-size:12px; font-weight:500; transition:all var(--transition-fast); }
+.quick-reply-btn:hover { background:rgba(201,168,76,0.15); transform:translateY(-1px); }
+.chat-footer { padding:12px 28px 20px; border-top:1px solid var(--border-subtle); }
+.input-row { display:flex; gap:10px; align-items:flex-end; }
+.input-wrapper { flex:1; position:relative; background:var(--bg-secondary); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); transition:all var(--transition-fast); }
+.input-wrapper:focus-within { border-color:var(--border-gold); box-shadow:0 0 0 3px rgba(201,168,76,0.06); }
+.chat-input { width:100%; padding:14px 18px; padding-right:44px; background:transparent; border:none; outline:none; color:var(--text-primary); font-family:var(--font-body); font-size:13.5px; resize:none; line-height:1.5; max-height:120px; }
+.chat-input::placeholder { color:var(--text-muted); }
+.char-count { position:absolute; right:14px; bottom:14px; font-size:10px; color:var(--text-muted); pointer-events:none; }
+.send-btn { width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg, var(--gold), var(--gold-dark)); border:none; color:#1a1a1a; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; transition:all var(--transition-fast); flex-shrink:0; }
+.send-btn:hover { transform:scale(1.05); box-shadow:0 4px 20px rgba(201,168,76,0.3); } .send-btn:active { transform:scale(0.95); }
+.category-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.category-tag { padding:6px 14px; border-radius:16px; font-size:11px; font-weight:500; cursor:pointer; border:1px solid var(--border-subtle); color:var(--text-secondary); background:var(--bg-secondary); transition:all var(--transition-fast); }
+.category-tag:hover { border-color:var(--gold); color:var(--gold-light); }
+.category-tag.selected { background:rgba(201,168,76,0.1); border-color:var(--gold); color:var(--gold-light); }
+@media (max-width:900px) { .sidebar { display:none; } .app-shell { max-width:100%; } .messages-container { padding:16px; } .chat-footer { padding:10px 16px 16px; } .msg-bubble { font-size:13px; padding:12px 14px; } }
+@media (max-width:500px) { .chat-topbar { padding:12px 16px; } .category-tags { display:none; } }
+
+/* ── DEMO MODE ──────────────── */
+.demo-btn { padding:8px 16px; border:1px solid var(--accent-blue); background:rgba(91,143,185,0.1); color:var(--accent-blue); border-radius:20px; cursor:pointer; font-family:var(--font-body); font-size:11px; font-weight:600; transition:all var(--transition-fast); white-space:nowrap; margin-left:12px; }
+.demo-btn:hover { background:rgba(91,143,185,0.2); box-shadow:0 0 12px rgba(91,143,185,0.2); }
+.demo-btn.playing { border-color:var(--accent-green); color:var(--accent-green); background:rgba(74,158,92,0.1); animation:demoPulse 1.5s infinite; }
+@keyframes demoPulse { 0%,100% { box-shadow:0 0 0 0 rgba(74,158,92,0.4); } 50% { box-shadow:0 0 0 10px rgba(74,158,92,0); } }
+.demo-dropdown { position:absolute; top:54px; right:28px; background:var(--bg-secondary); border:1px solid var(--border-gold); border-radius:var(--radius-md); padding:8px; z-index:100; display:none; min-width:320px; box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+.demo-dropdown.show { display:block; animation:slideDown 0.25s var(--transition-smooth); }
+@keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+.demo-scenario { padding:10px 14px; border-radius:var(--radius-sm); cursor:pointer; transition:all var(--transition-fast); display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-secondary); margin-bottom:4px; }
+.demo-scenario:hover { background:var(--bg-tertiary); color:var(--text-primary); }
+.demo-scenario .sc-icon { font-size:18px; width:32px; text-align:center; }
+.demo-scenario .sc-meta { font-size:10px; color:var(--text-muted); }
+.demo-scenario:last-child { margin-bottom:0; }
+.demo-speed-row { display:flex; gap:6px; padding:8px 14px; border-top:1px solid var(--border-subtle); margin-top:4px; }
+.speed-btn { padding:4px 10px; border:1px solid var(--border-subtle); border-radius:12px; background:transparent; color:var(--text-muted); cursor:pointer; font-size:10px; transition:all var(--transition-fast); }
+.speed-btn:hover { border-color:var(--border-gold); color:var(--gold-light); }
+.speed-btn.active { background:rgba(201,168,76,0.15); border-color:var(--gold); color:var(--gold-light); }
+
+/* ── ANNOTATION LAYER ────────── */
+.annotation-overlay { position:fixed; inset:0; pointer-events:none; z-index:10; }
+.annotation-bubble { position:absolute; pointer-events:none; padding:10px 14px; border-radius:var(--radius-md); font-size:12px; line-height:1.5; color:#fff; max-width:260px; opacity:0; transform:translateY(10px); transition:all 0.4s var(--transition-spring); font-family:var(--font-body); }
+.annotation-bubble.visible { opacity:1; transform:translateY(0); }
+.annotation-bubble.insight { background:linear-gradient(135deg, rgba(74,158,92,0.9), rgba(31,64,43,0.95)); border:1px solid rgba(74,158,92,0.5); }
+.annotation-bubble.tech { background:linear-gradient(135deg, rgba(91,143,185,0.9), rgba(19,42,26,0.95)); border:1px solid rgba(91,143,185,0.5); }
+.annotation-bubble.highlight { background:linear-gradient(135deg, rgba(201,168,76,0.9), rgba(160,128,48,0.95)); border:1px solid var(--gold); }
+.annotation-bubble .anno-icon { font-size:16px; margin-bottom:4px; display:block; }
+.annotation-ctrls { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:20; display:none; gap:8px; pointer-events:all; }
+.annotation-ctrls.show { display:flex; }
+.anno-ctrl-btn { padding:8px 20px; border:1px solid var(--gold); border-radius:20px; background:var(--bg-secondary); color:var(--gold-light); cursor:pointer; font-family:var(--font-body); font-size:12px; font-weight:600; transition:all var(--transition-fast); pointer-events:all; }
+.anno-ctrl-btn:hover { background:rgba(201,168,76,0.15); }
+.anno-ctrl-btn.primary { background:linear-gradient(135deg, var(--gold), var(--gold-dark)); color:#1a1a1a; border:none; }
+.anno-ctrl-btn.primary:hover { box-shadow:0 4px 16px rgba(201,168,76,0.3); }
+
+/* ── DEMO PROGRESS ────────── */
+.demo-progress { position:absolute; top:52px; left:28px; z-index:50; display:none; align-items:center; gap:8px; }
+.demo-progress.show { display:flex; }
+.demo-progress-bar { width:180px; height:3px; background:var(--bg-tertiary); border-radius:4px; overflow:hidden; }
+.demo-progress-fill { height:100%; background:var(--accent-green); border-radius:4px; transition:width 0.3s ease; width:0%; }
+.demo-progress-label { font-size:10px; color:var(--text-muted); white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+<div class="particles" id="particles"></div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-icon">🌿</div>
+      <h1>GreenCraft</h1>
+      <p class="tagline">Intelligent Support</p>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      <span class="status-text">Status:</span>
+      <span class="status-online" data-i18n="online24">Online 24/7</span>
+    </div>
+    <div>
+      <p class="lang-selector-label" data-i18n="language">Language</p>
+      <div class="lang-grid" id="langGrid"></div>
+    </div>
+    <div class="quick-links">
+      <h3 data-i18n="quickTopics">Quick Topics</h3>
+      <div class="quick-link-item" data-topic="troubleshoot"><span class="icon">🔧</span><span data-i18n="troubleshoot">Troubleshooting</span></div>
+      <div class="quick-link-item" data-topic="maintenance"><span class="icon">🛢️</span><span data-i18n="maintenance">Maintenance Guide</span></div>
+      <div class="quick-link-item" data-topic="parts"><span class="icon">🔩</span><span data-i18n="parts">Spare Parts</span></div>
+      <div class="quick-link-item" data-topic="warranty"><span class="icon">📋</span><span data-i18n="warranty">Warranty Info</span></div>
+      <div class="quick-link-item" data-topic="compare"><span class="icon">⚖️</span><span data-i18n="compare">Product Comparison</span></div>
+      <div class="quick-link-item" data-topic="safety"><span class="icon">🛡️</span><span data-i18n="safety">Safety Guidelines</span></div>
+    </div>
+  </aside>
+
+  <main class="chat-main">
+    <div class="chat-topbar">
+      <div>
+        <div class="topbar-title" data-i18n="assistantName">AI Support Assistant</div>
+        <div class="topbar-subtitle" data-i18n="assistantDesc">Garden Power Tools Expert</div>
+      </div>
+      <div class="topbar-actions">
+        <div style="position:relative;">
+          <button class="demo-btn" id="demoBtn" onclick="toggleDemoDropdown()">▶ 演示模式</button>
+          <div class="demo-dropdown" id="demoDropdown">
+            <div class="demo-scenario" data-scenario="scenario1">
+              <span class="sc-icon">🇬🇧</span>
+              <div><div>场景一：草坪机故障排查</div><div class="sc-meta">英文对话 · 5轮互动 · 逐步诊断</div></div>
+            </div>
+            <div class="demo-scenario" data-scenario="scenario2">
+              <span class="sc-icon">🇫🇷</span>
+              <div><div>场景二：修枝剪使用咨询</div><div class="sc-meta">法语对话 · 4轮互动 · 产品推荐</div></div>
+            </div>
+            <div class="demo-scenario" data-scenario="scenario3">
+              <span class="sc-icon">🇩🇪</span>
+              <div><div>场景三：链锯养护 & 配件订购</div><div class="sc-meta">德语对话 · 5轮互动 · 养护+配件</div></div>
+            </div>
+            <div class="demo-scenario" data-scenario="scenario4">
+              <span class="sc-icon">🇨🇳</span>
+              <div><div>场景四：综合售后问题</div><div class="sc-meta">中文对话 · 6轮互动 · 保修+安全</div></div>
+            </div>
+            <div class="demo-speed-row">
+              <span style="font-size:10px;color:var(--text-muted);margin-right:4px;">速度:</span>
+              <button class="speed-btn" data-speed="slow">慢</button>
+              <button class="speed-btn active" data-speed="normal">中</button>
+              <button class="speed-btn" data-speed="fast">快</button>
+            </div>
+          </div>
+        </div>
+        <button class="topbar-btn" title="Export Chat" onclick="exportChat()">📥</button>
+        <button class="topbar-btn" title="Clear Chat" onclick="clearChat()">🗑️</button>
+      </div>
+    </div>
+    <div class="demo-progress" id="demoProgress">
+      <span style="font-size:12px;">📽️</span>
+      <div class="demo-progress-bar"><div class="demo-progress-fill" id="demoProgressFill"></div></div>
+      <span class="demo-progress-label" id="demoProgressLabel">演示中...</span>
+    </div>
+    <div class="category-tags" style="padding:12px 28px 0;" id="categoryTags"></div>
+    <div class="messages-container" id="messagesContainer"></div>
+    <div class="quick-replies" id="quickReplies"></div>
+    <div class="chat-footer">
+      <div class="input-row">
+        <div class="input-wrapper">
+          <textarea class="chat-input" id="chatInput" rows="1" data-i18n-placeholder="inputPlaceholder" onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+          <span class="char-count" id="charCount">0/500</span>
+        </div>
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="annotation-overlay" id="annotationOverlay"></div>
+<div class="annotation-ctrls" id="annotationCtrls">
+  <button class="anno-ctrl-btn" onclick="prevAnnotation()">◀ 上一条</button>
+  <button class="anno-ctrl-btn primary" onclick="nextAnnotation()">下一条 ▶</button>
+  <button class="anno-ctrl-btn" onclick="hideAnnotation()">✕ 关闭讲解</button>
+</div>
+
+<script>
+const LANGUAGES = {
+  en: { name:'English', flag:'🇬🇧', native:'English' },
+  zh: { name:'中文', flag:'🇨🇳', native:'中文' },
+  fr: { name:'Français', flag:'🇫🇷', native:'Français' },
+  de: { name:'Deutsch', flag:'🇩🇪', native:'Deutsch' },
+  es: { name:'Español', flag:'🇪🇸', native:'Español' },
+  it: { name:'Italiano', flag:'🇮🇹', native:'Italiano' },
+  nl: { name:'Nederlands', flag:'🇳🇱', native:'Nederlands' },
+  pt: { name:'Português', flag:'🇵🇹', native:'Português' }
+};
+
+const I18N = {
+  online24: { en:'Online 24/7', zh:'全天候在线', fr:'En ligne 24/7', de:'24/7 online', es:'En línea 24/7', it:'Online 24/7', nl:'24/7 online', pt:'Online 24/7' },
+  language: { en:'Language', zh:'语言选择', fr:'Langue', de:'Sprache', es:'Idioma', it:'Lingua', nl:'Taal', pt:'Idioma' },
+  quickTopics: { en:'Quick Topics', zh:'快捷话题', fr:'Sujets rapides', de:'Schnellthemen', es:'Temas rápidos', it:'Argomenti rapidi', nl:'Snelle onderwerpen', pt:'Tópicos rápidos' },
+  troubleshoot: { en:'Troubleshooting', zh:'故障诊断', fr:'Dépannage', de:'Fehlerbehebung', es:'Solución de problemas', it:'Risoluzione problemi', nl:'Probleemoplossing', pt:'Resolução de problemas' },
+  maintenance: { en:'Maintenance Guide', zh:'养护指南', fr:'Guide d\'entretien', de:'Wartungsanleitung', es:'Guía de mantenimiento', it:'Guida alla manutenzione', nl:'Onderhoudsgids', pt:'Guia de manutenção' },
+  parts: { en:'Spare Parts', zh:'配件订购', fr:'Pièces détachées', de:'Ersatzteile', es:'Repuestos', it:'Pezzi di ricambio', nl:'Reserveonderdelen', pt:'Peças sobressalentes' },
+  warranty: { en:'Warranty Info', zh:'保修查询', fr:'Garantie', de:'Garantie', es:'Garantía', it:'Garanzia', nl:'Garantie', pt:'Garantia' },
+  compare: { en:'Product Comparison', zh:'产品对比', fr:'Comparaison', de:'Produktvergleich', es:'Comparación', it:'Confronto prodotti', nl:'Productvergelijking', pt:'Comparação de produtos' },
+  safety: { en:'Safety Guidelines', zh:'安全指南', fr:'Sécurité', de:'Sicherheitshinweise', es:'Seguridad', it:'Linee guida di sicurezza', nl:'Veiligheidsrichtlijnen', pt:'Diretrizes de segurança' },
+  allProducts: { en:'All Products', zh:'全部产品', fr:'Tous les produits', de:'Alle Produkte', es:'Todos los productos', it:'Tutti i prodotti', nl:'Alle producten', pt:'Todos os produtos' },
+  assistantName: { en:'AI Support Assistant', zh:'园林工具智能客服', fr:'Assistant Support IA', de:'KI-Support-Assistent', es:'Asistente de Soporte IA', it:'Assistente Supporto IA', nl:'AI-ondersteuningsassistent', pt:'Assistente de Suporte IA' },
+  assistantDesc: { en:'Garden Power Tools Expert', zh:'园林电动工具专家 · 跨境售后服务', fr:'Expert en outils de jardin', de:'Garten-Elektrowerkzeuge Experte', es:'Experto en herramientas de jardín', it:'Esperto di attrezzi da giardino', nl:'Expert in tuingereedschap', pt:'Especialista em ferramentas de jardim' },
+  inputPlaceholder: { en:'Describe your issue...', zh:'请描述您的问题，或选择话题开始咨询...', fr:'Décrivez votre problème...', de:'Beschreiben Sie Ihr Problem...', es:'Describa su problema...', it:'Descrivi il tuo problema...', nl:'Beschrijf uw probleem...', pt:'Descreva o seu problema...' },
+  welcomeTitle: { en:'Welcome to GreenCraft AI Support 🌿', zh:'欢迎使用 GreenCraft 智能客服 🌿', fr:'Bienvenue chez GreenCraft 🌿', de:'Willkommen bei GreenCraft 🌿', es:'Bienvenido a GreenCraft 🌿', it:'Benvenuto in GreenCraft 🌿', nl:'Welkom bij GreenCraft 🌿', pt:'Bem-vindo ao GreenCraft 🌿' },
+  welcomeMsg: { en:'I am your garden power tools support specialist, fluent in 8 languages and available 24/7.\n\nI can help you with:\n🔧 Troubleshooting\n🛢️ Maintenance\n🔩 Spare Parts\n📋 Warranty\n⚖️ Product Comparison\n🛡️ Safety\n\nDescribe your issue or click a quick topic below.', zh:'您好！我是园林电动工具专属智能客服，精通中英法德西意荷葡八种语言，7×24小时全天候为您提供售后服务支持。\n\n我能帮您处理：\n🔧 故障诊断与排除\n🛢️ 日常养护与保养\n🔩 配件查询与订购\n📋 保修政策咨询\n⚖️ 产品对比与推荐\n🛡️ 安全操作规范\n\n请直接描述您遇到的问题，或点击下方快捷话题开始咨询。', fr:'Je suis votre spécialiste en outils de jardin motorisés. Je peux vous aider avec le dépannage, l\'entretien, les pièces détachées, la garantie et les comparaisons de produits. Comment puis-je vous aider?', de:'Ich bin Ihr Spezialist für Garten-Elektrowerkzeuge. Ich helfe bei Fehlerbehebung, Wartung, Ersatzteilen, Garantie und Produktvergleichen. Wie kann ich Ihnen helfen?', es:'Soy su especialista en herramientas eléctricas de jardín. Puedo ayudar con solución de problemas, mantenimiento, repuestos, garantía y comparaciones. ¿Cómo puedo ayudarle?', it:'Sono il tuo specialista in attrezzi da giardino. Posso aiutarti con risoluzione problemi, manutenzione, ricambi, garanzia e confronti. Come posso aiutarti?', nl:'Ik ben uw specialist in tuingereedschap. Ik help met probleemoplossing, onderhoud, reserveonderdelen, garantie en productvergelijkingen. Hoe kan ik u helpen?', pt:'Sou o seu especialista em ferramentas elétricas de jardim. Posso ajudar com resolução de problemas, manutenção, peças, garantia e comparações. Como posso ajudar?' },
+  thinking: { en:'Analyzing...', zh:'正在分析中...', fr:'Réflexion...', de:'Denkt nach...', es:'Pensando...', it:'Sto pensando...', nl:'Denken...', pt:'A pensar...' },
+  noMatch: { en:'I couldn\'t quite understand. Please provide more details:\n• Which tool is the issue with?\n• What are the symptoms (won\'t start / noise / leak)?\n• What is the model number?\n\nYou can also click a topic on the left sidebar.', zh:'未能完全理解您的问题，请您提供更多细节：\n• 具体是什么设备出现问题？\n• 故障表现是什么（无法启动 / 异响 / 漏油等）？\n• 设备的型号是什么？\n\n您也可以点击左侧快捷话题选择对应服务类型。', fr:'Je n\'ai pas bien compris. Donnez plus de détails sur votre problème.', de:'Das habe ich nicht verstanden. Bitte geben Sie mehr Details an.', es:'No lo he entendido bien. ¿Podría dar más detalles?', it:'Non ho capito bene. Puoi fornire più dettagli?', nl:'Ik begreep dat niet helemaal. Kunt u meer details geven?', pt:'Não entendi bem. Pode dar mais detalhes?' },
+  tooLong: { en:'Your message exceeds the 500-character limit. Please shorten it and try again.', zh:'您的消息超过 500 字上限，请精简后再发送。', fr:'Votre message dépasse la limite de 500 caractères. Veuillez le raccourcir.', de:'Ihre Nachricht überschreitet das Limit von 500 Zeichen. Bitte kürzen Sie sie.', es:'Su mensaje supera el límite de 500 caracteres. Acórtelo e inténtelo de nuevo.', it:'Il messaggio supera il limite di 500 caratteri. Accorcialo e riprova.', nl:'Uw bericht overschrijdt de limiet van 500 tekens. Kort het in en probeer opnieuw.', pt:'Sua mensagem excede o limite de 500 caracteres. Encurte-a e tente novamente.' },
+  // 负面清单红线2：AI 生成内容须显式披露 —— 欢迎语前置 AI 身份告知
+  aiNotice: { en:'🤖 Disclosure: you are chatting with an AI customer-service assistant. Type "human agent" at any time to reach a human colleague.',
+    zh:'🤖 服务披露：本会话由 AI 智能客服提供；如需人工服务，请随时输入"转人工"。',
+    fr:'🤖 Divulgation : vous discutez avec un assistant client IA. Tapez « agent humain » à tout moment pour joindre un collègue humain.',
+    de:'🤖 Hinweis: Sie chatten mit einem KI-Kundenservice-Assistenten. Schreiben Sie jederzeit „Mitarbeiter sprechen“, um einen menschlichen Kollegen zu erreichen.',
+    es:'🤖 Aviso: está chateando con un asistente de atención al cliente de IA. Escriba "hablar con una persona" en cualquier momento para contactar con un agente humano.',
+    it:'🤖 Informativa: stai chattando con un assistente clienti IA. Digita "parlare con una persona" in qualsiasi momento per parlare con un operatore umano.',
+    nl:'🤖 Mededeling: u chat met een AI-klantenservice-assistent. Typ op elk moment "medewerker" om een menselijke collega te bereiken.',
+    pt:'🤖 Divulgação: está a conversar com um assistente de atendimento IA. Escreva "falar com uma pessoa" a qualquer momento para falar com um colaborador humano.' },
+  // 转人工应答：工单号 + 保修/退货场景自动衔接 RMA 退件流程（履约链路衔接 + 红线5人工复核）
+  handoff: { en:'✅ I have created after-sales ticket **{ticket}** and transferred this conversation to a human specialist (business hours: 9:00–18:00 CET, response within 2 hours).\n\nIf your case involves a **return or warranty claim**, the specialist will arrange the **RMA return authorization** and pickup with our logistics partner — no need to resubmit your details.\n\nI have summarized the conversation history for the specialist, so you can continue right where you left off. 🙋',
+    zh:'✅ 已为您生成售后工单 **{ticket}**，并转接人工专员（工作时间 9:00–18:00，2小时内回复）。\n\n如涉及**退货或保修理赔**，专员将同步为您安排 **RMA 退件授权**及物流上门取件，无需重复提交信息。\n\n对话记录已同步给专员，您可以直接继续之前的沟通。🙋',
+    fr:'✅ J\'ai créé le ticket SAV **{ticket}** et transféré cette conversation à un spécialiste humain (heures ouvrées : 9h–18h, réponse sous 2 heures).\n\nSi votre demande concerne un **retour ou une réclamation sous garantie**, le spécialiste organisera l\'**autorisation de retour RMA** et l\'enlèvement avec notre transporteur — inutile de renvoyer vos informations.\n\nL\'historique a été transmis au spécialiste, vous pouvez reprendre là où vous en étiez. 🙋',
+    de:'✅ Ich habe das Service-Ticket **{ticket}** erstellt und dieses Gespräch an einen menschlichen Spezialisten weitergeleitet (Geschäftszeiten: 9–18 Uhr, Antwort innerhalb von 2 Stunden).\n\nFalls es um **Rückgabe oder Garantiefall** geht, veranlasst der Spezialist die **RMA-Rücksendegenehmigung** und Abholung mit unserem Logistikpartner — Sie müssen keine Angaben erneut übermitteln.\n\nDer Gesprächsverlauf wurde übergeben, Sie können direkt dort weitermachen. 🙋',
+    es:'✅ He creado la incidencia de posventa **{ticket}** y he transferido esta conversación a un especialista humano (horario: 9:00–18:00, respuesta en 2 horas).\n\nSi su caso implica una **devolución o reclamación de garantía**, el especialista gestionará la **autorización de devolución RMA** y la recogida con nuestro transportista — no hace falta reenviar sus datos.\n\nEl historial ya está con el especialista: puede continuar donde lo dejó. 🙋',
+    it:'✅ Ho creato il ticket di assistenza **{ticket}** e ho trasferito la conversazione a uno specialista umano (orari: 9:00–18:00, risposta entro 2 ore).\n\nSe il caso riguarda un **reso o una richiesta in garanzia**, lo specialista organizzerà l\'**autorizzazione di reso RMA** e il ritiro con il nostro corriere — non dovrai reinviare i tuoi dati.\n\nLa cronologia è già stata condivisa: puoi riprendere da dove eri. 🙋',
+    nl:'✅ Ik heb service-ticket **{ticket}** aangemaakt en dit gesprek doorgestuurd naar een menselijke specialist (kantooruren: 9:00–18:00, reactie binnen 2 uur).\n\nGaat het om een **retour of garantiekeuring**? Dan regelt de specialist de **RMA-retourautorisatie** en ophaling met onze logistieke partner — u hoeft niets opnieuw in te dienen.\n\nDe gespreksgeschiedenis is doorgegeven; u kunt verdergaan waar u was gebleven. 🙋',
+    pt:'✅ Criei o ticket de pós-venda **{ticket}** e transferei esta conversa para um especialista humano (horário: 9:00–18:00, resposta em 2 horas).\n\nSe o seu caso envolve **devolução ou reclamação de garantia**, o especialista providenciará a **autorização de devolução RMA** e a recolha com o nosso parceiro logístico — não precisa de reenviar os seus dados.\n\nO histórico já foi partilhado: pode continuar de onde parou. 🙋' },
+  // 连续 2 轮未命中知识库 → 主动建议转人工（业务闭环出口）
+  handoffHint: { en:'It seems I haven\'t fully solved your problem yet. Would you like me to transfer you to a **human specialist**? Just type "human agent" and I\'ll create a ticket right away. 🙋',
+    zh:'看起来我还没能完全解决您的问题。需要为您转接**人工专员**吗？回复"转人工"即可立即生成工单。🙋',
+    fr:'Il semble que je n\'aie pas encore résolu votre problème. Souhaitez-vous être transféré à un **spécialiste humain** ? Tapez « agent humain » et je crée immédiatement un ticket. 🙋',
+    de:'Es scheint, dass ich Ihr Problem noch nicht vollständig lösen konnte. Möchten Sie an einen **menschen Spezialisten** weitergeleitet werden? Schreiben Sie „Mitarbeiter sprechen", dann erstelle ich sofort ein Ticket. 🙋',
+    es:'Parece que aún no he resuelto del todo su problema. ¿Desea que le transfiera a un **especialista humano**? Escriba "hablar con una persona" y crearé una incidencia de inmediato. 🙋',
+    it:'Sembra che non abbia ancora risolto completamente il tuo problema. Vuoi essere trasferito a uno **specialista umano**? Digita "parlare con una persona" e creerò subito un ticket. 🙋',
+    nl:'Het lijkt erop dat ik uw probleem nog niet helemaal heb opgelost. Wilt u worden doorverbonden met een **menselijke specialist**? Typ "medewerker" en ik maak direct een ticket aan. 🙋',
+    pt:'Parece que ainda não resolvi completamente o seu problema. Deseja ser transferido para um **especialista humano**? Escreva "falar com uma pessoa" e criarei um ticket imediatamente. 🙋' }
+};
+
+const PRODUCTS = [
+  { id:'lawn_mower', icon:'🌱', names:{ en:'Lawn Mower', zh:'草坪修剪机', fr:'Tondeuse à gazon', de:'Rasenmäher', es:'Cortacésped', it:'Tosaerba', nl:'Grasmaaier', pt:'Cortador de relva' } },
+  { id:'pruner', icon:'✂️', names:{ en:'Electric Pruner', zh:'电动修枝剪', fr:'Sécateur électrique', de:'Elektrische Astschere', es:'Podadora eléctrica', it:'Potatrice elettrica', nl:'Elektrische snoeischaar', pt:'Tesoura de poda elétrica' } },
+  { id:'chainsaw', icon:'🪓', names:{ en:'Chainsaw', zh:'电链锯', fr:'Tronçonneuse', de:'Kettensäge', es:'Motosierra', it:'Motosega', nl:'Kettingzaag', pt:'Motosserra' } },
+  { id:'hedge_trimmer', icon:'🌳', names:{ en:'Hedge Trimmer', zh:'绿篱修剪机', fr:'Taille-haie', de:'Heckenschere', es:'Cortasetos', it:'Tagliasiepi', nl:'Heggenschaar', pt:'Cortador de sebes' } },
+  { id:'leaf_blower', icon:'🍂', names:{ en:'Leaf Blower', zh:'吹叶机', fr:'Souffleur de feuilles', de:'Laubbläser', es:'Soplador de hojas', it:'Soffiatore', nl:'Bladblazer', pt:'Soprador de folhas' } },
+  { id:'pressure_washer', icon:'💧', names:{ en:'Pressure Washer', zh:'高压清洗机', fr:'Nettoyeur haute pression', de:'Hochdruckreiniger', es:'Hidrolimpiadora', it:'Idropulitrice', nl:'Hogedrukreiniger', pt:'Lavadora de pressão' } },
+  { id:'brush_cutter', icon:'⚡', names:{ en:'Brush Cutter', zh:'割灌机', fr:'Débroussailleuse', de:'Freischneider', es:'Desbrozadora', it:'Decespugliatore', nl:'Bosmaaier', pt:'Roçadora' } },
+  { id:'tiller', icon:'🔄', names:{ en:'Garden Tiller', zh:'微耕机', fr:'Motoculteur', de:'Gartenfräse', es:'Motoazada', it:'Motozappa', nl:'Tuinfrees', pt:'Motoenxada' } },
+  { id:'wood_chipper', icon:'🪵', names:{ en:'Wood Chipper', zh:'碎木机', fr:'Broyeur de végétaux', de:'Häcksler', es:'Biotrituradora', it:'Cippatrice', nl:'Houtversnipperaar', pt:'Triturador de madeira' } },
+  { id:'robot_mower', icon:'🤖', names:{ en:'Robot Mower', zh:'智能割草机器人', fr:'Robot tondeuse', de:'Mähroboter', es:'Robot cortacésped', it:'Robot tosaerba', nl:'Robotmaaier', pt:'Robô cortador' } }
+];
+
+const CATEGORIES = [
+  { id:'all', names:{ en:'All', zh:'全部', fr:'Tous', de:'Alle', es:'Todos', it:'Tutti', nl:'Alle', pt:'Todos' } },
+  { id:'lawn_mower', names:{ en:'Mowers', zh:'草坪机', fr:'Tondeuses', de:'Mäher', es:'Cortacéspedes', it:'Tosaerba', nl:'Maaiers', pt:'Cortadores' } },
+  { id:'pruner', names:{ en:'Pruners', zh:'修枝剪', fr:'Sécateurs', de:'Astscheren', es:'Podadoras', it:'Potatrici', nl:'Snoeischaren', pt:'Tesouras' } },
+  { id:'chainsaw', names:{ en:'Chainsaws', zh:'链锯', fr:'Tronçonneuses', de:'Sägen', es:'Motosierras', it:'Motoseghe', nl:'Zagen', pt:'Serras' } },
+  { id:'hedge_trimmer', names:{ en:'Trimmers', zh:'修剪机', fr:'Taille-haies', de:'Heckenscheren', es:'Cortasetos', it:'Tagliasiepi', nl:'Heggenscharen', pt:'Corta-sebes' } },
+  { id:'leaf_blower', names:{ en:'Blowers', zh:'吹叶机', fr:'Souffleurs', de:'Bläser', es:'Sopladores', it:'Soffiatori', nl:'Blazers', pt:'Sopradores' } },
+  { id:'pressure_washer', names:{ en:'Washers', zh:'清洗机', fr:'Nettoyeurs', de:'Reiniger', es:'Limpiadoras', it:'Idropulitrici', nl:'Reinigers', pt:'Lavadoras' } },
+  { id:'brush_cutter', names:{ en:'Cutters', zh:'割灌机', fr:'Débroussailleuses', de:'Freischneider', es:'Desbrozadoras', it:'Decespugliatori', nl:'Bosmaaiers', pt:'Roçadoras' } }
+];
+
+const KB = {
+  troubleshoot: {
+    lawn_mower: {
+      en: [{ q:'won\'t start', a:'Lawn mower won\'t start — step-by-step diagnosis:\n\n1. **Battery** — fully charged? Most mowers need 4-6h. LED should be solid green.\n2. **Safety key** — must be fully inserted.\n3. **Bail switch** — must be fully pressed against the handlebar.\n4. **Overload protection** — if stopped mid-use, wait 15 min before retrying.\n5. **Blade jam** — disconnect power, check for debris blocking the blade.\n\nStill stuck? Tell me your model number for specific help.' },{ q:'battery drains fast', a:'Fast battery drain causes:\n\n1. **Battery age** — capacity drops after 300-500 cycles.\n2. **Thick/wet grass** — raise cutting height on first pass.\n3. **Dull blade** — increases motor load by ~30%.\n4. **Temperature** — below 5°C or above 35°C reduces performance.\n5. **Wrong Ah battery** — check your lawn size vs battery rating.\n\nIf runtime <50% of original, consider battery replacement.' },{ q:'vibrating', a:'Excessive vibration is serious:\n\n1. **Stop immediately** — check for bent/chipped blade.\n2. **Loose blade bolt** — tighten to spec.\n3. **Blade imbalance** — use a blade balancer after sharpening.\n4. **Deck buildup** — scrape dried grass from underside.\n5. **Motor mounts** — check mounting bolts.\n\n⚠️ Never operate with excessive vibration — safety hazard.' }],
+      zh: [{ q:'无法启动', a:'草坪机无法启动 — 逐步诊断：\n\n1. **电池** — 是否充满？多数机型需4-6小时充电，LED应为绿色常亮。\n2. **安全钥匙** — 必须完全插入到位。\n3. **安全把手** — 必须完全压紧到手柄上。\n4. **过载保护** — 如使用中停止，等15分钟再试。\n5. **刀片卡住** — 断开电源，检查是否有杂物堵塞。\n\n仍有问题？请提供型号，我为您精准排查。' },{ q:'电池不耐用', a:'电池耗电过快：\n\n1. **电池老化** — 300-500次循环后容量显著下降。\n2. **草地太厚/太湿** — 首次割草时调高割草高度。\n3. **刀片钝化** — 钝刀片增加电机负荷约30%。\n4. **温度影响** — 低于5°C或高于35°C性能下降。\n5. **电池容量不匹配** — 检查Ah额定值是否适合您的草坪面积。\n\n续航不到原来一半？考虑更换电池。' },{ q:'震动厉害', a:'剧烈震动需立即处理：\n\n1. **立刻停机** — 检查刀片是否弯曲或有缺口。\n2. **刀片螺丝松动** — 按厂家扭矩要求拧紧。\n3. **刀片不平衡** — 磨刀后用平衡仪检测。\n4. **底盘积草** — 清理底盘下的干草堆积。\n5. **电机固定座** — 检查固定螺丝。\n\n⚠️ 震动状态下严禁操作，有安全隐患。' }],
+      fr: [{ q:'ne démarre pas', a:'Tondeuse qui ne démarre pas — diagnostic étape par étape :\n\n1. **Batterie** — est-elle bien chargée ? La plupart des modèles demandent 4 à 6 h de charge, le voyant LED doit être vert fixe.\n2. **Clé de sécurité** — doit être complètement insérée.\n3. **Levier de sécurité** — doit être maintenu pressé contre le guidon.\n4. **Protection contre les surcharges** — si la tondeuse s\'est arrêtée en cours d\'utilisation, attendez 15 minutes avant de réessayer.\n5. **Lame bloquée** — débranchez l\'alimentation et vérifiez qu\'aucun débris ne bloque la lame.\n\nLe problème persiste ? Indiquez-moi le numéro de modèle pour une aide ciblée.' },{ q:'batterie se vide vite', a:'Causes d\'une décharge rapide de la batterie :\n\n1. **Usure de la batterie** — la capacité diminue après 300 à 500 cycles.\n2. **Herbe épaisse ou humide** — augmentez la hauteur de coupe pour le premier passage.\n3. **Lame émoussée** — augmente la charge du moteur d\'environ 30 %.\n4. **Température** — en dessous de 5 °C ou au-dessus de 35 °C, les performances baissent.\n5. **Capacité inadaptée** — vérifiez que l\'ampérage (Ah) correspond à votre pelouse.\n\nSi l\'autonomie descend sous 50 % de l\'originale, envisagez de remplacer la batterie.' },{ q:'vibre beaucoup', a:'Une vibration excessive doit être traitée immédiatement :\n\n1. **Arrêtez tout de suite** — vérifiez si la lame est tordue ou ébréchée.\n2. **Boulon de lame desserré** — serrez au couple indiqué.\n3. **Lame déséquilibrée** — utilisez un équilibreur après l\'affûtage.\n4. **Accumulation d\'herbe sous le carter** — grattez l\'herbe séchée.\n5. **Supports moteur** — vérifiez les boulons de fixation.\n\n⚠️ N\'utilisez jamais la tondeuse si elle vibre excessivement — risque de sécurité.' }],
+      de: [{ q:'startet nicht', a:'Rasenmäher startet nicht — Schritt-für-Schritt-Diagnose:\n\n1. **Akku** — vollständig geladen? Die meisten Modelle benötigen 4-6 Stunden, die LED sollte dauerhaft grün leuchten.\n2. **Sicherheitsschlüssel** — muss vollständig eingesteckt sein.\n3. **Sicherheitsbügel** — muss ganz an den Holm gedrückt werden.\n4. **Überlastschutz** — wenn der Mäher während des Betriebs stoppt, 15 Minuten warten.\n5. **Messer blockiert** — Akku entfernen und prüfen, ob Fremdkörper das Messer blockieren.\n\nImmer noch kein Start? Nennen Sie mir die Modellnummer für gezielte Hilfe.' },{ q:'akku schnell leer', a:'Ursachen für schnelle Akku-Entladung:\n\n1. **Akku-Alter** — die Kapazität sinkt nach 300-500 Ladezyklen.\n2. **Dichtes/nasses Gras** — beim ersten Schnitt die Schnitthöhe erhöhen.\n3. **Stumpfes Messer** — erhöht die Motorlast um ca. 30 %.\n4. **Temperatur** — unter 5 °C oder über 35 °C sinkt die Leistung.\n5. **Falsche Akku-Kapazität** — prüfen Sie, ob die Ah-Zahl zu Ihrer Rasenfläche passt.\n\nLiegt die Laufzeit unter 50 % des ursprünglichen Werts, sollten Sie den Akku ersetzen.' },{ q:'vibriert stark', a:'Starke Vibrationen müssen sofort behandelt werden:\n\n1. **Sofort stoppen** — prüfen, ob das Messer verbogen oder beschädigt ist.\n2. **Messerbolzen locker** — mit dem vorgegebenen Drehmoment anziehen.\n3. **Messer unwuchtig** — nach dem Schärfen mit einer Wuchtwaage prüfen.\n4. **Grasansammlung unter dem Deck** — getrocknetes Gras abkratzen.\n5. **Motorlager** — Befestigungsschrauben prüfen.\n\n⚠️ Niemals mit starken Vibrationen weiterarbeiten — Sicherheitsrisiko.' }]
+    },
+    pruner: {
+      en: [{ q:'not cutting', a:'Pruner not cutting properly:\n\n1. **Battery** — fully charge. Low power reduces cutting force.\n2. **Blade condition** — dull/damaged blades need sharpening or replacement.\n3. **Branch too thick** — max capacity typically 25-30mm diameter.\n4. **Sap buildup** — clean blades with rubbing alcohol.\n5. **Safety trigger** — both power & safety switches must be pressed simultaneously.\n\n⚠️ Wear cut-resistant gloves when inspecting blades.' },{ q:'blades stuck', a:'Pruner blades stuck open:\n\n1. **Battery removed mid-cut** — reinsert battery, press trigger to reset.\n2. **Resin buildup** — clean with WD-40 or alcohol.\n3. **Gear jam** — manually close blades (battery removed) to free mechanism.\n4. **Overload protection** — triggered by cutting beyond capacity. Remove battery, wait 5 min.' },{ q:'battery life short', a:'Short pruner battery life:\n\n1. **Thick branches** — each thick cut uses much more power.\n2. **Dull blade** — forces motor to work harder.\n3. **Cold weather** — lithium batteries lose efficiency below 5°C.\n4. **Battery wear** — 300+ cycles degrade capacity.\n5. **Continuous use** — let motor rest briefly between heavy cuts.' }],
+      zh: [{ q:'剪不动', a:'修枝剪剪切无力：\n\n1. **电池** — 确保充满电，低电量剪切力度会大幅下降。\n2. **刀片状态** — 钝化或损坏需要磨锋利或更换。\n3. **枝条过粗** — 最大剪切直径通常25-30mm，超出会卡住电机。\n4. **树汁堆积** — 用酒精清洁刀片上的树汁和碎屑。\n5. **安全扳机** — 需同时按压电源开关和安全扳机。\n\n⚠️ 检查刀片时务必佩戴防割手套。' },{ q:'刀片卡住', a:'刀片卡在张开位置：\n\n1. **中途取出电池** — 重新插入电池，按压开关重置。\n2. **树脂堆积** — 用WD-40或酒精彻底清洁。\n3. **齿轮卡住** — 先取出电池，手动闭合刀片释放机构。\n4. **过载保护** — 超出剪切能力时触发。取出电池等5分钟再试。' },{ q:'电池续航短', a:'修枝剪续航短：\n\n1. **粗枝剪切** — 每剪一次粗枝消耗大量电力。\n2. **刀片变钝** — 钝刀片使电机负荷大增。\n3. **低温影响** — 5°C以下锂电池效率骤降。\n4. **电池老化** — 300次循环后容量退化明显。\n5. **连续作业** — 重活时剪切间隙让电机稍作休息。' }],
+      fr: [{ q:'ne coupe pas', a:'Le sécateur ne coupe plus correctement :\n\n1. **Batterie** — chargez-la complètement, une faible charge réduit la force de coupe.\n2. **État des lames** — des lames émoussées ou abîmées doivent être affûtées ou remplacées.\n3. **Branche trop épaisse** — la capacité maximale est généralement de 25 à 30 mm de diamètre.\n4. **Accumulation de sève** — nettoyez les lames à l\'alcool à friction.\n5. **Gâchette de sécurité** — l\'interrupteur d\'alimentation et la gâchette doivent être pressés simultanément.\n\n⚠️ Portez des gants anti-coupure pour inspecter les lames.' },{ q:'lames bloquées', a:'Lames bloquées en position ouverte :\n\n1. **Batterie retirée en cours de coupe** — réinsérez-la et appuyez sur la gâchette pour réinitialiser.\n2. **Accumulation de résine** — nettoyez au WD-40 ou à l\'alcool.\n3. **Engrenage coincé** — batterie retirée, fermez manuellement les lames pour libérer le mécanisme.\n4. **Protection contre les surcharges** — déclenchée par une coupe au-delà de la capacité. Retirez la batterie et attendez 5 minutes.' },{ q:'autonomie faible', a:'Autonomie réduite du sécateur :\n\n1. **Branches épaisses** — chaque coupe épaisse consomme beaucoup d\'énergie.\n2. **Lame émoussée** — force le moteur à travailler davantage.\n3. **Temps froid** — les batteries lithium perdent en efficacité sous 5 °C.\n4. **Usure de la batterie** — la capacité se dégrade après 300 cycles.\n5. **Utilisation continue** — laissez le moteur souffler entre les grosses coupes.' }],
+      de: [{ q:'schneidet nicht', a:'Die Astschere schneidet nicht mehr richtig:\n\n1. **Akku** — vollständig laden, bei niedrigem Ladestand sinkt die Schnittkraft.\n2. **Klingenzustand** — stumpfe oder beschädigte Klingen müssen geschärft oder ersetzt werden.\n3. **Ast zu dick** — die maximale Schnittstärke liegt meist bei 25-30 mm Durchmesser.\n4. **Harz- und Saftablagerungen** — Klingen mit Alkohol reinigen.\n5. **Sicherheitsschalter** — Netzschalter und Sicherheitshebel müssen gleichzeitig gedrückt werden.\n\n⚠️ Tragen Sie bei der Inspektion der Klingen Schnittschutzhandschuhe.' },{ q:'klingen klemmen', a:'Klingen bleiben in geöffneter Stellung stecken:\n\n1. **Akku während des Schnitts entfernt** — Akku wieder einsetzen und Auslöser drücken.\n2. **Harzablagerungen** — mit WD-40 oder Alkohol gründlich reinigen.\n3. **Getriebe klemmt** — Akku entfernen und Klingen manuell schließen.\n4. **Überlastschutz** — wird durch Schnitte jenseits der Kapazität ausgelöst. Akku entfernen und 5 Minuten warten.' },{ q:'akku kurze laufzeit', a:'Kurze Akkulaufzeit der Astschere:\n\n1. **Dicke Äste** — jeder Schnitt durch dickes Holz verbraucht viel Strom.\n2. **Stumpfe Klinge** — erhöht die Belastung des Motors deutlich.\n3. **Kälte** — Lithium-Akkus verlieren unter 5 °C spürbar an Leistung.\n4. **Akku-Verschleiß** — nach 300 Zyklen lässt die Kapazität deutlich nach.\n5. **Dauerbetrieb** — bei schwerer Arbeit dem Motor kurze Pausen gönnen.' }]
+    },
+    chainsaw: {
+      en: [{ q:'chain not moving', a:'Chainsaw chain not moving:\n\n1. **Chain brake** — most common! Push brake handle forward to disengage.\n2. **Over-tightened chain** — loosen bar nuts, adjust until chain pulls freely.\n3. **Low bar oil** — refill the oil reservoir.\n4. **Motor overload** — triggered by heavy cutting. Cool 15-20 min.\n5. **Debris in sprocket** — remove bar, clean drive sprocket.\n\n⚠️ Always remove battery before inspection.' },{ q:'cuts crooked', a:'Crooked cuts mean:\n\n- Chain dull on one side — sharpen or replace\n- Uneven chain tension — re-tension evenly\n- Guide bar worn/bent — inspect and replace if needed\n- Let the saw do the work, don\'t force it sideways.\n\nUse full PPE: helmet, eye/ear protection, gloves, cut-resistant legwear.' },{ q:'leaking oil', a:'Oil leak causes:\n\n1. **Overfilled tank** — fill to 80% max.\n2. **Loose oil cap** — tighten securely.\n3. **Damaged gasket** — replace cap or seal.\n4. **Storage position** — store with oil tank side UP.\n5. **Normal seepage** — slight residue after use is normal.' }],
+      zh: [{ q:'链条不动', a:'链锯链条不转：\n\n1. **链条刹车** — 最常见！向前推刹车柄释放刹车。\n2. **链条过紧** — 松开导板螺母，调整至可手动拉动。\n3. **导板油不足** — 加满导板润滑油。\n4. **电机过载** — 切割过重时触发，冷却15-20分钟。\n5. **链轮卡杂物** — 取下导板清洁驱动链轮。\n\n⚠️ 任何检查前务必先取出电池。' },{ q:'切不直', a:'切割不直的原因：\n\n- 链条单侧钝化 — 磨锋利或更换\n- 链条张力不匀 — 重新均匀调整\n- 导板磨损或弯曲 — 检查并更换\n- 让锯自己工作，不要侧向用力。\n\n务必穿戴全套防护装备。' }],
+      fr: [{ q:'chaîne ne tourne pas', a:'La chaîne de la tronçonneuse ne tourne pas :\n\n1. **Frein de chaîne** — la cause la plus fréquente ! Poussez la poignée du frein vers l\'avant pour le désengager.\n2. **Chaîne trop tendue** — desserrez les écrous du guide et réglez jusqu\'à ce que la chaîne coulisse librement.\n3. **Huile de chaîne insuffisante** — remplissez le réservoir.\n4. **Surcharge moteur** — déclenchée par des coupes lourdes. Laissez refroidir 15-20 minutes.\n5. **Débris dans le pignon** — démontez le guide et nettoyez le pignon d\'entraînement.\n\n⚠️ Retirez toujours la batterie avant toute inspection.' },{ q:'coupe de travers', a:'Une coupe de travers signifie :\n\n- Chaîne émoussée d\'un côté — affûtez ou remplacez\n- Tension de chaîne irrégulière — retendez uniformément\n- Guide-chaîne usé ou tordu — inspectez et remplacez si nécessaire\n- Laissez la scie travailler, ne forcez pas latéralement.\n\nPortez un EPI complet : casque, protections oculaires et auditives, gants, jambières anti-coupure.' },{ q:'fuite d\'huile', a:'Causes d\'une fuite d\'huile :\n\n1. **Réservoir trop rempli** — remplissez à 80 % maximum.\n2. **Bouchon mal vissé** — resserrez correctement.\n3. **Joint endommagé** — remplacez le bouchon ou le joint.\n4. **Position de stockage** — stockez la tronçonneuse avec le réservoir d\'huile vers le HAUT.\n5. **Suintement normal** — un léger résidu après utilisation est normal.' }],
+      de: [{ q:'kette bewegt sich nicht', a:'Die Kette der Kettensäge läuft nicht:\n\n1. **Kettenbremse** — die häufigste Ursache! Bremshebel nach vorne drücken, um die Bremse zu lösen.\n2. **Kette zu straff** — Führungsschienen-Muttern lösen und einstellen, bis sich die Kette frei ziehen lässt.\n3. **Zu wenig Kettenöl** — Ölbehälter auffüllen.\n4. **Motorüberlastung** — durch schwere Schnitte ausgelöst. 15-20 Minuten abkühlen lassen.\n5. **Schmutz im Kettenrad** — Schiene abnehmen und Antriebsritzel reinigen.\n\n⚠️ Vor jeder Inspektion immer den Akku entfernen.' },{ q:'schneidet schief', a:'Schräge Schnitte bedeuten:\n\n- Kette einseitig stumpf — schärfen oder ersetzen\n- Ungleichmäßige Kettenspannung — neu gleichmäßig spannen\n- Führungsschiene verschlissen oder verbogen — prüfen und ggf. ersetzen\n- Die Säge arbeiten lassen, nicht seitlich drücken.\n\nVollständige PSA tragen: Helm, Augen-/Gehörschutz, Handschuhe, Schnittschutzhose.' },{ q:'ölleck', a:'Ursachen für Ölleckagen:\n\n1. **Tank überfüllt** — nur bis 80 % befüllen.\n2. **Öldeckel locker** — fest verschließen.\n3. **Dichtung beschädigt** — Deckel oder Dichtung ersetzen.\n4. **Lagerposition** — Säge mit der Öltankseite nach OBEN lagern.\n5. **Normales Nachlaufen** — leichte Rückstände nach dem Gebrauch sind normal.' }]
+    },
+    hedge_trimmer: {
+      en: [{ q:'blades not moving', a:'Hedge trimmer blades stuck:\n\n1. **Dual switch** — both trigger and front handle switch must be pressed together.\n2. **Branch jam** — remove battery, clear with wooden stick (never fingers!).\n3. **Battery** — ensure fully seated and charged.\n4. **Overheating** — let cool for 20 min.\n5. **Lubrication** — apply blade lubricant spray.' }],
+      zh: [{ q:'刀片不动', a:'绿篱修剪机刀片不动：\n\n1. **双开关** — 扳机和前手柄开关需同时按下。\n2. **树枝卡住** — 取出电池，用木棍清理（切勿用手）。\n3. **电池** — 确保安装到位且充满电。\n4. **过热保护** — 冷却20分钟。\n5. **润滑** — 定期喷涂刀片润滑油。' }]
+    },
+    leaf_blower: {
+      en: [{ q:'low power', a:'Blower low power:\n\n1. **Clogged intake** — clean the intake vent.\n2. **Blocked tube** — remove and clear debris.\n3. **Low battery** <20% — power drops significantly.\n4. **Wrong speed** — use turbo/max for heavy debris.\n5. **Worn impeller** — may need replacement after heavy use.' }],
+      zh: [{ q:'风力小', a:'吹叶机风力不足：\n\n1. **进风口堵塞** — 清洁进风口滤网。\n2. **管道堵塞** — 取下吹管清除杂物。\n3. **电量不足** — 低于20%时功率明显下降。\n4. **档位不对** — 重杂物使用涡轮/最高档。\n5. **叶轮磨损** — 长期使用后可能需要更换。' }]
+    },
+    pressure_washer: {
+      en: [{ q:'no pressure', a:'Pressure washer low/no pressure:\n\n1. **Water supply** — hose fully open, no kinks.\n2. **Nozzle clogged** — clean with provided tool.\n3. **Air in system** — run water 30 sec without motor to purge.\n4. **Filter blocked** — clean inlet water filter.\n5. **Wrong nozzle** — use correct color-coded nozzle.\n\n⚠️ Never run without water flowing.' }],
+      zh: [{ q:'没压力', a:'高压清洗机无压力：\n\n1. **供水** — 水管完全打开、无弯折。\n2. **喷嘴堵塞** — 用通针清洁。\n3. **管路有气** — 不开电机让水流30秒排空气。\n4. **进水滤网堵塞** — 清洁滤网。\n5. **喷嘴不对** — 使用正确颜色标示的喷嘴。\n\n⚠️ 严禁无水运行。' }]
+    },
+    default: {
+      en: [{ q:'won\'t start', a:'General startup troubleshooting:\n\n1. Check battery is charged and properly seated\n2. Ensure all safety switches are engaged\n3. Check for LED error codes\n4. Check thermal overload — let cool 15-20 min\n5. Verify power connection (corded tools)\n\nWhich tool are you using? I can give more targeted guidance.' }],
+      zh: [{ q:'无法启动', a:'通用启动排查：\n\n1. 检查电池是否充满并安装到位\n2. 确保所有安全开关已触发\n3. 查看是否有LED错误指示灯\n4. 检查是否热过载 — 冷却15-20分钟\n5. 确认电源连接（插电式工具）\n\n请问您用的是哪款工具？我为您精准诊断。' }],
+      fr: [{ q:'ne démarre pas', a:'Dépannage général au démarrage :\n\n1. Vérifiez que la batterie est chargée et correctement insérée\n2. Assurez-vous que tous les interrupteurs de sécurité sont enclenchés\n3. Vérifiez les voyants LED d\'erreur\n4. Vérifiez la surcharge thermique — laissez refroidir 15-20 minutes\n5. Vérifiez le branchement (outils filaires)\n\nQuel outil utilisez-vous ? Je pourrai alors vous donner des conseils ciblés.' }],
+      de: [{ q:'startet nicht', a:'Allgemeine Starthilfe:\n\n1. Prüfen, ob der Akku geladen und richtig eingesetzt ist\n2. Sicherstellen, dass alle Sicherheitsschalter betätigt sind\n3. Auf LED-Fehlercodes achten\n4. Thermische Überlastung prüfen — 15-20 Minuten abkühlen lassen\n5. Stromanschluss prüfen (kabelgebundene Geräte)\n\nWelches Gerät verwenden Sie? Dann kann ich gezielter helfen.' }],
+      es: [{ q:'no arranca', a:'Solución general de problemas de arranque:\n\n1. Compruebe que la batería esté cargada y bien colocada\n2. Asegúrese de que todos los interruptores de seguridad estén activados\n3. Verifique si hay códigos de error en el LED\n4. Compruebe la sobrecarga térmica — deje enfriar 15-20 minutos\n5. Verifique la conexión eléctrica (herramientas con cable)\n\n¿Qué herramienta está usando? Puedo darle indicaciones más precisas.' }],
+      it: [{ q:'non si avvia', a:'Risoluzione generale dei problemi di avvio:\n\n1. Controlla che la batteria sia carica e inserita correttamente\n2. Assicurati che tutti gli interruttori di sicurezza siano attivati\n3. Verifica eventuali codici di errore LED\n4. Controlla il sovraccarico termico — lascia raffreddare 15-20 minuti\n5. Verifica il collegamento elettrico (utensili con cavo)\n\nChe attrezzo stai usando? Posso darti indicazioni più mirate.' }],
+      nl: [{ q:'start niet', a:'Algemene hulp bij startproblemen:\n\n1. Controleer of de accu geladen en correct geplaatst is\n2. Zorg dat alle veiligheidsschakelaars zijn ingeschakeld\n3. Controleer op LED-foutcodes\n4. Controleer op thermische overbelasting — laat 15-20 minuten afkoelen\n5. Controleer de stroomaansluiting (apparaten met snoer)\n\nWelk apparaat gebruikt u? Dan kan ik gerichter helpen.' }],
+      pt: [{ q:'não liga', a:'Resolução geral de problemas de arranque:\n\n1. Verifique se a bateria está carregada e bem encaixada\n2. Certifique-se de que todos os interruptores de segurança estão acionados\n3. Verifique se há códigos de erro no LED\n4. Verifique sobrecarga térmica — deixe arrefecer 15-20 minutos\n5. Verifique a ligação elétrica (ferramentas com fio)\n\nQue ferramenta está a usar? Posso dar orientações mais específicas.' }]
+    }
+  },
+  maintenance: {
+    general: {
+      en: 'Maintenance schedule:\n\n**After each use:** Clean debris, check screws, wipe down.\n**Monthly:** Sharpen blades, lubricate parts, clean/replace filters, tighten fasteners.\n**Seasonally:** Deep clean, inspect electrical connections, check battery health (40-60% for storage), apply rust inhibitor.\n**Annually:** Professional service, replace belts, complete blade replacement, battery capacity test.\n\nWhich tool would you like specific maintenance details for?',
+      zh: '园林工具保养周期：\n\n**每次用后：** 清理碎屑、检查螺丝、擦拭机身。\n**每月：** 磨锋利刀片、润滑活动部件、清洗或更换滤芯、拧紧所有紧固件。\n**每季：** 深度清洁整机、检查电气连接和线缆磨损、检查电池健康（储存电量40-60%）、金属部件涂防锈剂。\n**每年：** 专业检修保养、更换传动皮带、全面更换刀片或专业磨刀、电池容量检测。\n\n想了解哪款工具的具体保养细节？',
+      fr: 'Calendrier d\'entretien :\n\n**Après chaque utilisation :** retirez les débris, vérifiez les vis, essuyez la machine.\n**Mensuel :** affûtez les lames, lubrifiez les pièces mobiles, nettoyez ou remplacez les filtres, resserrez les fixations.\n**Saisonnier :** nettoyage complet, inspection des connexions électriques, vérification de la batterie (stockage à 40-60 % de charge), application d\'un antirouille.\n**Annuel :** révision professionnelle, remplacement des courroies, remplacement complet des lames, test de capacité de la batterie.\n\nPour quel outil souhaitez-vous des détails d\'entretien spécifiques ?',
+      de: 'Wartungsplan:\n\n**Nach jedem Einsatz:** Schmutz entfernen, Schrauben prüfen, Gerät abwischen.\n**Monatlich:** Messer schärfen, bewegliche Teile schmieren, Filter reinigen/ersetzen, Befestigungen nachziehen.\n**Saisonal:** Grundreinigung, elektrische Anschlüsse prüfen, Akkuzustand prüfen (Lagerladung 40-60 %), Rostschutz auftragen.\n**Jährlich:** professionelle Inspektion, Riemen ersetzen, Messer komplett tauschen, Akkukapazität testen.\n\nFür welches Gerät möchten Sie konkrete Wartungshinweise?',
+      es: 'Calendario de mantenimiento:\n\n**Después de cada uso:** retire los residuos, compruebe los tornillos, limpie la máquina.\n**Mensual:** afile las cuchillas, lubrique las piezas móviles, limpie o sustituya los filtros, apriete las fijaciones.\n**Por temporada:** limpieza profunda, inspección de las conexiones eléctricas, comprobación de la batería (almacenamiento al 40-60 % de carga), aplicación de antioxidante.\n**Anual:** revisión profesional, sustitución de correas, cambio completo de cuchillas, prueba de capacidad de la batería.\n\n¿Para qué herramienta desea detalles de mantenimiento específicos?',
+      it: 'Programma di manutenzione:\n\n**Dopo ogni uso:** rimuovi i detriti, controlla le viti, pulisci la macchina.\n**Mensile:** affila le lame, lubrifica le parti mobili, pulisci o sostituisci i filtri, stringi i fissaggi.\n**Stagionale:** pulizia profonda, ispezione dei collegamenti elettrici, controllo della batteria (conservazione al 40-60% di carica), applicazione di antiruggine.\n**Annuale:** revisione professionale, sostituzione delle cinghie, sostituzione completa delle lame, test della capacità della batteria.\n\nPer quale attrezzo vuoi dettagli di manutenzione specifici?',
+      nl: 'Onderhoudsschema:\n\n**Na elk gebruik:** verwijder vuil, controleer schroeven, veeg de machine af.\n**Maandelijks:** slij de messen, smeer bewegende delen, reinig of vervang filters, draai bevestigingen aan.\n**Seizoensgebonden:** dieptereiniging, controle van elektrische aansluitingen, controle van de accu (opslag bij 40-60% lading), roestwerende behandeling.\n**Jaarlijks:** professionele inspectie, riemen vervangen, messen volledig vervangen, accucapaciteit testen.\n\nVoor welk apparaat wilt u specifieke onderhoudsinstructies?',
+      pt: 'Plano de manutenção:\n\n**Após cada utilização:** remova os detritos, verifique os parafusos, limpe a máquina.\n**Mensal:** afie as lâminas, lubrifique as peças móveis, limpe ou substitua os filtros, aperte as fixações.\n**Por estação:** limpeza profunda, inspeção das ligações elétricas, verificação da bateria (armazenamento com 40-60 % de carga), aplicação de antiferrugem.\n**Anual:** revisão profissional, substituição das correias, substituição completa das lâminas, teste de capacidade da bateria.\n\nPara que ferramenta quer detalhes de manutenção específicos?'
+    },
+    lawn_mower: { en:'Lawn Mower Maintenance:\n\n**Blade:** Sharpen every 25h. Replace annually.\n**Deck:** Scrape underside after each session.\n**Battery:** Store at 40-60% in 10-25°C. Full charge before first seasonal use.\n**Wheels:** Lubricate height levers with silicone spray.\n**Storage:** Clean, charge to 50%, cover, dry place.', zh:'草坪机保养：\n\n**刀片：** 每25小时磨一次，每年更换。\n**底盘：** 每次用后清理底部积草。\n**电池：** 储存电量40-60%，温度10-25°C，换季首次使用前充满。\n**轮子：** 高度调节杆喷硅润滑剂。\n**储存：** 清洗干净，充至50%，遮盖存放于干燥处。' },
+    chainsaw: { en:'Chainsaw Maintenance:\n\n**Chain tension:** Check before each use.\n**Sharpening:** Every 3-5h of cutting. Use correct file size.\n**Guide bar:** Flip every 8-10h. Clean groove and oil holes.\n**Oil:** Use quality bar oil. Check oiler function.\n**Sprocket:** Inspect every 20h.', zh:'链锯保养：\n\n**链条张力：** 每次使用前检查。\n**磨锋利：** 每切3-5小时磨一次，用正确尺寸的锉刀。\n**导板：** 每8-10小时翻转一次，清洁导板槽和油孔。\n**油：** 使用优质导板油，检查油泵功能。\n**链轮：** 每20小时检查一次。' },
+    pruner: { en:'Pruner Maintenance:\n\n**Blades:** Clean after each use with alcohol. Sharpen every 20-30h.\n**Gears:** Apply lithium grease every 3 months.\n**Battery:** Store at 40-60% charge.\n**Safety check:** Test trigger mechanism before each use.\n**Storage:** Keep in dry place with blade cover on.', zh:'修枝剪保养：\n\n**刀片：** 每次用后酒精清洁。每20-30小时磨锋利。\n**齿轮：** 每3个月涂锂基润滑脂。\n**电池：** 储存电量40-60%。\n**安全：** 每次使用前测试扳机机制。\n**储存：** 干燥存放，套上刀片保护套。' }
+  },
+  parts: {
+    general: { en:'To order spare parts:\n\n1. **Model number** — on the rating plate\n2. **Part number** — from the manual if known\n3. **Purchase date** — for warranty verification\n\nEU delivery: 3-5 business days. US: 5-7 days.\n\nSearch by model number?', zh:'配件订购所需信息：\n\n1. **型号** — 铭牌上可找到\n2. **零件编号** — 如已知可从说明书查找\n3. **购买日期** — 用于保修验证\n\n欧盟配送：3-5个工作日。美国：5-7个工作日。\n\n需要按型号查找配件吗？', fr:'Pour commander des pièces détachées :\n\n1. **Numéro de modèle** — sur la plaque signalétique\n2. **Référence de la pièce** — dans le manuel si connue\n3. **Date d\'achat** — pour la vérification de la garantie\n\nLivraison UE : 3-5 jours ouvrés. États-Unis : 5-7 jours.\n\nSouhaitez-vous rechercher par numéro de modèle ?', de:'Zur Ersatzteilbestellung benötigen Sie:\n\n1. **Modellnummer** — auf dem Typenschild\n2. **Teilenummer** — falls bekannt, aus der Anleitung\n3. **Kaufdatum** — zur Garantieprüfung\n\nLieferung EU: 3-5 Werktage. USA: 5-7 Werktage.\n\nMöchten Sie nach Modellnummer suchen?',
+      es: 'Para pedir repuestos necesita:\n\n1. **Número de modelo** — en la placa de características\n2. **Referencia de la pieza** — en el manual, si la conoce\n3. **Fecha de compra** — para la verificación de la garantía\n\nEnvío UE: 3-5 días laborables. EE. UU.: 5-7 días.\n\n¿Desea buscar por número de modelo?',
+      it: 'Per ordinare pezzi di ricambio ti servono:\n\n1. **Numero di modello** — sulla targhetta\n2. **Codice del pezzo** — nel manuale, se noto\n3. **Data di acquisto** — per la verifica della garanzia\n\nConsegna UE: 3-5 giorni lavorativi. USA: 5-7 giorni.\n\nVuoi cercare per numero di modello?',
+      nl: 'Voor het bestellen van reserveonderdelen heeft u nodig:\n\n1. **Modelnummer** — op het typeplaatje\n2. **Onderdeelnummer** — indien bekend, uit de handleiding\n3. **Aankoopdatum** — voor garantiecontrole\n\nLevering EU: 3-5 werkdagen. VS: 5-7 werkdagen.\n\nWilt u op modelnummer zoeken?',
+      pt: 'Para encomendar peças sobressalentes precisa de:\n\n1. **Número do modelo** — na placa de características\n2. **Referência da peça** — no manual, se conhecida\n3. **Data de compra** — para verificação da garantia\n\nEntrega UE: 3-5 dias úteis. EUA: 5-7 dias.\n\nDeseja pesquisar por número de modelo?' },
+    lawn_mower: { en:'Lawn mower parts:\n\n| Part | Life | Replace when |\n|------|------|-------------|\n| Blade | 1-2 seasons | Nicks, poor cut |\n| Battery | 3-5 years | >30% runtime loss |\n| Mulching plug | 2-3 seasons | Cracks |\n| Grass bag | 2-4 seasons | Tears |\n| Wheels | 3-5 seasons | Stiff/cracked |', zh:'草坪机配件：\n\n| 零件 | 寿命 | 更换标志 |\n|------|------|---------|\n| 刀片 | 1-2季 | 缺口/切不齐 |\n| 电池 | 3-5年 | 续航下降>30% |\n| 碎草塞 | 2-3季 | 开裂 |\n| 集草袋 | 2-4季 | 破损 |\n| 轮子 | 3-5季 | 卡顿/开裂 |' },
+    chainsaw: { en:'Chainsaw parts:\n\n| Part | Life | Notes |\n|------|------|-------|\n| Chain | 3-5 sharpenings | Teeth < 4mm |\n| Guide bar | ~100h | Flip every 8-10h |\n| Sprocket | ~50h | Replace with chain |\n| Battery | 3-5 years | OEM only |\n| Oil pump | ~200h | Check if flow is weak |', zh:'链锯配件：\n\n| 零件 | 寿命 | 备注 |\n|------|------|------|\n| 链条 | 磨3-5次 | 齿<4mm更换 |\n| 导板 | ~100小时 | 每8-10h翻转 |\n| 链轮 | ~50小时 | 与链条同换 |\n| 电池 | 3-5年 | 只能用原厂 |\n| 油泵 | ~200小时 | 油量少时检查 |' }
+  },
+  warranty: {
+    general: {
+      en: 'GreenCraft Warranty:\n\n**Domestic:** 3 years\n**Commercial:** 1 year\n**Batteries:** 2 years or 500 cycles\n\n✅ Covered: Manufacturing defects, motor/electronic failures, battery defects\n❌ Not: Normal wear, improper use, water damage, non-OEM parts, unauthorized repairs\n\n**Claim:** Contact us with proof of purchase + serial number.\n**Extended warranty:** Available within 30 days of purchase — 5 years domestic / 2 years commercial.',
+      zh: 'GreenCraft 保修政策：\n\n**家用：** 3年\n**商用：** 1年\n**电池：** 2年或500次循环（先到为准）\n\n✅ 保修范围：制造缺陷、电机/电子元件故障、电池缺陷\n❌ 不保修：正常磨损（刀片/链条/皮带/滤芯）、使用不当、进水腐蚀、非原厂配件、擅自改装维修\n\n**申报流程：** 联系客服，提供购买凭证+序列号，安排检测及维修/更换。\n**延保服务：** 购机30天内可购买，延至5年家用/2年商用。',
+      fr: 'Garantie GreenCraft :\n\n**Usage domestique :** 3 ans\n**Usage commercial :** 1 an\n**Batteries :** 2 ans ou 500 cycles\n\n✅ Couvert : défauts de fabrication, pannes moteur/électroniques, défauts de batterie\n❌ Non couvert : usure normale, mauvaise utilisation, dégâts des eaux, pièces non d\'origine, réparations non autorisées\n\n**Réclamation :** contactez-nous avec la preuve d\'achat et le numéro de série.\n**Extension de garantie :** disponible dans les 30 jours suivant l\'achat — 5 ans usage domestique / 2 ans usage commercial.',
+      de: 'GreenCraft Garantie:\n\n**Privatnutzung:** 3 Jahre\n**Gewerbliche Nutzung:** 1 Jahr\n**Akkus:** 2 Jahre oder 500 Ladezyklen\n\n✅ Abgedeckt: Herstellungsfehler, Motor-/Elektronikdefekte, Akkufehler\n❌ Nicht abgedeckt: normaler Verschleiß, unsachgemäße Nutzung, Wasserschäden, Nicht-Originalteile, eigenmächtige Reparaturen\n\n**Garantiefall:** kontaktieren Sie uns mit Kaufbeleg und Seriennummer.\n**Garantieverlängerung:** innerhalb von 30 Tagen nach Kauf erhältlich — 5 Jahre privat / 2 Jahre gewerblich.',
+      es: 'Garantía GreenCraft:\n\n**Uso doméstico:** 3 años\n**Uso comercial:** 1 año\n**Baterías:** 2 años o 500 ciclos\n\n✅ Cubierto: defectos de fabricación, fallos de motor/electrónica, defectos de batería\n❌ No cubierto: desgaste normal, uso indebido, daños por agua, piezas no originales, reparaciones no autorizadas\n\n**Reclamación:** contáctenos con el comprobante de compra y el número de serie.\n**Extensión de garantía:** disponible dentro de los 30 días posteriores a la compra — 5 años uso doméstico / 2 años uso comercial.',
+      it: 'Garanzia GreenCraft:\n\n**Uso domestico:** 3 anni\n**Uso commerciale:** 1 anno\n**Batterie:** 2 anni o 500 cicli\n\n✅ Coperto: difetti di fabbricazione, guasti motore/elettronici, difetti della batteria\n❌ Non coperto: normale usura, uso improprio, danni da acqua, parti non originali, riparazioni non autorizzate\n\n**Reclamo:** contattaci con prova d\'acquisto e numero di serie.\n**Estensione di garanzia:** disponibile entro 30 giorni dall\'acquisto — 5 anni uso domestico / 2 anni uso commerciale.',
+      nl: 'GreenCraft-garantie:\n\n**Huishoudelijk gebruik:** 3 jaar\n**Commercieel gebruik:** 1 jaar\n**Accu\'s:** 2 jaar of 500 laadcycli\n\n✅ Gedekt: fabricagefouten, motor-/elektronische storingen, accufouten\n❌ Niet gedekt: normale slijtage, verkeerd gebruik, waterschade, niet-originele onderdelen, ongeautoriseerde reparaties\n\n**Garantieclaim:** neem contact op met aankoopbewijs en serienummer.\n**Garantieverlenging:** binnen 30 dagen na aankoop verkrijgbaar — 5 jaar huishoudelijk / 2 jaar commercieel.',
+      pt: 'Garantia GreenCraft:\n\n**Uso doméstico:** 3 anos\n**Uso comercial:** 1 ano\n**Baterias:** 2 anos ou 500 ciclos\n\n✅ Coberto: defeitos de fabrico, falhas de motor/eletrónica, defeitos da bateria\n❌ Não coberto: desgaste normal, uso indevido, danos por água, peças não originais, reparações não autorizadas\n\n**Reclamação:** contacte-nos com o comprovativo de compra e o número de série.\n**Extensão de garantia:** disponível nos 30 dias após a compra — 5 anos uso doméstico / 2 anos uso comercial.'
+    }
+  },
+  compare: {
+    general: {
+      en: 'I can help compare products! Tell me:\n\n1. Tool type needed?\n2. Garden size? (small/medium/large)\n3. Primary use case?\n4. Budget range?\n5. Already own GreenCraft batteries?\n\nProduct lines:\n- **Eco Series** — small gardens\n- **Pro Series** — enhanced features\n- **Elite Series** — professional grade',
+      zh: '我可以帮您对比产品！请告诉我：\n\n1. 需要什么类型的工具？\n2. 庭院面积？（小型/中型/大型）\n3. 主要用途？\n4. 预算范围？\n5. 是否已有GreenCraft电池？\n\n产品系列：\n- **ECO系列** — 入门级，适合小型庭院\n- **PRO系列** — 中端，功能增强\n- **ELITE系列** — 专业级，最大功率和耐用性',
+      fr: 'Je peux vous aider à comparer les produits ! Dites-moi :\n\n1. Quel type d\'outil vous faut-il ?\n2. Quelle est la taille de votre jardin ? (petit/moyen/grand)\n3. Quel usage principal ?\n4. Quel budget ?\n5. Possédez-vous déjà des batteries GreenCraft ?\n\nGammes :\n- **Série Eco** — petits jardins\n- **Série Pro** — fonctionnalités avancées\n- **Série Elite** — usage professionnel',
+      de: 'Ich helfe Ihnen gerne beim Produktvergleich! Bitte nennen Sie mir:\n\n1. Welcher Gerätetyp wird benötigt?\n2. Wie groß ist Ihr Garten? (klein/mittel/groß)\n3. Welcher Haupteinsatzzweck?\n4. Welches Budget?\n5. Besitzen Sie bereits GreenCraft-Akkus?\n\nProduktlinien:\n- **Eco-Serie** — kleine Gärten\n- **Pro-Serie** — erweiterte Funktionen\n- **Elite-Serie** — Profiqualität',
+      es: '¡Puedo ayudarle a comparar productos! Dígame:\n\n1. ¿Qué tipo de herramienta necesita?\n2. ¿Tamaño del jardín? (pequeño/mediano/grande)\n3. ¿Uso principal?\n4. ¿Presupuesto?\n5. ¿Ya tiene baterías GreenCraft?\n\nGamas:\n- **Serie Eco** — jardines pequeños\n- **Serie Pro** — funciones avanzadas\n- **Serie Elite** — uso profesional',
+      it: 'Posso aiutarti a confrontare i prodotti! Dimmi:\n\n1. Che tipo di attrezzo ti serve?\n2. Dimensione del giardino? (piccolo/medio/grande)\n3. Uso principale?\n4. Budget?\n5. Hai già batterie GreenCraft?\n\nLinee:\n- **Serie Eco** — piccoli giardini\n- **Serie Pro** — funzioni avanzate\n- **Serie Elite** — uso professionale',
+      nl: 'Ik help u graag producten te vergelijken! Vertel me:\n\n1. Welk type gereedschap heeft u nodig?\n2. Tuinoppervlak? (klein/middel/groot)\n3. Hoofdgebruik?\n4. Budget?\n5. Heeft u al GreenCraft-accu\'s?\n\nProductlijnen:\n- **Eco-serie** — kleine tuinen\n- **Pro-serie** — geavanceerde functies\n- **Elite-serie** — professioneel gebruik',
+      pt: 'Posso ajudá-lo a comparar produtos! Diga-me:\n\n1. Que tipo de ferramenta precisa?\n2. Tamanho do jardim? (pequeno/médio/grande)\n3. Uso principal?\n4. Orçamento?\n5. Já tem baterias GreenCraft?\n\nGamas:\n- **Série Eco** — jardins pequenos\n- **Série Pro** — funções avançadas\n- **Série Elite** — uso profissional'
+    }
+  },
+  safety: {
+    general: {
+      en: 'PPE Required:\n- 👁️ Safety glasses — mandatory\n- 👂 Hearing protection — >85dB tools\n- 🧤 Cut-resistant gloves — chainsaws/trimmers\n- 👢 Steel-toe boots\n- 👖 Long pants — no shorts!\n\nPre-operation:\n- Inspect tool for damage\n- Guards/devices in place\n- Clear work area\n- Never in wet conditions\n- Remove battery before maintenance\n\nKeep bystanders 15m away. Never leave running tools unattended.',
+      zh: '必须佩戴的个人防护装备：\n- 👁️ 安全护目镜 — 操作所有工具必须佩戴\n- 👂 听力保护 — 85分贝以上工具必须\n- 🧤 防割手套 — 链锯/修剪机必须\n- 👢 钢头安全鞋\n- 👖 长裤 — 严禁穿短裤操作\n\n操作前检查：\n- 检查工具是否有损坏\n- 防护装置到位\n- 清理工作区域\n- 电动工具严禁潮湿环境操作\n- 保养/清理前必先取出电池\n\n保持旁观者15米以上距离。运行中的工具切勿离手。',
+      fr: 'EPI obligatoire :\n- 👁️ Lunettes de sécurité — obligatoires\n- 👂 Protection auditive — outils > 85 dB\n- 🧤 Gants anti-coupure — tronçonneuses/taille-haies\n- 👢 Chaussures à embout acier\n- 👖 Pantalon long — pas de short !\n\nAvant l\'utilisation :\n- Inspectez l\'outil\n- Protections en place\n- Dégagez la zone de travail\n- Jamais en environnement humide\n- Retirez la batterie avant tout entretien\n\nTenez les tiers à 15 m de distance. Ne laissez jamais un outil en marche sans surveillance.',
+      de: 'Erforderliche PSA:\n- 👁️ Schutzbrille — Pflicht\n- 👂 Gehörschutz — bei Geräten über 85 dB\n- 🧤 Schnittschutzhandschuhe — Sägen/Heckenscheren\n- 👢 Sicherheitsschuhe mit Stahlkappe\n- 👖 Lange Hose — keine Shorts!\n\nVor dem Einsatz:\n- Gerät auf Schäden prüfen\n- Schutzvorrichtungen montiert\n- Arbeitsbereich räumen\n- Niemals bei Nässe arbeiten\n- Vor Wartung Akku entfernen\n\nUmstehende auf 15 m Abstand halten. Laufende Geräte nie unbeaufsichtigt lassen.',
+      es: 'EPP obligatorio:\n- 👁️ Gafas de seguridad — obligatorias\n- 👂 Protección auditiva — herramientas > 85 dB\n- 🧤 Guantes anticorte — motosierras/cortasetos\n- 👢 Botas con puntera de acero\n- 👖 Pantalón largo — ¡nada de shorts!\n\nAntes de usar:\n- Inspeccione la herramienta\n- Protecciones colocadas\n- Despeje la zona de trabajo\n- Nunca en condiciones de humedad\n- Retire la batería antes del mantenimiento\n\nMantenga a terceros a 15 m de distancia. Nunca deje una herramienta en marcha sin vigilancia.',
+      it: 'DPI obbligatori:\n- 👁️ Occhiali di sicurezza — obbligatori\n- 👂 Protezione acustica — attrezzi > 85 dB\n- 🧤 Guanti antitaglio — motoseghe/tagliasiepi\n- 👢 Scarpe con puntale in acciaio\n- 👖 Pantaloni lunghi — niente pantaloncini!\n\nPrima dell\'uso:\n- Ispeziona l\'attrezzo\n- Protezioni montate\n- Libera l\'area di lavoro\n- Mai in condizioni di umidità\n- Rimuovi la batteria prima della manutenzione\n\nTieni le altre persone a 15 m di distanza. Non lasciare mai incustodito un attrezzo in funzione.',
+      nl: 'Verplichte PBM:\n- 👁️ Veiligheidsbril — verplicht\n- 👂 Gehoorbescherming — apparaten > 85 dB\n- 🧤 Snijbestendige handschoenen — zagen/heggenscharen\n- 👢 Veiligheidsschoenen met stalen neus\n- 👖 Lange broek — geen short!\n\nVoor gebruik:\n- Inspecteer het apparaat\n- Beschermingen gemonteerd\n- Werkgebied vrijmaken\n- Nooit bij natte omstandigheden werken\n- Verwijder de accu vóór onderhoud\n\nHoud omstanders op 15 m afstand. Laat draaiende apparaten nooit onbeheerd achter.',
+      pt: 'EPI obrigatório:\n- 👁️ Óculos de segurança — obrigatórios\n- 👂 Proteção auditiva — ferramentas > 85 dB\n- 🧤 Luvas anticorte — motosserras/corta-sebes\n- 👢 Botas com biqueira de aço\n- 👖 Calças compridas — nada de calções!\n\nAntes de usar:\n- Inspecione a ferramenta\n- Proteções montadas\n- Limpe a área de trabalho\n- Nunca em condições de humidade\n- Retire a bateria antes da manutenção\n\nMantenha terceiros a 15 m de distância. Nunca deixe uma ferramenta em funcionamento sem vigilância.'
+    }
+  }
+};
+
+const INTENT_PATTERNS = {
+  troubleshoot: {
+    en: ['won\'t start','not starting','doesn\'t start','stopped working','not working','broken','broke','issue','problem','fault','error','not running','dead','no power','won\'t turn','not cutting','vibrat','noise','loud','smoke','spark','overheat','low power','weak','stall','jammed','stuck','not moving','not spinning','leaking','oil leak','stopped'],
+    zh: ['无法启动','不能启动','启动不了','开不了','不动了','不工作了','坏了','出问题','故障','毛病','无法运转','不转了','声音大','异响','冒烟','过热','火花','没力气','卡住','抖动','震动','漏油','不转','转不动','风力小','风力变','没劲','不好用','不灵'],
+    de: ['startet nicht','funktioniert nicht','kaputt','defekt','problem','fehler','läuft nicht','kein strom','vibriert','rauch','überhitzt','schwach','steckt fest','springt nicht','geht nicht','verliert öl','ölleck','leckt','schneidet nicht','nicht mehr'],
+    fr: ['ne démarre pas','ne fonctionne pas','cassé','problème','panne','erreur','pas de courant','vibre','bruit','fumée','bloqué','ne démarre','fuit','fuite'],
+    es: ['no arranca','no funciona','roto','problema','fallo','error','sin corriente','vibra','ruido','humo','atascado','pierde aceite','fuga','gotea','poca potencia','poca fuerza','sin fuerza'],
+    it: ['non si avvia','non funziona','rotto','problema','guasto','errore','vibra','rumore','fumo','bloccato','perde olio','perdita'],
+    nl: ['start niet','werkt niet','kapot','probleem','storing','fout','geen stroom','trilt','rook','vastgelopen','lekt olie','lekt','doet niets','geen reactie'],
+    pt: ['não liga','não funciona','quebrado','problema','falha','erro','vibra','barulho','fumaça','preso','vazando','vazamento','vaza','fraco','sem força']
+  },
+  maintenance: {
+    en: ['maintenance','maintain','service','oil change','lubricat','sharpen','clean','filter','inspect','tune up','care','preserve','schedule','interval','how often','when should','storage','winter','season','how to maintain','care for'],
+    zh: ['保养','维护','怎么保养','如何维护','护理','润滑','上油','磨刀','磨锋利','清洁','清洗','更换滤芯','检查','存放','储存','过冬','换季','用什么油','怎么清理','维护频率','磨一次','多久磨'],
+    de: ['wartung','warten','service','ölwechsel','schmieren','schärfen','reinigen','filter','inspektion','pflege','intervall','wie oft','lagerung','winter'],
+    fr: ['entretien','maintenir','service','vidange','lubrifi','affûter','nettoyer','filtre','inspecter','soin','intervalle','fréquence','stockage','hiver','entretenir','entretenu'],
+    es: ['mantenimiento','mantener','servicio','cambio aceite','lubricar','afilar','limpiar','filtro','inspeccionar','cuidado','intervalo','frecuencia','almacenamiento','invierno','guardar'],
+    it: ['manutenzione','servizio','cambio olio','lubrificare','affilare','pulire','filtro','cura','intervallo','inverno','affila','ogni quanto'],
+    nl: ['onderhoud','onderhouden','service','smeren','slijpen','schoonmaken','filter','interval','hoe vaak','opslag','winter'],
+    pt: ['manutenção','manter','serviço','lubrificar','afiar','limpar','filtro','cuidado','intervalo','frequência','armazenamento','inverno','guardar']
+  },
+  parts: {
+    en: ['spare part','replacement','part','blade','chain','battery','charger','motor','switch','wheel','handle','bag','filter','belt','sprocket','bar','nozzle','order','buy','purchase','price','cost','available','where to buy','need a new'],
+    zh: ['配件','零件','备件','更换件','刀片','链条','电池','充电器','电机','开关','轮子','手柄','袋子','滤芯','滤网','皮带','链轮','导板','喷嘴','订购','购买','价格','多少钱','哪里有卖','换一个'],
+    de: ['ersatzteil','teil','klinge','kette','akku','ladegerät','motor','schalter','rad','griff','filter','riemen','düse','bestellen','kaufen','preis','ersatz','kostet','was kostet'],
+    fr: ['pièce détachée','pièce','lame','chaîne','batterie','chargeur','moteur','roue','poignée','filtre','courroie','buse','commander','acheter','prix'],
+    es: ['repuesto','pieza','cuchilla','cadena','batería','cargador','motor','rueda','filtro','correa','boquilla','pedir','comprar','precio'],
+    it: ['ricambio','pezzo','lama','catena','batteria','motore','ruota','filtro','cinghia','ordinare','comprare','prezzo'],
+    nl: ['reserveonderdeel','onderdeel','mes','ketting','accu','oplader','motor','wiel','filter','riem','bestellen','kopen','prijs','vervangende','vervanging'],
+    pt: ['peça','lâmina','corrente','bateria','carregador','motor','roda','filtro','correia','encomendar','comprar','preço']
+  },
+  warranty: {
+    en: ['warranty','guarantee','claim','return','refund','replace','repair','covered','coverage','extend','registration','serial','receipt','proof of purchase','defect','faulty','policy','terms'],
+    zh: ['保修','质保','三包','退换','退货','退款','维修','更换','索赔','延保','注册','序列号','发票','购买凭证','瑕疵','缺陷','保修政策','保修多久','保修期','保修范围','能退','质量问题'],
+    de: ['garantie','gewährleistung','anspruch','rückgabe','rückerstattung','ersetzen','reparatur','abgedeckt','verlängerung','seriennummer','quittung','defekt','zurückgeben','umtausch'],
+    fr: ['garantie','réclamation','retour','remboursement','remplacer','réparation','couvert','extension','numéro de série','reçu','défaut'],
+    es: ['garantía','reclamación','devolución','reembolso','reemplazar','reparación','cubierto','extensión','número de serie','recibo','defecto','devolver','defectuoso'],
+    it: ['garanzia','reclamo','reso','rimborso','sostituire','riparazione','coperto','numero di serie','ricevuta','difetto','coperta'],
+    nl: ['garantie','claim','retour','terugbetaling','vervangen','reparatie','gedekt','serienummer','aankoopbewijs','defect'],
+    pt: ['garantia','reclamação','devolução','reembolso','substituir','reparação','número de série','recibo','defeito']
+  },
+  compare: {
+    en: ['compare','difference','which','better','best','vs','versus','recommend','suggest','decide','choose','between','option','model','series','eco','pro','elite','upgrade'],
+    zh: ['对比','比较','哪个好','哪个更好','推荐','建议','怎么选','选择','区别','差异','系列','ECo','PRO','ELITE','升级款','高配','哪款','买哪'],
+    de: ['vergleich','unterschied','welcher','besser','beste','empfehlen','wählen','modell','serie','upgrade'],
+    fr: ['comparer','différence','lequel','meilleur','mieux','recommander','choisir','modèle','série','améliorer','quelle','conseiller','conseil'],
+    es: ['comparar','diferencia','cuál','mejor','recomendar','elegir','modelo','serie','mejorar','recomienda','recomendación','aconseja'],
+    it: ['confrontare','differenza','quale','migliore','raccomandare','scegliere','modello','serie','consiglia','consiglio'],
+    nl: ['vergelijken','verschil','welke','beter','beste','aanbevelen','kiezen','model','serie'],
+    pt: ['comparar','diferença','qual','melhor','recomendar','escolher','modelo','série']
+  },
+  safety: {
+    en: ['safe','safety','protect','protection','glasses','gloves','helmet','boots','ppe','gear','danger','warning','caution','risk','hazard','injury','accident','guard','guideline','regulation','protective gear','protective'],
+    zh: ['安全','保护','防护','护目镜','手套','头盔','安全鞋','防护装备','危险','警告','小心','受伤','事故','安全指南','安全规范'],
+    de: ['sicherheit','sicher','schutz','brille','handschuhe','helm','stiefel','ausrüstung','gefahr','warnung','risiko','verletzung','nasses gras'],
+    fr: ['sécurité','sûr','protection','lunettes','gants','casque','bottes','équipement','danger','risque','blessure'],
+    es: ['seguridad','seguro','protección','gafas','guantes','casco','botas','equipo','peligro','riesgo','lesión','césped mojado'],
+    it: ['sicurezza','sicuro','protezione','occhiali','guanti','casco','stivali','pericolo','rischio','erba bagnata'],
+    nl: ['veiligheid','veilig','bescherming','bril','handschoenen','helm','laarzen','gevaar','risico','nat gras'],
+    pt: ['segurança','seguro','proteção','óculos','luvas','capacete','botas','perigo','risco','relva molhada']
+  }
+};
+
+const PRODUCT_KEYWORDS = {
+  lawn_mower: { en:['lawn mower','mower','lawnmower','grass cutter','cut grass','mow','mowing','lawn'], zh:['草坪机','割草机','修剪草坪','修草坪','割草','推草机','草湿','湿草'], de:['rasenmäher','mäher','rasen','gras schneiden','mähen'], fr:['tondeuse','gazon','herbe','tondre'], es:['cortacésped','cortacesped','césped','hierba'], it:['tosaerba','tagliaerba','erba','prato'], nl:['grasmaaier','maaier','gras','gazon','maaien'], pt:['cortador de relva','cortador','relva','grama','cortar'] },
+  pruner: { en:['pruner','electric pruner','pruning shear','secateur','lopper','branch cutter'], zh:['修枝剪','电动修枝剪','电动剪刀','修枝','剪枝','果树剪','园艺剪','电动枝剪'], de:['astschere','elektrische astschere','baumschere','gartenschere'], fr:['sécateur','sécateur électrique','coupe-branche','élagueuse'], es:['podadora','podadora eléctrica','tijeras de podar','cortarramas'], it:['potatrice','potatrice elettrica','cesoie','forbice da potatura'], nl:['snoeischaar','elektrische snoeischaar','takkenknipper'], pt:['tesoura de poda','podadora','tesoura elétrica','corta-ramos'] },
+  chainsaw: { en:['chainsaw','chain saw','saw','cut wood','tree','logging','pruning saw','chain'], zh:['电链锯','链锯','油锯','锯树','砍树','伐木'], de:['kettensäge','säge','kette','holz schneiden','baum','fällen'], fr:['tronçonneuse','scie','chaîne','couper bois','arbre'], es:['motosierra','sierra','cadena','cortar madera','árbol'], it:['motosega','sega','catena','albero'], nl:['kettingzaag','zaag','ketting','hout zagen','boom'], pt:['motosserra','serra','corrente','árvore'] },
+  hedge_trimmer: { en:['hedge trimmer','hedge cutter','trimmer','trim','hedge','bush','shrub','prune'], zh:['绿篱修剪机','绿篱机','修剪机','修篱笆','修剪灌木'], de:['heckenschere','hecke','busch','strauch','trimmen'], fr:['taille-haie','haie','buisson','arbuste','tailler'], es:['cortasetos','seto','arbusto','podar'], it:['tagliasiepi','siepe','cespuglio','potare'], nl:['heggenschaar','heg','haag','struik','snoeien'], pt:['cortador de sebes','corta sebes','sebe','arbusto','podar'] },
+  leaf_blower: { en:['leaf blower','blower','blow','leaf','leaves','sweep','debris'], zh:['吹叶机','吹风机','吹叶子','扫落叶'], de:['laubbläser','bläser','laub','blätter','blasen'], fr:['souffleur','souffler','feuilles','nettoyer'], es:['soplador','soplar','hojas','limpiar'], it:['soffiatore','soffiare','foglie'], nl:['bladblazer','blazer','bladeren','blaas'], pt:['soprador','soprar','folhas'] },
+  pressure_washer: { en:['pressure washer','power washer','jet wash','high pressure','clean driveway'], zh:['高压清洗机','高压水枪','洗车机','冲洗'], de:['hochdruckreiniger','hochdruck','kärcher','reinigen','druck'], fr:['nettoyeur haute pression','haute pression','karcher','nettoyer'], es:['hidrolimpiadora','alta presión','karcher','limpiar'], it:['idropulitrice','alta pressione','pulire'], nl:['hogedrukreiniger','hoge druk','reinigen'], pt:['lavadora de pressão','alta pressão','limpar'] },
+  brush_cutter: { en:['brush cutter','brushcutter','strimmer','weed eater','line trimmer','string trimmer'], zh:['割灌机','打草机','割草机','除草机'], de:['freischneider','motorsense','trimmer','unkraut'], fr:['débroussailleuse','coupe-herbe','désherber'], es:['desbrozadora','cortadora de hilo','maleza'], it:['decespugliatore','tagliaerba a filo','erbacce'], nl:['bosmaaier','trimmer','onkruid'], pt:['roçadora','cortador de fio','ervas daninhas'] },
+  tiller: { en:['tiller','cultivator','rototiller','soil','dig','plow'], zh:['微耕机','耕机','松土机','翻土'], de:['gartenfräse','bodenfräse'], fr:['motoculteur','bêche'], es:['motoazada','cultivador'], it:['motozappa','fresa'], nl:['tuinfrees','frees'], pt:['motoenxada','cultivador'] },
+  wood_chipper: { en:['wood chipper','chipper','shredder','mulcher','branch shredder'], zh:['碎木机','粉碎机','树枝粉碎机'], de:['häcksler','schredder'], fr:['broyeur','broyeur de végétaux'], es:['biotrituradora','trituradora'], it:['cippatrice','trituratore'], nl:['houtversnipperaar','versnipperaar'], pt:['triturador','triturador de madeira'] },
+  robot_mower: { en:['robot mower','robotic mower','auto mower','automatic lawn mower'], zh:['割草机器人','智能割草机','自动割草'], de:['mähroboter','rasenroboter'], fr:['robot tondeuse','tondeuse robot'], es:['robot cortacésped','cortacésped robot'], it:['robot tosaerba','tosaerba automatico'], nl:['robotmaaier','automatische maaier'], pt:['robô cortador','cortador automático'] }
+};
+
+const state = { lang:'zh', messages:[], activeCategory:'all', context:{ topic:null, product:null, intent:null }, isTyping:false, conversationRound:0 };
+
+function detectIntent(text) {
+  const lower = text.toLowerCase(); const scores = {};
+  for (const [intent, patterns] of Object.entries(INTENT_PATTERNS)) {
+    const lp = patterns[state.lang] || patterns['en']; let score = 0;
+    for (const p of lp) { if (lower.includes(p)) score += p.length; }
+    if (score > 0) scores[intent] = score;
+  }
+  const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+  return sorted.length > 0 ? sorted[0][0] : null;
+}
+
+function detectProduct(text) {
+  const lower = text.toLowerCase(); const scores = {};
+  for (const [pid, patterns] of Object.entries(PRODUCT_KEYWORDS)) {
+    const lp = patterns[state.lang] || patterns['en']; let score = 0;
+    for (const p of lp) { if (lower.includes(p)) score += p.length * 2; }
+    if (score > 0) scores[pid] = score;
+  }
+  const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+  return sorted.length > 0 ? sorted[0][0] : null;
+}
+
+// ── 转人工触发词（优先级高于意图识别；红线5：人工复核环节入口） ──
+const HANDOFF_PATTERNS = {
+  en: ['human agent','real person','speak to someone','talk to a person','speak with a human','representative','customer service rep','transfer to human','real human'],
+  zh: ['转人工','人工客服','人工服务','真人客服','找人工','转接人工'],
+  de: ['an mitarbeiter','mitarbeiter sprechen','echte person','echter mitarbeiter','weiterleiten','persönlich sprechen'],
+  fr: ['parler à un conseiller','conseiller humain','agent humain','parler à quelqu','personne réelle','service client humain'],
+  es: ['hablar con una persona','atención humana','agente real','persona real','pasar con alguien','atendedor humano'],
+  it: ['parlare con una persona','operatore','persona reale','gestore','assistenza umana'],
+  nl: ['medewerker','echte persoon','doorverbinden','menselijke medewerker','een persoon spreken'],
+  pt: ['falar com uma pessoa','atendente','pessoa real','transferir para humano','atendimento humano','falar com alguém']
+};
+function detectHandoff(text) {
+  const lower = text.toLowerCase();
+  const lp = HANDOFF_PATTERNS[state.lang] || HANDOFF_PATTERNS['en'];
+  return lp.some(p => lower.includes(p));
+}
+
+function findKBResponse(intent, product) {
+  const lang = state.lang; const kbSec = KB[intent];
+  if (!kbSec) return null;
+  const pick = (e) => e == null ? null : (typeof e === 'string' ? e : (e.length ? e[0].a : null));
+  // 语言优先回落链：同语言产品条目 → 同语言通用/默认 → 英文产品条目 → 英文通用/默认
+  const prod = (product && kbSec[product]) ? kbSec[product] : null;
+  const chain = [
+    prod && prod[lang],
+    kbSec['general'] && kbSec['general'][lang],
+    kbSec['default'] && kbSec['default'][lang],
+    prod && prod['en'],
+    kbSec['general'] && kbSec['general']['en'],
+    kbSec['default'] && kbSec['default']['en']
+  ];
+  for (const e of chain) { const r = pick(e); if (r) return r; }
+  return null;
+}
+
+function findFuzzy(intent, product, text) {
+  const lang = state.lang; const kbSec = KB[intent];
+  if (!kbSec || !product || !kbSec[product]) return null;
+  const entries = kbSec[product][lang] || kbSec[product]['en'];
+  if (!entries || !entries.length || typeof entries === 'string') return null;
+  const lower = text.toLowerCase(); let best = null, bestScore = 0;
+  for (const entry of entries) {
+    const qWords = entry.q.toLowerCase().split(/\s+/); let score = 0;
+    for (const w of qWords) { if (w.length > 2 && lower.includes(w)) score += w.length; }
+    if (score > bestScore) { bestScore = score; best = entry.a; }
+  }
+  return best;
+}
+
+function getProductName(pid) { const p = PRODUCTS.find(x => x.id === pid); return p ? (p.names[state.lang] || p.names['en']) : pid; }
+
+function generateResponse(text, forcedIntent, forcedProduct) {
+  const intent = forcedIntent || detectIntent(text);
+  const product = forcedProduct || detectProduct(text);
+  state.context.intent = intent; state.context.product = product;
+  if (intent && product) { const f = findFuzzy(intent, product, text); if (f) return f; const k = findKBResponse(intent, product); if (k) return k; }
+  if (intent) { const k = findKBResponse(intent, null); if (k) return k; }
+  if (product) {
+    const pn = getProductName(product); const lang = state.lang;
+    const fu = { en:`I see you're asking about **${pn}**. To help you better:\n\n• Is it a troubleshooting issue?\n• Do you need maintenance advice?\n• Are you looking for spare parts?\n• Do you have a warranty question?\n\nJust describe what's happening.`,
+      zh:`您咨询的是**${pn}**相关问题。为更好地帮助您，请告诉我：\n\n• 是故障排查类问题？\n• 需要养护保养建议？\n• 想查询配件？\n• 咨询保修政策？\n\n请描述具体情况，我来帮您解决。`,
+      de:`Sie fragen nach **${pn}**. Was genau benötigen Sie?\n• Fehlerbehebung?\n• Wartung?\n• Ersatzteile?\n• Garantie?`, fr:`Vous posez une question sur **${pn}**. De quoi avez-vous besoin?\n• Dépannage?\n• Entretien?\n• Pièces?\n• Garantie?` };
+    return fu[lang] || fu['en'];
+  }
+  return I18N.noMatch[state.lang] || I18N.noMatch['en'];
+}
+
+const QUICK_REPLY_SETS = {
+  zh: { welcome:['草坪机无法启动怎么办','修枝剪怎么保养','电池耗电太快','保修政策是什么'], troubleshoot:['电机有异响','电池续航短','刀片卡住不动'], maintenance:['刀片多久磨一次','冬季怎么存放','电池怎么保养'], parts:['刀片多少钱','更换电池怎么买','充电器兼容型号'], warranty:['怎么申请保修','保修范围有哪些','保修多久'] },
+  en: { welcome:['My mower won\'t start','How to maintain my pruner?','Battery drains too fast','What is the warranty policy?'], troubleshoot:['Motor makes noise','Battery life short','Blades stuck'], maintenance:['How often to sharpen?','Winter storage tips','Battery care guide'], parts:['Blade price','Order a new battery','Compatible chargers'], warranty:['How to file a claim','Warranty coverage','Warranty duration'] },
+  de: { welcome:['Mein Mäher startet nicht','Wartung meiner Astschere','Akku zu schnell leer','Garantieinformationen'] },
+  fr: { welcome:['Ma tondeuse ne démarre pas','Entretien sécateur','Batterie se vide vite','Informations garantie'] }
+};
+function getQuickReplies() { const sets = QUICK_REPLY_SETS[state.lang] || QUICK_REPLY_SETS['en']; const ctx = state.context; if (ctx.intent === 'troubleshoot') return sets.troubleshoot; if (ctx.intent === 'maintenance') return sets.maintenance; if (ctx.intent === 'parts') return sets.parts; if (ctx.intent === 'warranty') return sets.warranty; return sets.welcome; }
+
+function t(key) { return (I18N[key] && I18N[key][state.lang]) ? I18N[key][state.lang] : (I18N[key] ? I18N[key]['en'] : key); }
+function formatTime() { const now = new Date(); return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0'); }
+
+function renderCategories() {
+  const c = document.getElementById('categoryTags');
+  c.innerHTML = CATEGORIES.map(cat => { const n = cat.names[state.lang] || cat.names['en']; const sel = cat.id === state.activeCategory ? ' selected' : ''; return `<span class="category-tag${sel}" data-cat="${cat.id}">${n}</span>`; }).join('');
+  c.querySelectorAll('.category-tag').forEach(t => t.addEventListener('click', () => { state.activeCategory = t.dataset.cat; state.context.product = (t.dataset.cat === 'all') ? null : t.dataset.cat; renderCategories(); }));
+}
+function renderLangButtons() {
+  const g = document.getElementById('langGrid');
+  g.innerHTML = Object.entries(LANGUAGES).map(([code, info]) => { const a = code === state.lang ? ' active' : ''; return `<button class="lang-btn${a}" data-lang="${code}">${info.flag} ${info.native}</button>`; }).join('');
+  g.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; renderLangButtons(); renderCategories(); updateAllI18n(); updatePlaceholder(); renderQuickReplies(); }));
+}
+function updateAllI18n() { document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (I18N[k] && I18N[k][state.lang]) el.textContent = I18N[k][state.lang]; }); }
+function updatePlaceholder() { const inp = document.getElementById('chatInput'); const k = inp.dataset.i18nPlaceholder; if (I18N[k] && I18N[k][state.lang]) inp.placeholder = I18N[k][state.lang]; }
+
+function renderQuickReplies() {
+  const c = document.getElementById('quickReplies'); const r = getQuickReplies();
+  c.innerHTML = r.map(x => `<button class="quick-reply-btn">${x}</button>`).join('');
+  c.querySelectorAll('.quick-reply-btn').forEach(b => b.addEventListener('click', () => { document.getElementById('chatInput').value = b.textContent; sendMessage(); }));
+}
+
+function addMessage(type, text) { state.messages.push({ type, text, time: formatTime() }); renderMessages(); }
+function renderMessages() {
+  const c = document.getElementById('messagesContainer');
+  c.innerHTML = state.messages.map(m => `<div class="message-wrapper ${m.type}"><div class="msg-avatar ${m.type==='user'?'user-avatar':'bot-avatar'}">${m.type==='user'?'👤':'🌿'}</div><div><div class="msg-bubble ${m.type==='user'?'user-bubble':'bot-bubble'}">${formatMsg(m.text)}</div><div class="msg-time">${m.time}</div></div></div>`).join('');
+  c.scrollTop = c.scrollHeight;
+}
+function formatMsg(t) {
+  const inline = s => s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/✅/g,'<span style="color:#4a9e5c">✅</span>').replace(/❌/g,'<span style="color:#c44e4e">❌</span>').replace(/⚠️/g,'<span style="color:#c9a84c">⚠️</span>');
+  const isRow = l => /^\s*\|.*\|\s*$/.test(l);
+  const lines = t.split('\n'); const parts = []; let i = 0;
+  while (i < lines.length) {
+    if (isRow(lines[i])) {
+      const rows = [];
+      while (i < lines.length && isRow(lines[i])) { rows.push(lines[i]); i++; }
+      const cells = r => r.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(c => c.trim());
+      let head = [], bodyStart = 0;
+      if (rows.length > 1 && /^\s*\|[\s:\-|]+\|\s*$/.test(rows[1])) { head = cells(rows[0]); bodyStart = 2; }
+      const th = head.length ? '<tr>' + head.map(c => '<th>' + inline(c) + '</th>').join('') + '</tr>' : '';
+      let tb = '';
+      for (let r = bodyStart; r < rows.length; r++) tb += '<tr>' + cells(rows[r]).map(c => '<td>' + inline(c) + '</td>').join('') + '</tr>';
+      parts.push('<table class="msg-table">' + th + tb + '</table>');
+    } else { parts.push(inline(lines[i])); i++; }
+  }
+  return parts.join('<br>').replace(/<br>(<table)/g, '$1').replace(/(<\/table>)<br>/g, '$1');
+}
+
+function showTyping() { if (state.isTyping) return; state.isTyping = true; const c = document.getElementById('messagesContainer'); const d = document.createElement('div'); d.className = 'typing-indicator'; d.id = 'typingIndicator'; d.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>'; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+function hideTyping() { state.isTyping = false; const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
+
+async function sendMessage(forceText, forceIntent, forceProduct) {
+  if (state.isTyping) return; const input = document.getElementById('chatInput');
+  const text = (forceText || input.value).trim(); if (!text) return;
+  if (text.length > 500) { addMessage('bot', I18N.tooLong[state.lang] || I18N.tooLong['en']); input.value = ''; autoResize(input); updateCharCount(); return; }
+  input.value = ''; autoResize(input); updateCharCount(); state.conversationRound++;
+  addMessage('user', text); showTyping();
+  await new Promise(r => setTimeout(r, Math.min(700 + text.length * 12, 2200)));
+  hideTyping(); const response = generateResponse(text, forceIntent, forceProduct); addMessage('bot', response); renderQuickReplies();
+}
+
+function handleKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; updateCharCount(); }
+function updateCharCount() { document.getElementById('charCount').textContent = document.getElementById('chatInput').value.length + '/500'; }
+
+function exportChat() {
+  const text = state.messages.map(m => `[${m.time}] ${m.type==='user'?'Customer':'GreenCraft'}: ${m.text.replace(/\*\*/g,'').replace(/\n/g,' ')}`).join('\n\n');
+  const blob = new Blob([text], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'greencraft-chat-'+new Date().toISOString().slice(0,10)+'.txt'; a.click();
+}
+function clearChat() { state.messages = []; state.context = { topic:null, product:null, intent:null }; state.conversationRound = 0; initWelcome(); }
+
+// ═══════════════ DEMO SCENARIOS ═══════════════
+const DEMO_SCENARIOS = {
+  scenario1: {
+    title: '草坪机故障排查',
+    lang: 'en',
+    speed: 1.0,
+    steps: [
+      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景一：一位英国用户新买的草坪修剪机无法启动，通过自然语言对话进行逐步故障排查。注意客服是如何引导用户自行诊断的。' },
+      { delay: 800, type:'user', text:'Hi, I just bought your lawn mower model GC-480E last week. It was working fine yesterday but today it won\'t start at all. I\'m really frustrated.' },
+      { delay: 1800, type:'bot', text:'I totally understand your frustration — that\'s not what you expect from a brand new mower! Let\'s get this sorted out together. 🔧\n\nFirst, the most common cause with new users: have you made sure the **safety key** is pushed all the way in? It\'s the red plastic tab near the battery compartment. Without it fully seated, the mower won\'t start — it\'s a safety feature.' },
+      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🔍', text:'注意AI客服的语气：先共情（"I totally understand"），再给出具体可执行的排查步骤，而不是抛出一堆技术术语。这是专业客服的关键技巧。' },
+      { delay: 1200, type:'user', text:'Oh, the safety key? I didn\'t even notice that. Let me check... Yes, it was partially out! I pushed it in all the way and now it starts. But there\'s a weird vibration when I use it.' },
+      { delay: 2000, type:'bot', text:'Great catch on the safety key — that fixes the startup issue! 👍\n\nNow, about the vibration — that\'s something we need to address carefully because it can be a safety concern. Let me ask you a few quick questions:\n\n• Have you checked under the deck for any dried grass buildup?\n• When was the last time you checked the blade bolt tightness?\n• Did you notice if the blade hit any rocks or hard objects recently?' },
+      { type:'annotation', pos:'top-right', style:'insight', icon:'🎯', text:'AI的追问策略：不是一次性列出所有可能原因，而是通过反问引导用户参与诊断过程。这样既收集了信息，也让用户感到被重视。' },
+      { delay: 1500, type:'user', text:'I haven\'t checked under the deck at all actually. I\'ve been using it for a week without cleaning it.' },
+      { delay: 1800, type:'bot', text:'That explains it! After a week of mowing, especially in thicker grass, the underside of the deck collects a lot of dried grass clippings. This buildup throws the blade off balance and causes that vibration you\'re feeling.\n\nHere\'s what to do:\n1. **Remove the battery first** — always safety first.\n2. Tilt the mower on its side (carburetor/air filter side UP).\n3. Use a plastic scraper or stiff brush to clean the deck underside.\n4. While you\'re there, check the **blade bolt** is tight.\n\nThis should be done after every 2-3 mowing sessions. Any questions before you try this?' }
+    ]
+  },
+  scenario2: {
+    title: '修枝剪使用咨询',
+    lang: 'fr',
+    speed: 1.0,
+    steps: [
+      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景二：法国顾客想买电动修枝剪但不确定哪款适合。AI客服通过询问使用场景，引导顾客找到最优选择。注意多语种的自然切换。' },
+      { delay: 800, type:'user', text:'Bonjour, je cherche un sécateur électrique pour entretenir mon verger. J\'ai des pommiers et des cerisiers, certaines branches font 3-4 cm. Vous me conseillez quel modèle ?' },
+      { delay: 2200, type:'bot', text:'Bonjour ! C\'est un excellent choix de s\'équiper pour votre verger. 🍎🍒\n\nAvec des branches de 3-4 cm, vous avez besoin d\'un modèle qui offre une bonne puissance de coupe. Notre gamme comprend :\n\n• **Eco Pruner P-200** — Max 25mm, idéal pour arbustes et rosiers\n• **Pro Pruner P-500** — Max 35mm, parfait pour votre usage !\n• **Elite Pruner P-800** — Max 45mm, usage professionnel intensif\n\nPour vos pommiers et cerisiers, le **Pro P-500** semble le meilleur compromis. Il coupe jusqu\'à 35mm confortablement et la batterie tient 4-5 heures en usage normal.' },
+      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🎯', text:'AI自动将产品参数与用户需求匹配：识别"3-4cm"关键词后，推荐了合适的Pro P-500型号，并排除了不适合的Eco型号。这是智能推荐的核心能力。' },
+      { delay: 1200, type:'user', text:'Merci ! Et pour l\'entretien, c\'est compliqué ? J\'ai peur que ça s\'use vite avec la sève des arbres.' },
+      { delay: 2000, type:'bot', text:'Très bonne question — la sève est effectivement le principal ennemi des sécateurs électriques !\n\nVoici l\'entretien recommandé, c\'est très simple :\n\n**Après chaque utilisation :**\n• Nettoyez les lames avec un chiffon imbibé d\'alcool à friction\n• Cela dissout la sève en quelques secondes\n\n**Tous les 20-30 heures :**\n• Affûtez ou remplacez les lames\n• Appliquez de la graisse au lithium sur les engrenages\n\nAvec cet entretien basique, votre sécateur durera des années. Nous avons aussi des kits d\'entretien à prix réduit si vous achetez avec la machine.' }
+    ]
+  },
+  scenario3: {
+    title: '链锯养护 & 配件订购',
+    lang: 'de',
+    speed: 1.0,
+    steps: [
+      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景三：德国顾客的链锯使用一年后出现漏油和切割问题。客服诊断故障后顺势推荐配件，实现养护+销售的一站式服务。' },
+      { delay: 800, type:'user', text:'Hallo, meine Kettensäge GC-520 verliert Öl und schneidet nicht mehr richtig. Ich habe sie vor einem Jahr gekauft. Was kann ich tun?' },
+      { delay: 2200, type:'bot', text:'Hallo! Zwei Probleme auf einmal — das kriegen wir Schritt für Schritt hin. 🔧\n\n**Zum Ölverlust:**\n1. Ist der Öltank vielleicht überfüllt? Nur bis 80% befüllen.\n2. Prüfen Sie den Tankdeckel — ist er fest verschlossen?\n3. Lagern Sie die Säge mit der Öltankseite nach OBEN?\n4. Die Dichtung am Tankdeckel könnte nach einem Jahr spröde sein.\n\n**Schneidproblem:**\nHaben Sie die Kette jemals geschärft? Nach einem Jahr Nutzung ist sie wahrscheinlich stumpf. Eine stumpfe Kette schneidet nicht nur schlecht, sondern erhöht auch den Motorverschleiß!' },
+      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🔍', text:'AI同时处理两个独立问题（漏油+切割），分别给出排查步骤。注意结尾自然过渡到配件推荐——不突兀地引导销售。' },
+      { delay: 1500, type:'user', text:'Nein, ich habe die Kette noch nie geschärft. Ich brauche wahrscheinlich eine neue. Und die Dichtung ist tatsächlich etwas spröde.' },
+      { delay: 2000, type:'bot', text:'Verstanden! Dann empfehle ich Ihnen Folgendes:\n\n📦 **Ersatzteile für Ihre GC-520:**\n\n| Teil | Artikelnummer | Bemerkung |\n|------|--------------|----------|\n| Ersatzkette | GC-520-CH-18 | 18 Zoll, passend für Ihr Modell |\n| Tankdichtung | GC-520-SL-01 | Einfach selbst zu wechseln |\n| Kettenöl 1L | GC-OIL-BIO | Biologisch abbaubar, empfohlen |\n\n**Lieferung:** 3-5 Werktage innerhalb der EU. Möchten Sie, dass ich Ihnen direkt einen Bestell-Link sende? Oder haben Sie noch Fragen zum Selbsteinbau?' },
+      { type:'annotation', pos:'top-right', style:'highlight', icon:'📋', text:'配件推荐表格化展示——清晰列出料号、规格和备注。末尾给顾客选择权：下单或继续咨询。这是优秀售后的关键时刻。' },
+      { delay: 1200, type:'user', text:'Super, bitte schicken Sie mir den Bestell-Link. Und wie wechsle ich die Dichtung selbst?' },
+      { delay: 1800, type:'bot', text:'Perfekt! 👍 Der Bestell-Link wurde an Ihre registrierte E-Mail gesendet.\n\n**Dichtung selbst wechseln (Dauer: 2 Minuten):**\n1. Akku entfernen — Sicherheit geht vor\n2. Alten Tankdeckel komplett abschrauben\n3. Alte Dichtung mit einem kleinen Schraubendreher vorsichtig heraushebeln\n4. Neue Dichtung einsetzen — sie rastet hörbar ein\n5. Deckel wieder aufschrauben, aber nicht zu fest!\n\nEin kleiner Tipp: Bewahren Sie die Säge immer liegend mit der Öltankseite nach oben auf. Das verhindert künftige Leckagen.' }
+    ]
+  },
+  scenario4: {
+    title: '综合售后问题',
+    lang: 'zh',
+    speed: 1.0,
+    steps: [
+      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景四：最有代表性的综合场景——中国运营团队查看后台，一位美国顾客同时涉及保修、配件和安全三个维度的问题。' },
+      { delay: 800, type:'user', text:'你好，我是在美国亚马逊购买了你们高压清洗机的顾客。用了三个月，现在出水压力变得很小，而且喷嘴好像坏了。这个在保修范围内吗？另外我之前没戴护目镜用，现在有点担心安全问题。' },
+      { delay: 2500, type:'bot', text:'您好！感谢您选择GreenCraft产品。您提了三个问题，我一个一个帮您梳理清楚 😊\n\n**📋 关于保修：** 您购买三个月，完全在3年家用保修范围内！需要您提供亚马逊订单号和产品序列号（在机身铭牌上），我就可以帮您建立保修档案。\n\n**🔧 关于水压变小：** 这个问题80%的情况下不是机器故障。请先检查：\n1. 进水滤网是否堵塞？（最常见原因！）\n2. 喷嘴是否用通针清洁过？\n3. 水管是否有弯折？\n\n**🛡️ 关于安全：** 您能意识到护目镜的问题非常好！高压水流如果反弹到眼睛可能造成严重伤害。我强烈建议您从今天起每次使用都佩戴**ANSI Z87.1认证的护目镜**。我们官网有配套的安全套装，包含护目镜+防滑手套+耳塞。' },
+      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🔍', text:'关键观察：AI同时处理三个维度的问题（保修/故障/安全），分别标注清晰，不混淆。对"水压变小"给出量化数据（"80%不是故障"），增强说服力。' },
+      { delay: 1500, type:'user', text:'谢谢你这么详细的解答。进水滤网我确实没清理过。那喷嘴怎么办，需要买新的吗？还有那个安全套装多少钱？' },
+      { delay: 2200, type:'bot', text:'不客气，能帮到您我很高兴！\n\n**🔩 关于喷嘴：** 先别急着买新的。您的清洗机包装里应该附带了一根**通针**（很小的金属针），用它疏通喷嘴孔就可以了。如果通针丢了，用回形针拉直也能应急。只有喷嘴明显变形或裂缝的情况下才需要更换。\n\n**🛡️ 安全套装 GC-SAFE-KIT：** $24.99，包含：\n• ANSI Z87.1 护目镜 ×1\n• 防滑防护手套 ×1双\n• SNR 28dB 降噪耳塞 ×1对\n\n美国仓库发货，3-5个工作日送达。需要我帮您下单吗？现在和喷嘴一起买可以免运费哦。' },
+      { type:'annotation', pos:'top-right', style:'highlight', icon:'🎯', text:'AI展现了三层智能：（1）帮顾客省钱——先教用通针而不是直接卖喷嘴；（2）灵活应变——通针丢了可以用回形针；（3）自然营销——安全套装价格清晰，搭配免运费提升转化。' },
+      { delay: 1200, type:'user', text:'好的，帮我下单安全套装。型号是GC-2000PW，订单号我找找... AMZ-2024-78342。对了，通针我找到了，确实通了之后压力恢复了！谢谢你。' },
+      { delay: 2200, type:'bot', text:'太好了！三个好消息：\n\n✅ **喷嘴问题已解决** — 通针清理后压力恢复，说明机器本身没有问题。\n✅ **保修档案已建立** — 我已记录您的订单号 AMZ-2024-78342，型号 GC-2000PW，保修至2027年。\n✅ **安全套装已下单** — 订单号 #GC-88421，预计5月15日前送达您的地址。\n\n📧 所有详细信息已同步发送到您的注册邮箱。\n\n最后温馨提醒：每次使用后记得清洁进水滤网（只需10秒钟），这个习惯能让您的清洗机多用好几年！还有其他问题吗？' }
+    ]
+  }
+};
+
+// ═══════════════ DEMO ENGINE ═══════════════
+let demoState = { running: false, scenarioId: null, currentStep: 0, speed: 1.0, steps: [], annotationIndex: -1, annotations: [] };
+
+function toggleDemoDropdown() {
+  const dd = document.getElementById('demoDropdown');
+  if (demoState.running) { stopDemo(); return; }
+  dd.classList.toggle('show');
+}
+
+function initDemoDropdown() {
+  document.querySelectorAll('.demo-scenario').forEach(sc => {
+    sc.addEventListener('click', () => {
+      document.getElementById('demoDropdown').classList.remove('show');
+      startDemo(sc.dataset.scenario);
+    });
+  });
+  document.querySelectorAll('.speed-btn').forEach(b => {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('.speed-btn').forEach(x => x.classList.remove('active'));
+      this.classList.add('active');
+      const m = { slow: 2.0, normal: 1.0, fast: 0.4 };
+      demoState.speed = m[this.dataset.speed] || 1.0;
+    });
+  });
+  document.addEventListener('click', e => {
+    const dd = document.getElementById('demoDropdown');
+    const btn = document.getElementById('demoBtn');
+    if (!dd.contains(e.target) && e.target !== btn && dd.classList.contains('show')) {
+      dd.classList.remove('show');
+    }
+  });
+}
+
+async function startDemo(scenarioId) {
+  if (demoState.running) return;
+  const scenario = DEMO_SCENARIOS[scenarioId];
+  if (!scenario) return;
+
+  clearChat();
+  demoState.running = true;
+  demoState.scenarioId = scenarioId;
+  demoState.currentStep = 0;
+  demoState.steps = scenario.steps;
+  demoState.annotations = [];
+  demoState.annotationIndex = -1;
+
+  document.getElementById('demoBtn').textContent = '⏸ 演示中';
+  document.getElementById('demoBtn').classList.add('playing');
+  document.getElementById('demoProgress').classList.add('show');
+  document.getElementById('annotationOverlay').innerHTML = '';
+
+  if (scenario.lang && LANGUAGES[scenario.lang]) {
+    state.lang = scenario.lang;
+    renderLangButtons();
+    renderCategories();
+    updateAllI18n();
+  }
+
+  updateDemoProgress();
+
+  for (let i = 0; i < scenario.steps.length; i++) {
+    if (!demoState.running) break;
+    const step = scenario.steps[i];
+    demoState.currentStep = i + 1;
+    updateDemoProgress();
+
+    if (step.type === 'annotation') {
+      demoState.annotations.push({ index: i, pos: step.pos, style: step.style, icon: step.icon, text: step.text });
+      showAnnotationSingle(demoState.annotations.length - 1);
+      await sleep((step.delay || 2000) * demoState.speed);
+      continue;
+    }
+
+    if (step.delay) await sleep(step.delay * demoState.speed);
+
+    if (!demoState.running) break;
+
+    if (step.type === 'user') {
+      document.getElementById('chatInput').value = '';
+      addMessage('user', step.text);
+    } else if (step.type === 'bot') {
+      showTyping();
+      await sleep((800 + step.text.length * 8) * demoState.speed);
+      hideTyping();
+      addMessage('bot', step.text);
+    }
+  }
+
+  finishDemo();
+}
+
+function updateDemoProgress() {
+  const total = demoState.steps.filter(s => s.type === 'user' || s.type === 'bot').length;
+  const done = demoState.steps.slice(0, demoState.currentStep).filter(s => s.type === 'user' || s.type === 'bot').length;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('demoProgressFill').style.width = pct + '%';
+  document.getElementById('demoProgressLabel').textContent = '演示中 ' + pct + '%';
+}
+
+function finishDemo() {
+  demoState.running = false;
+  document.getElementById('demoBtn').textContent = '▶ 演示模式';
+  document.getElementById('demoBtn').classList.remove('playing');
+  document.getElementById('demoProgress').classList.remove('show');
+  showAllAnnotations();
+  document.getElementById('annotationCtrls').classList.add('show');
+}
+
+function stopDemo() {
+  demoState.running = false;
+  document.getElementById('demoBtn').textContent = '▶ 演示模式';
+  document.getElementById('demoBtn').classList.remove('playing');
+  document.getElementById('demoProgress').classList.remove('show');
+  document.getElementById('annotationOverlay').innerHTML = '';
+  document.getElementById('annotationCtrls').classList.remove('show');
+}
+
+function showAnnotationSingle(idx) {
+  const overlay = document.getElementById('annotationOverlay');
+  const a = demoState.annotations[idx];
+  if (!a) return;
+  const cls = a.style === 'insight' ? 'insight' : a.style === 'tech' ? 'tech' : 'highlight';
+  overlay.innerHTML = `<div class="annotation-bubble visible ${cls}" style="${getAnnotationPos(a.pos)}"><span class="anno-icon">${a.icon}</span>${a.text}</div>`;
+}
+
+function showAllAnnotations() {
+  const overlay = document.getElementById('annotationOverlay');
+  overlay.innerHTML = demoState.annotations.map((a, i) => {
+    const cls = a.style === 'insight' ? 'insight' : a.style === 'tech' ? 'tech' : 'highlight';
+    return `<div class="annotation-bubble visible ${cls}" style="${getAnnotationPos(a.pos)}" data-anno-idx="${i}">${a.text}</div>`;
+  }).join('');
+  demoState.annotationIndex = 0;
+}
+
+function getAnnotationPos(pos) {
+  const positions = {
+    'top-right': 'top:80px;right:340px;',
+    'bottom-left': 'bottom:120px;left:340px;',
+    'top-left': 'top:80px;left:340px;',
+    'bottom-right': 'bottom:120px;right:340px;'
+  };
+  return positions[pos] || 'top:80px;right:340px;';
+}
+
+function nextAnnotation() {
+  if (demoState.annotations.length === 0) return;
+  demoState.annotationIndex = (demoState.annotationIndex + 1) % demoState.annotations.length;
+  highlightAnnotation(demoState.annotationIndex);
+}
+
+function prevAnnotation() {
+  if (demoState.annotations.length === 0) return;
+  demoState.annotationIndex = (demoState.annotationIndex - 1 + demoState.annotations.length) % demoState.annotations.length;
+  highlightAnnotation(demoState.annotationIndex);
+}
+
+function highlightAnnotation(idx) {
+  document.querySelectorAll('.annotation-bubble').forEach(el => {
+    el.style.opacity = '0.5';
+    el.style.transform = 'scale(0.95)';
+  });
+  const target = document.querySelector(`.annotation-bubble[data-anno-idx="${idx}"]`);
+  if (target) {
+    target.style.opacity = '1';
+    target.style.transform = 'scale(1.05)';
+    target.style.zIndex = '20';
+  }
+}
+
+function hideAnnotation() {
+  document.getElementById('annotationOverlay').innerHTML = '';
+  document.getElementById('annotationCtrls').classList.remove('show');
+  demoState.annotations = [];
+  demoState.annotationIndex = -1;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ═══════════════ ENHANCED RESPONSE ENGINE ═══════════════
+const ENHANCED_GREETINGS = {
+  en: { thanks: ['Glad I could help! 😊','You\'re very welcome!','Happy to assist! 🌿'], followUp: ['Is there anything else I can help with?','Let me know if you have more questions.','I\'m here if you need anything else!'] },
+  zh: { thanks: ['很高兴能帮到您！😊','不用客气，这是我应该做的！','随时为您服务！🌿'], followUp: ['还有其他问题需要帮您处理吗？','如果有需要随时找我。','祝您使用愉快！'] },
+  de: { thanks: ['Gerne geschehen! 😊','Freut mich, dass ich helfen konnte!','Jederzeit gerne! 🌿'], followUp: ['Kann ich sonst noch helfen?','Melden Sie sich bei weiteren Fragen.'] },
+  fr: { thanks: ['Avec plaisir ! 😊','Ravi d\'avoir pu vous aider !','Je reste à votre disposition ! 🌿'], followUp: ['Autre chose à vous aider ?','N\'hésitez pas si vous avez d\'autres questions.'] }
+};
+
+function makeTicket() { return 'GC-' + Date.now().toString(36).toUpperCase().slice(-6); }
+
+function generateEnhancedResponse(text, forcedIntent, forcedProduct) {
+  // 转人工请求优先于一切意图判定（红线5：人工复核入口；评分点：转人工率）
+  if (!forcedIntent && detectHandoff(text)) {
+    state.context.missCount = 0;
+    const tpl = I18N.handoff[state.lang] || I18N.handoff['en'];
+    return tpl.replace('{ticket}', makeTicket());
+  }
+
+  const intent = forcedIntent || detectIntent(text) || state.context.intent;
+  const product = forcedProduct || detectProduct(text) || state.context.product;
+  state.context.intent = intent; state.context.product = product;
+
+  if (intent && product) {
+    const fuzzy = findFuzzy(intent, product, text);
+    if (fuzzy) { state.context.missCount = 0; return enhanceWithPersonality(fuzzy, intent); }
+    const kb = findKBResponse(intent, product);
+    if (kb) { state.context.missCount = 0; return enhanceWithPersonality(kb, intent); }
+  }
+  if (intent) { const kb = findKBResponse(intent, null); if (kb) { state.context.missCount = 0; return enhanceWithPersonality(kb, intent); } }
+  // 连续 2 轮未命中知识库 → 主动建议转人工（业务闭环出口）
+  state.context.missCount = (state.context.missCount || 0) + 1;
+  if (state.context.missCount >= 2) {
+    state.context.missCount = 0;
+    return I18N.handoffHint[state.lang] || I18N.handoffHint['en'];
+  }
+  if (product) {
+    const pn = getProductName(product); const lang = state.lang;
+    const fu = { en:`I see you're asking about our **${pn}**. Let me help you find exactly what you need!\n\n• Having a problem with it?\n• Need maintenance tips?\n• Looking for parts or accessories?\n\nJust tell me what's going on and I'll guide you through it. 😊`,
+      zh:`您好！您咨询的是我们的**${pn}**。让我帮您精准解决问题！\n\n• 设备出了什么故障？\n• 需要养护建议吗？\n• 想查询配件或附件？\n\n请描述具体情况，我会一步步引导您排查。😊`,
+      de:`Sie interessieren sich für unseren **${pn}**. Wie kann ich Ihnen konkret helfen?\n• Problem mit dem Gerät?\n• Wartungstipps?\n• Ersatzteile?`, fr:`Vous vous intéressez à notre **${pn}**. Comment puis-je vous aider concrètement ?\n• Problème avec l'appareil ?\n• Conseils d'entretien ?\n• Pièces détachées ?` };
+    return fu[lang] || fu['en'];
+  }
+  const lang = state.lang;
+  const fallbacks = {
+    en: 'I want to make sure I give you the best help possible. Could you tell me a bit more?\n\n• What kind of garden tool is it?\n• What seems to be the issue?\n\nEven a brief description helps me narrow things down quickly! 😊',
+    zh: '我想给您最精准的帮助，能否再描述一下？\n\n• 是哪一类园林工具？\n• 大概是什么问题？\n\n简单描述一下，我就能快速定位帮您解决！😊',
+    de: 'Um Ihnen bestmöglich zu helfen — um welches Gartengerät geht es? Welches Problem tritt auf?',
+    fr: 'Pour vous aider au mieux — de quel outil de jardin s\'agit-il ? Quel problème rencontrez-vous ?'
+  };
+  return fallbacks[lang] || fallbacks['en'];
+}
+
+function enhanceWithPersonality(response, intent) {
+  if (intent === 'troubleshoot') {
+    const inserts = {
+      zh: '（这个问题很常见，别担心，我们一步步来 👇）',
+      en: '(This is a common issue — don\'t worry, let\'s work through it step by step 👇)',
+      fr: '(C\'est un problème courant — pas d\'inquiétude, procédons étape par étape 👇)',
+      de: '(Das ist ein häufiges Problem — keine Sorge, wir gehen es Schritt für Schritt an 👇)'
+    };
+    const ins = inserts[state.lang];
+    if (ins) return response.replace(/\n\n/, '\n\n' + ins + '\n\n');
+  }
+  return response;
+}
+
+// Use the enhanced response engine
+generateResponse = function(text, forcedIntent, forcedProduct) {
+  return generateEnhancedResponse(text, forcedIntent, forcedProduct);
+};
+
+function initParticles() { const c = document.getElementById('particles'); for (let i = 0; i < 25; i++) { const p = document.createElement('div'); p.className = 'particle'; const s = Math.random() * 3 + 1; p.style.width = s + 'px'; p.style.height = s + 'px'; p.style.left = Math.random() * 100 + '%'; p.style.animationDuration = (Math.random() * 12 + 8) + 's'; p.style.animationDelay = (Math.random() * 10) + 's'; c.appendChild(p); } }
+
+function initWelcome() { addMessage('bot', (I18N.aiNotice[state.lang] || I18N.aiNotice['en']) + '\n\n' + (I18N.welcomeMsg[state.lang] || I18N.welcomeMsg['en'])); renderQuickReplies(); }
+
+function init() {
+  renderLangButtons(); renderCategories(); updateAllI18n(); initParticles(); initWelcome(); initDemoDropdown();
+  document.querySelectorAll('.quick-link-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const topic = item.dataset.topic;
+      const labels = { troubleshoot:{ zh:'我的设备出了问题需要排查', en:'I need help troubleshooting my tool', de:'Ich brauche Hilfe bei der Fehlerbehebung', fr:'J\'ai besoin d\'aide pour dépanner' }, maintenance:{ zh:'我的工具怎么保养', en:'How do I maintain my garden tools?', de:'Wie warte ich meine Gartengeräte?', fr:'Comment entretenir mes outils?' }, parts:{ zh:'我需要订购配件', en:'I need to order spare parts', de:'Ich muss Ersatzteile bestellen', fr:'Je dois commander des pièces' }, warranty:{ zh:'我想了解保修政策', en:'Tell me about the warranty', de:'Informationen zur Garantie', fr:'Informations sur la garantie' }, compare:{ zh:'帮我对比产品', en:'Help me compare products', de:'Hilfe beim Produktvergleich', fr:'Aidez-moi à comparer' }, safety:{ zh:'需要什么安全装备', en:'What safety gear do I need?', de:'Welche Schutzausrüstung?', fr:'Quel équipement de sécurité?' } };
+      sendMessage((labels[topic] && labels[topic][state.lang]) || labels[topic]?.en || '', topic, null);
+    });
+  });
+  updatePlaceholder();
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
