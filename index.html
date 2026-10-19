@@ -1063,21 +1063,20 @@ function splitResponse(text) {
   }
   return out.length ? out : [text];
 }
-// 思考延迟取决于「答案长度」而非用户输入长度，并带随机抖动，避免固定节拍感
-function thinkTime(chunk, i) {
-  const base = i === 0 ? 200 : 120;
-  return Math.min(base + chunk.length * 3, 620) + Math.random() * 150;
+// 思考延迟与演示模式同一节奏：取决于「答案长度」，360ms 起步、上限 1.2s，加随机抖动避免固定节拍感
+function thinkTime(chunk) {
+  return Math.min(360 + chunk.length * 3, 1200) + Math.random() * 150;
 }
 async function sendMessage(forceText, forceIntent, forceProduct) {
   if (state.isTyping) return; const input = document.getElementById('chatInput');
   const text = (forceText || input.value).trim(); if (!text) return;
-  if (text.length > 500) { addMessage('bot', I18N.tooLong[state.lang] || I18N.tooLong['en']); input.value = ''; autoResize(input); updateCharCount(); return; }
+  if (text.length > 500) { input.value = ''; autoResize(input); updateCharCount(); showTyping(UI_TEXT.typing[state.lang] || UI_TEXT.typing.en); await sleep(700); hideTyping(); addMessage('bot', I18N.tooLong[state.lang] || I18N.tooLong['en'], { stream: true }); return; }
   input.value = ''; autoResize(input); updateCharCount(); state.conversationRound++;
   appendRaw('user', text);
   const chunks = splitResponse(generateResponse(text, forceIntent, forceProduct));
   for (let i = 0; i < chunks.length; i++) {
     showTyping(UI_TEXT.typing[state.lang] || UI_TEXT.typing.en);
-    await sleep(thinkTime(chunks[i], i));
+    await sleep(thinkTime(chunks[i]));
     hideTyping();
     await addMessage('bot', chunks[i], { stream: true });
   }
