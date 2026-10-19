@@ -145,7 +145,10 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
 .messages-container::-webkit-scrollbar-thumb { background:rgba(212,175,95,0.18); border-radius:10px; }
 .messages-container::-webkit-scrollbar-thumb:hover { background:rgba(212,175,95,0.32); }
 
-.message-wrapper { display:flex; gap:11px; max-width:82%; animation:msgSlideIn 0.4s var(--transition-spring); }
+.message-wrapper { display:flex; gap:11px; max-width:82%; }
+/* 仅新到达的消息播放入场动画；全量重建时复用同一节点不重播，消除“整屏刷新”的机械感 */
+.message-wrapper.is-new { animation:msgSlideIn 0.42s var(--transition-spring) both; }
+.msg-body { min-width:0; }
 @keyframes msgSlideIn { from { opacity:0; transform:translateY(14px) scale(0.98); } to { opacity:1; transform:none; } }
 .message-wrapper.user { align-self:flex-end; flex-direction:row-reverse; }
 .message-wrapper.bot { align-self:flex-start; }
@@ -191,6 +194,25 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
 .quick-reply-btn:hover { background:rgba(212,175,95,0.16); transform:translateY(-2px);
   box-shadow:0 5px 16px rgba(212,175,95,0.16); }
 .quick-reply-btn:active { transform:translateY(0); }
+
+/* ── v9 拟人化交互层 ── */
+.msg-avatar svg { width:18px; height:18px; display:block; }
+.msg-avatar.user-avatar svg { width:17px; height:17px; }
+.topbar-status { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; color:var(--sage);
+  margin-top:4px; letter-spacing:0.4px; }
+.status-dot { width:6px; height:6px; border-radius:50%; background:#5fbf77; flex-shrink:0;
+  animation:statusPulse 2.4s infinite; }
+@keyframes statusPulse { 0%{box-shadow:0 0 0 0 rgba(95,191,119,0.55);} 70%{box-shadow:0 0 0 7px rgba(95,191,119,0);} 100%{box-shadow:0 0 0 0 rgba(95,191,119,0);} }
+.typing-indicator { align-items:center; }
+.typing-dots { display:flex; gap:5px; }
+.typing-label { font-size:11px; color:var(--text-muted); margin-left:9px; letter-spacing:0.4px; }
+.caret { display:inline-block; width:2px; height:1em; background:var(--gold); margin-left:2px;
+  vertical-align:-2px; animation:caretBlink 0.9s steps(1) infinite; }
+@keyframes caretBlink { 0%,49% { opacity:1; } 50%,100% { opacity:0; } }
+.message-wrapper.is-streaming .msg-bubble { border-color:rgba(143,196,155,0.26); }
+.quick-reply-btn { animation:chipIn 0.34s var(--transition-spring) both; }
+@keyframes chipIn { from { opacity:0; transform:translateY(8px) scale(0.96); } to { opacity:1; transform:none; } }
+.read-mark { font-size:9px; color:var(--sage); margin-left:5px; letter-spacing:0.5px; }
 
 .chat-footer { padding:13px 30px 22px; border-top:1px solid var(--border-subtle);
   background:linear-gradient(180deg, transparent, rgba(212,175,95,0.022)); position:relative; }
@@ -333,6 +355,7 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
       <div>
         <div class="topbar-title" data-i18n="assistantName">AI Support Assistant</div>
         <div class="topbar-subtitle" data-i18n="assistantDesc">Garden Power Tools Expert</div>
+        <div class="topbar-status"><span class="status-dot"></span><span id="statusText">在线 · 秒级响应</span></div>
       </div>
       <div class="topbar-actions">
         <div style="position:relative;">
@@ -698,6 +721,13 @@ const PRODUCT_KEYWORDS = {
   robot_mower: { en:['robot mower','robotic mower','auto mower','automatic lawn mower'], zh:['割草机器人','智能割草机','自动割草','机器人'], de:['mähroboter','rasenroboter'], fr:['robot tondeuse','tondeuse robot'], es:['robot cortacésped','cortacésped robot','robot'], it:['robot tosaerba','tosaerba automatico'], nl:['robotmaaier','automatische maaier'], pt:['robô cortador','cortador automático','robô'] }
 };
 
+// ── v9 拟人化文案（随当前 UI 语言）──
+const UI_TEXT = {
+  typing: { zh:'正在输入…', en:'typing…', de:'schreibt gerade…', fr:'est en train d\'écrire…', es:'escribiendo…', it:'sta scrivendo…', nl:'typt…', pt:'digitando…' },
+  online: { zh:'在线 · 秒级响应', en:'Online · instant replies', de:'Online · antwortet sofort', fr:'En ligne · réponse immédiate', es:'En línea · respuesta inmediata', it:'Online · risposta immediata', nl:'Online · direct antwoord', pt:'Online · resposta imediata' }
+};
+let phHints = [], phIndex = 0;
+
 const state = { lang:'zh', messages:[], activeCategory:'all', context:{ topic:null, product:null, intent:null }, isTyping:false, conversationRound:0 };
 
 // pattern 匹配策略缓存：每个 pattern 只判定一次"正则 or 包含"，后续直接用
@@ -902,19 +932,69 @@ function renderLangButtons() {
   g.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; renderLangButtons(); renderCategories(); updateAllI18n(); updatePlaceholder(); renderQuickReplies(); }));
 }
 function updateAllI18n() { document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (I18N[k] && I18N[k][state.lang]) el.textContent = I18N[k][state.lang]; }); }
-function updatePlaceholder() { const inp = document.getElementById('chatInput'); const k = inp.dataset.i18nPlaceholder; if (I18N[k] && I18N[k][state.lang]) inp.placeholder = I18N[k][state.lang]; }
+function updatePlaceholder() {
+  const inp = document.getElementById('chatInput'); const k = inp.dataset.i18nPlaceholder;
+  const base = (I18N[k] && I18N[k][state.lang]) || '';
+  const st = document.getElementById('statusText');
+  if (st) st.textContent = UI_TEXT.online[state.lang] || UI_TEXT.online.en;
+  // 提示语轮播：基础占位文案 + 当前场景推荐问，模拟真人客服的动态引导
+  phHints = [base].concat(getQuickReplies()).filter(Boolean);
+  phIndex = 0; inp.placeholder = phHints[0] || base;
+}
 
 function renderQuickReplies() {
   const c = document.getElementById('quickReplies'); const r = getQuickReplies();
-  c.innerHTML = r.map(x => `<button class="quick-reply-btn">${x}</button>`).join('');
+  c.innerHTML = r.map((x, i) => `<button class="quick-reply-btn" style="animation-delay:${i * 45}ms">${x}</button>`).join('');
   c.querySelectorAll('.quick-reply-btn').forEach(b => b.addEventListener('click', () => { document.getElementById('chatInput').value = b.textContent; sendMessage(); }));
 }
 
-function addMessage(type, text) { state.messages.push({ type, text, time: formatTime() }); renderMessages(); }
+// ── 消息节点：品牌图形头像 + 增量插入（不再整屏重建，避免动画重播的"机器刷新"感）──
+const BOT_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#8fc49b" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c0-5.6 3.2-10.6 8-12.4 0 5.6-3.2 10.6-8 12.4Z"/><path d="M12 21c0-5.6-3.2-10.6-8-12.4 0 5.6 3.2 10.6 8 12.4Z"/></svg>';
+const USER_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#2b2416" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.5"/><path d="M5.2 20c1.2-3.5 3.7-5.3 6.8-5.3s5.6 1.8 6.8 5.3"/></svg>';
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function scrollBottom() { const c = document.getElementById('messagesContainer'); c.scrollTop = c.scrollHeight; }
+function messageNode(m, isNew) {
+  const w = document.createElement('div');
+  w.className = 'message-wrapper ' + m.type + (isNew ? ' is-new' : '');
+  w.innerHTML = '<div class="msg-avatar ' + (m.type==='user'?'user-avatar':'bot-avatar') + '">' + (m.type==='user'?USER_SVG:BOT_SVG) + '</div>'
+    + '<div class="msg-body"><div class="msg-bubble ' + (m.type==='user'?'user-bubble':'bot-bubble') + '">' + formatMsg(m.text) + '</div>'
+    + '<div class="msg-time">' + m.time + '</div></div>';
+  return w;
+}
+function appendRaw(type, text) {
+  const m = { type, text, time: formatTime() };
+  state.messages.push(m);
+  const node = messageNode(m, true);
+  document.getElementById('messagesContainer').appendChild(node);
+  scrollBottom();
+  return node;
+}
+// 逐字流式呈现：先用纯文本揭示模拟打字，收尾再套富文本格式，避免 Markdown 半成品闪烁
+async function streamBubble(node, text, opts) {
+  const bubble = node.querySelector('.msg-bubble');
+  if (/^\s*\|/m.test(text) || text.length > 900) { scrollBottom(); return node; }
+  node.classList.add('is-streaming');
+  const stepMs = (opts && opts.stepMs) || 14;
+  const steps = Math.max(4, Math.min(Math.ceil(text.length / 8), 55));
+  for (let s = 1; s <= steps; s++) {
+    bubble.innerHTML = escapeHtml(text.slice(0, Math.round(text.length * s / steps))) + '<span class="caret"></span>';
+    scrollBottom();
+    await sleep(stepMs);
+  }
+  node.classList.remove('is-streaming');
+  bubble.innerHTML = formatMsg(text);
+  scrollBottom();
+  return node;
+}
+function addMessage(type, text, opts) {
+  const node = appendRaw(type, text);
+  if (opts && opts.stream) return streamBubble(node, text, opts);
+  return Promise.resolve(node);
+}
 function renderMessages() {
   const c = document.getElementById('messagesContainer');
-  c.innerHTML = state.messages.map(m => `<div class="message-wrapper ${m.type}"><div class="msg-avatar ${m.type==='user'?'user-avatar':'bot-avatar'}">${m.type==='user'?'👤':'🌿'}</div><div><div class="msg-bubble ${m.type==='user'?'user-bubble':'bot-bubble'}">${formatMsg(m.text)}</div><div class="msg-time">${m.time}</div></div></div>`).join('');
-  c.scrollTop = c.scrollHeight;
+  c.innerHTML = state.messages.map(m => messageNode(m, false).outerHTML).join('');
+  scrollBottom();
 }
 function formatMsg(t) {
   const inline = s => s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/✅/g,'<span style="color:#4a9e5c">✅</span>').replace(/❌/g,'<span style="color:#c44e4e">❌</span>').replace(/⚠️/g,'<span style="color:#c9a84c">⚠️</span>');
@@ -936,17 +1016,72 @@ function formatMsg(t) {
   return parts.join('<br>').replace(/<br>(<table)/g, '$1').replace(/(<\/table>)<br>/g, '$1');
 }
 
-function showTyping() { if (state.isTyping) return; state.isTyping = true; const c = document.getElementById('messagesContainer'); const d = document.createElement('div'); d.className = 'typing-indicator'; d.id = 'typingIndicator'; d.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>'; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+function showTyping(label) {
+  if (state.isTyping) return; state.isTyping = true;
+  const c = document.getElementById('messagesContainer'); const d = document.createElement('div');
+  d.className = 'typing-indicator'; d.id = 'typingIndicator';
+  d.innerHTML = '<span class="typing-dots"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>'
+    + (label ? '<span class="typing-label">' + escapeHtml(label) + '</span>' : '');
+  c.appendChild(d); scrollBottom(); markRead();
+}
 function hideTyping() { state.isTyping = false; const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
+// 客服一旦开始输入，上一条用户消息点亮已读回执——强化"对方在场"的实感
+function markRead() {
+  const times = document.querySelectorAll('.message-wrapper.user .msg-time');
+  if (!times.length) return;
+  const last = times[times.length - 1];
+  if (last.dataset.read) return;
+  last.dataset.read = '1';
+  last.insertAdjacentHTML('beforeend', '<span class="read-mark">✓✓</span>');
+}
 
+// 长答案智能分段：按语义章节切分（引导语 → 条目列表 → 结尾提问各成一条），
+// 列表项永不被拆散，表格整体保留，过短的引导语并入其后的列表——模拟人工分条发送
+function splitResponse(text) {
+  if (!text) return [];
+  const lines = String(text).split('\n');
+  const isRow = l => /^\s*\|.*\|\s*$/.test(l);
+  const isItem = l => /^\s*([-•*–]|\d+[.)]|[a-z][.)])\s+\S/.test(l);
+  const kindOf = l => isRow(l) ? 'table' : (isItem(l) ? 'item' : 'para');
+  const chunks = []; let cur = []; let curKind = null;
+  const flush = () => { const s = cur.join('\n').replace(/\n+$/, ''); if (s.trim()) chunks.push(s); cur = []; curKind = null; };
+  for (let i = 0; i < lines.length; i++) {
+    const ln = lines[i];
+    if (ln.trim() === '') { flush(); continue; }
+    const k = kindOf(ln);
+    if (cur.length && k !== curKind && curKind !== 'table' && k !== 'table') flush();
+    if (!cur.length) curKind = k;
+    cur.push(ln);
+    if (curKind === 'para' && cur.join('\n').length > 400) flush();
+  }
+  flush();
+  const out = [];
+  for (const c of chunks) {
+    const prev = out[out.length - 1];
+    if (prev && prev.length < 45) out[out.length - 1] = prev + '\n' + c;
+    else out.push(c);
+  }
+  return out.length ? out : [text];
+}
+// 思考延迟取决于「答案长度」而非用户输入长度，并带随机抖动，避免固定节拍感
+function thinkTime(chunk, i) {
+  const base = i === 0 ? 200 : 120;
+  return Math.min(base + chunk.length * 3, 620) + Math.random() * 150;
+}
 async function sendMessage(forceText, forceIntent, forceProduct) {
   if (state.isTyping) return; const input = document.getElementById('chatInput');
   const text = (forceText || input.value).trim(); if (!text) return;
   if (text.length > 500) { addMessage('bot', I18N.tooLong[state.lang] || I18N.tooLong['en']); input.value = ''; autoResize(input); updateCharCount(); return; }
   input.value = ''; autoResize(input); updateCharCount(); state.conversationRound++;
-  addMessage('user', text); showTyping();
-  await new Promise(r => setTimeout(r, Math.min(700 + text.length * 12, 2200)));
-  hideTyping(); const response = generateResponse(text, forceIntent, forceProduct); addMessage('bot', response); renderQuickReplies();
+  appendRaw('user', text);
+  const chunks = splitResponse(generateResponse(text, forceIntent, forceProduct));
+  for (let i = 0; i < chunks.length; i++) {
+    showTyping(UI_TEXT.typing[state.lang] || UI_TEXT.typing.en);
+    await sleep(thinkTime(chunks[i], i));
+    hideTyping();
+    await addMessage('bot', chunks[i], { stream: true });
+  }
+  renderQuickReplies();
 }
 
 function handleKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
@@ -957,7 +1092,7 @@ function exportChat() {
   const text = state.messages.map(m => `[${m.time}] ${m.type==='user'?'Customer':'GreenCraft'}: ${m.text.replace(/\*\*/g,'').replace(/\n/g,' ')}`).join('\n\n');
   const blob = new Blob([text], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'greencraft-chat-'+new Date().toISOString().slice(0,10)+'.txt'; a.click();
 }
-function clearChat() { state.messages = []; state.context = { topic:null, product:null, intent:null }; state.conversationRound = 0; initWelcome(); }
+function clearChat() { hideTyping(); state.messages = []; state.context = { topic:null, product:null, intent:null }; state.conversationRound = 0; renderMessages(); initWelcome(); }
 
 // ═══════════════ DEMO SCENARIOS ═══════════════
 const DEMO_SCENARIOS = {
@@ -1105,10 +1240,13 @@ async function startDemo(scenarioId) {
       document.getElementById('chatInput').value = '';
       addMessage('user', step.text);
     } else if (step.type === 'bot') {
-      showTyping();
-      await sleep((800 + step.text.length * 8) * demoState.speed);
-      hideTyping();
-      addMessage('bot', step.text);
+      const parts = splitResponse(step.text);
+      for (let p = 0; p < parts.length; p++) {
+        showTyping(UI_TEXT.typing[state.lang] || UI_TEXT.typing.en);
+        await sleep(Math.min((360 + parts[p].length * 3) * demoState.speed, 1200));
+        hideTyping();
+        await addMessage('bot', parts[p], { stream: true, stepMs: 14 * demoState.speed });
+      }
     }
   }
 
@@ -1442,7 +1580,13 @@ generateResponse = function(text, forcedIntent, forcedProduct) {
 
 function initParticles() { const c = document.getElementById('particles'); for (let i = 0; i < 25; i++) { const p = document.createElement('div'); p.className = 'particle'; const s = Math.random() * 3 + 1; p.style.width = s + 'px'; p.style.height = s + 'px'; p.style.left = Math.random() * 100 + '%'; p.style.animationDuration = (Math.random() * 12 + 8) + 's'; p.style.animationDelay = (Math.random() * 10) + 's'; c.appendChild(p); } }
 
-function initWelcome() { addMessage('bot', (I18N.aiNotice[state.lang] || I18N.aiNotice['en']) + '\n\n' + (I18N.welcomeMsg[state.lang] || I18N.welcomeMsg['en'])); renderQuickReplies(); }
+async function initWelcome() {
+  // 欢迎语拆两条：AI 服务披露单独成条（合规可见），再送问候与能力清单，避免开场"一堵墙"
+  await addMessage('bot', I18N.aiNotice[state.lang] || I18N.aiNotice['en'], { stream: true });
+  await sleep(260);
+  await addMessage('bot', I18N.welcomeMsg[state.lang] || I18N.welcomeMsg['en'], { stream: true });
+  renderQuickReplies();
+}
 
 function init() {
   renderLangButtons(); renderCategories(); updateAllI18n(); initParticles(); initWelcome(); initDemoDropdown();
@@ -1454,6 +1598,12 @@ function init() {
     });
   });
   updatePlaceholder();
+  // 占位提示语每 5.2s 轮播一条（聚焦或有输入时暂停），像真人客服在动态引导
+  setInterval(() => {
+    const inp = document.getElementById('chatInput');
+    if (!inp || document.activeElement === inp || inp.value || phHints.length < 2) return;
+    phIndex = (phIndex + 1) % phHints.length; inp.placeholder = phHints[phIndex];
+  }, 5200);
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
