@@ -1,0 +1,2 @@
+# 每次运行 metrics.js 生成的时间戳快照，仅保留 canonical 版本
+tests/report/metrics-*T*.json

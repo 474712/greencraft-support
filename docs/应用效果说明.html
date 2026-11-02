@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>GreenCraft Pro · 应用效果说明</title>
+<link rel="stylesheet" href="assets/print.css">
+</head>
+<body>
+
+<!-- ══════════════════ 封面 ══════════════════ -->
+<div class="cover">
+  <div class="brand">GreenCraft Pro</div>
+  <h1>应用效果说明</h1>
+  <div class="subtitle">园林电动工具跨境智能客服系统</div>
+  <div class="rule"></div>
+  <div class="meta">
+    <div><b>参赛赛道</b>　第三届江苏省高校"丝路电商"创新挑战赛 · 赛道一 OPC 智能体创新应用</div>
+    <div><b>参赛团队</b>　丝路智算队</div>
+    <div><b>验证对象</b>　线上产物 <code>index.html</code> 中的真实引擎（未使用 mock）</div>
+    <div><b>报告版本</b>　v2.0（口径对齐版 · 2026-11-03）</div>
+  </div>
+  <div class="badges">
+    <span class="badge">意图准确率 100%</span>
+    <span class="badge">品类准确率 100%</span>
+    <span class="badge">一次解决率 98.6%</span>
+    <span class="badge">决策时延 0.05 ms</span>
+    <span class="badge">零外部请求</span>
+  </div>
+  <div class="callout" style="margin-top:26pt;text-align:left;">
+    <span class="callout-title">📌 本报告的数据口径</span>
+    本报告中的每一个数字，都由项目仓库中随代码提交的脚本对<b>线上产物本身</b>执行得出，可由任何第三方在本地复现。报告中<b>不含任何估算、推测或"行业普遍认为"式的数字</b>。凡本系统当前无法实测的指标（如客户满意度 CSAT、真实退货率），报告中明确标注为"需企业试点采集，当前无实测值"。
+  </div>
+</div>
+
+<!-- ══════════════════ 一、验证方法 ══════════════════ -->
+<h2>一、验证方法与可复现性</h2>
+
+<h3>1.1 为什么这份报告是可信的</h3>
+<p>智能体类参赛作品最常见的问题是"演示很好看，但说不清它到底准不准"。本项目采取的做法是：<strong>把测试直接架在生产产物上</strong>。</p>
+<p>线上产物 <code>index.html</code> 是一个零依赖的单文件应用，测试代码不重写、不复制任何业务逻辑，而是<b>在运行时把其中的 <code>&lt;script&gt;</code> 块抽取出来</b>，在 Node 的最小 DOM 桩中执行，直接调用线上真实的 <code>detectIntent</code> / <code>detectProduct</code> / <code>findKBResponse</code> / <code>findFuzzyScored</code> / <code>generateResponse</code>。因此"测试用例与实现脱节"这一类问题在本项目中<b>结构性地不可能发生</b>。</p>
+
+<h3>1.2 仓库结构</h3>
+<pre><code>greencraft-support/
+├── index.html              # 线上产物（唯一交付实现，零依赖单文件）
+├── docs/                   # 本次提交的文档材料
+│   ├── 方案设计文档.html
+│   ├── 应用效果说明.html          # 本文件
+│   ├── 作品简介.md
+│   ├── 演示讲解台词.md
+│   ├── 评审对照与答辩准备.md
+│   └── 提交物清单.md
+└── tests/
+    ├── engine.js            # 引擎加载器：抽取 index.html 的 script 并执行真实函数
+    ├── testset.json         # 调优集 280 条（人工标注）
+    ├── holdout.json         # 留出集  72 条（调优完成后新写）
+    ├── probes.json          # 流程探针 72 条
+    ├── run-tests.js         # 意图与品类回归
+    ├── metrics.js           # 实测指标生成器
+    └── report/              # 本报告的生成产物</code></pre>
+
+<h3>1.3 复现命令</h3>
+<pre><code># 1) 意图与品类回归（调优集 280 条）
+node tests/run-tests.js
+
+# 2) 留出集泛化验证（72 条）
+node tests/run-tests.js --set holdout.json
+
+# 3) 生成本报告的全部数字（输出 metrics-summary.json 与本文件的数据源）
+node tests/metrics.js</code></pre>
+<p>三条命令均无需安装任何依赖（仅需 Node ≥ 16），且直接读取仓库中的 <code>index.html</code>。</p>
+
+<!-- ══════════════════ 二、样本构成 ══════════════════ -->
+<h2>二、样本构成</h2>
+<table>
+  <thead><tr><th style="width:26%">测试集</th><th style="width:34%">用途</th><th class="num" style="width:14%">样本量</th><th>文件</th></tr></thead>
+  <tbody>
+    <tr><td>调优集</td><td>意图词表调优基准，用于确定强/弱特征词条</td><td class="num">280</td><td><code>tests/testset.json</code></td></tr>
+    <tr><td>留出集</td><td><b>调优完成之后新写</b>，用于检验词表对未见问法的泛化能力</td><td class="num">72</td><td><code>tests/holdout.json</code></td></tr>
+    <tr><td>流程探针</td><td>检验转人工 / 澄清追问 / 寒暄直答三条非业务分支</td><td class="num">72</td><td><code>tests/probes.json</code></td></tr>
+    <tr style="background:#eef4ec !important;"><td><b>回归合计</b></td><td><b>意图与品类标注回归</b></td><td class="num"><b>352</b></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3>2.1 标注口径</h3>
+<ul>
+  <li><b>意图 6 类</b>：故障诊断 / 养护保养 / 配件订购 / 保修咨询 / 选型对比 / 安全规范。</li>
+  <li><b>语种 8 种</b>：英 / 中 / 法 / 德 / 西 / 意 / 荷 / 葡，每语种约 44 条用例。</li>
+  <li><b>来源</b>：全部用例为对应语种母语客服的真实问法（例如荷兰语的 "Mijn grasmaaier start niet meer, help!"、葡萄牙语的 "O meu cortador não liga, o que faço?"），<b>未使用引擎内置关键词表的直译版本</b>——这一点很重要：若直接用引擎词表反推用例，准确率将失去意义。</li>
+  <li><b>留出集纪律</b>：72 条留出用例在词表调优<b>完成之后</b>才编写并一次性跑通，不用于反向修改词表。</li>
+</ul>
+
+<!-- ══════════════════ 三、核心指标 ══════════════════ -->
+<h2>三、核心指标</h2>
+<table>
+  <thead><tr><th style="width:30%">指标</th><th style="width:15%">实测值</th><th style="width:22%">分母</th><th>计算口径</th></tr></thead>
+  <tbody>
+    <tr><td>意图识别准确率</td><td><b>100%</b></td><td>352 / 352</td><td>判定意图与人工标注完全一致</td></tr>
+    <tr><td>品类识别准确率</td><td><b>100%</b></td><td>121 / 121</td><td>仅统计标注了品类的用例</td></tr>
+    <tr><td>知识库命中率</td><td><b>100%</b></td><td>352 / 352</td><td>命中精确条目 / 模糊条目 / 同语种通用条目</td></tr>
+    <tr><td>一次解决率</td><td><b>98.6%</b></td><td>347 / 352</td><td>无需澄清、无需转人工即给出对应答复</td></tr>
+    <tr><td>澄清追问触发率</td><td><b>1.4%</b></td><td>5 / 352</td><td>低置信度澄清 5 条 + 证据不足澄清 0 条</td></tr>
+    <tr><td>转人工触发率</td><td><b>0%</b></td><td>0 / 352</td><td>回归集均为业务问法，未触发转人工</td></tr>
+    <tr><td>转人工流程探针</td><td><b>100%</b></td><td>32 / 32</td><td>正确生成工单并转出</td></tr>
+    <tr><td>澄清追问流程探针</td><td><b>100%</b></td><td>24 / 24</td><td>触发追问或答复中主动反问（含问号）</td></tr>
+    <tr><td>寒暄直答流程探针</td><td><b>100%</b></td><td>16 / 16</td><td>走寒暄通道直接应答，未进入业务知识库</td></tr>
+    <tr><td>引擎决策时延（均值）</td><td><b>0.05 ms</b></td><td>352</td><td>意图 + 品类 + 检索 + 答复生成总耗时；预热后 3 轮取中位轮</td></tr>
+    <tr><td>引擎决策时延（P95）</td><td><b>0.10 ms</b></td><td>352</td><td>95 分位</td></tr>
+    <tr><td>端到端首字可见</td><td><b>802 ms</b></td><td>4 次采样</td><td>浏览器实测：提交到首字渲染</td></tr>
+    <tr><td>端到端全量渲染</td><td><b>3065 ms</b></td><td>4 次采样</td><td>浏览器实测：提交到答复完整渲染</td></tr>
+    <tr><td>外部网络请求数</td><td><b>0</b></td><td>—</td><td>浏览器 Performance 资源条目为空</td></tr>
+  </tbody>
+</table>
+
+<p class="small"><b>时延口径</b>：计时区间只包含 <code>generateResponse()</code>——线上一次请求的完整决策链（意图识别 → 品类识别 → 知识检索 → 置信度判定 → 答复生成），不含为人工标注比对而做的重复检测。测量前先预热代码，再清空以文本为键的归一化缓存，使每一轮都是"引擎已热、问题全新"的真实场景；重复 3 轮取均值居中的一轮作为对外口径。本机实测均值区间 <b>0.05–0.07 ms</b>，三轮原始值见 <code>tests/report/metrics-summary.json</code> 的 <code>engineLatencyMs.rounds</code>。</p>
+
+<div class="callout warn">
+<span class="callout-title">⚠ 两类时延不可混用</span>
+<b>引擎决策时延（0.05 ms）</b>是性能指标，衡量系统本身的决策成本；<b>端到端时延（802 ms / 3065 ms）</b>是体验指标，包含了产品<b>刻意设计</b>的拟人化节奏——思考停顿 360–1200 ms（带随机抖动）+ 逐字流式呈现 14 ms/步。后者的数值随答复长度变化，是"让用户觉得对面是个人在打字"的设计投入，不是性能问题。<b>答辩时若被追问"为什么 0.05 ms 的引擎要等 800 ms"，标准回答即在此。</b>
+</div>
+
+<!-- ══════════════════ 四、分语种 ══════════════════ -->
+<h2>四、分语种效果</h2>
+<table>
+  <thead><tr><th style="width:16%">语种</th><th class="num">样本量</th><th class="num">意图准确率</th><th class="num">知识库命中率</th><th class="num">一次解决率</th><th class="num">决策时延 (ms)</th></tr></thead>
+  <tbody>
+    <tr><td>英语 (en)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">95.5%</td><td class="num">0.069</td></tr>
+    <tr><td>中文 (zh)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">0.059</td></tr>
+    <tr><td>法语 (fr)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">0.060</td></tr>
+    <tr><td>德语 (de)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">97.7%</td><td class="num">0.077</td></tr>
+    <tr><td>西班牙语 (es)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">0.063</td></tr>
+    <tr><td>意大利语 (it)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">97.7%</td><td class="num">0.051</td></tr>
+    <tr><td>荷兰语 (nl)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">97.7%</td><td class="num">0.033</td></tr>
+    <tr><td>葡萄牙语 (pt)</td><td class="num">44</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td class="num">0.040</td></tr>
+  </tbody>
+</table>
+
+<p class="small">决策时延列取自同一次测量快照。8 个语种全部落在 <b>0.03–0.08 ms</b> 的同一量级，说明<b>语种之间没有量级差异</b>；但在亚毫秒尺度上，每语种仅 44 条样本的时延抖动足以覆盖组间差距，因此<b>不能据此得出"某语种更快"的结论</b>——对外只引用总体值 0.05 ms。</p>
+<figure>
+<svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <text x="16" y="18" font-size="11" font-weight="bold" fill="#1c2318">分语种一次解决率（%）</text>
+  <g font-size="9" fill="#3d4636">
+    <!-- rows: y baseline 40 + 24*i -->
+    <!-- en 95.5 -->
+    <text x="96" y="44" text-anchor="end">英语 en</text>
+    <rect x="106" y="33" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="33" width="535" height="14" fill="#2f6b3f"/>
+    <text x="676" y="44" fill="#2f6b3f" font-weight="bold">95.5%</text>
+    <!-- zh 100 -->
+    <text x="96" y="68" text-anchor="end">中文 zh</text>
+    <rect x="106" y="57" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="57" width="560" height="14" fill="#2f6b3f"/>
+    <text x="676" y="68" fill="#2f6b3f" font-weight="bold">100%</text>
+    <!-- fr -->
+    <text x="96" y="92" text-anchor="end">法语 fr</text>
+    <rect x="106" y="81" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="81" width="560" height="14" fill="#2f6b3f"/>
+    <text x="676" y="92" fill="#2f6b3f" font-weight="bold">100%</text>
+    <!-- de 97.7 -->
+    <text x="96" y="116" text-anchor="end">德语 de</text>
+    <rect x="106" y="105" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="105" width="547" height="14" fill="#6b8f4e"/>
+    <text x="676" y="116" fill="#2f6b3f" font-weight="bold">97.7%</text>
+    <!-- es -->
+    <text x="96" y="140" text-anchor="end">西语 es</text>
+    <rect x="106" y="129" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="129" width="560" height="14" fill="#2f6b3f"/>
+    <text x="676" y="140" fill="#2f6b3f" font-weight="bold">100%</text>
+    <!-- it -->
+    <text x="96" y="164" text-anchor="end">意语 it</text>
+    <rect x="106" y="153" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="153" width="547" height="14" fill="#6b8f4e"/>
+    <text x="676" y="164" fill="#2f6b3f" font-weight="bold">97.7%</text>
+    <!-- nl -->
+    <text x="96" y="188" text-anchor="end">荷兰语 nl</text>
+    <rect x="106" y="177" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="177" width="547" height="14" fill="#6b8f4e"/>
+    <text x="676" y="188" fill="#2f6b3f" font-weight="bold">97.7%</text>
+    <!-- pt -->
+    <text x="96" y="212" text-anchor="end">葡语 pt</text>
+    <rect x="106" y="201" width="560" height="14" fill="#eef2ea"/>
+    <rect x="106" y="201" width="560" height="14" fill="#2f6b3f"/>
+    <text x="676" y="212" fill="#2f6b3f" font-weight="bold">100%</text>
+  </g>
+  <g font-size="8" fill="#8a6d3b">
+    <rect x="106" y="228" width="9" height="9" fill="#2f6b3f"/><text x="120" y="236">100%（无需澄清或转人工即答复）</text>
+    <rect x="320" y="228" width="9" height="9" fill="#6b8f4e"/><text x="334" y="236">97.7%（1 条触发澄清追问）</text>
+  </g>
+</svg>
+<figcaption>图 4-1　各语种一次解决率（8 语种全部 ≥ 95.5%）</figcaption>
+</figure>
+<p class="small">说明：非 100% 的 5 条用例均为<b>低置信度澄清</b>（引擎主动反问而非硬答），属于设计上的正确行为——在证据不足时提问，好过硬答。分布为：英语 2 条，德语、意大利语、荷兰语各 1 条。</p>
+
+<!-- ══════════════════ 五、分意图 ══════════════════ -->
+<h2>五、分意图效果</h2>
+<table>
+  <thead><tr><th style="width:22%">意图</th><th class="num">样本量</th><th class="num">意图准确率</th><th class="num">知识库命中率</th><th class="num">一次解决率</th><th style="width:32%">备注</th></tr></thead>
+  <tbody>
+    <tr><td>故障诊断 (troubleshoot)</td><td class="num">65</td><td class="num">100%</td><td class="num">100%</td><td class="num">92.3%</td><td>5 条澄清全部集中于此</td></tr>
+    <tr><td>养护保养 (maintenance)</td><td class="num">63</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td>—</td></tr>
+    <tr><td>配件订购 (parts)</td><td class="num">64</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td>—</td></tr>
+    <tr><td>保修咨询 (warranty)</td><td class="num">56</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td>—</td></tr>
+    <tr><td>选型对比 (compare)</td><td class="num">48</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td>—</td></tr>
+    <tr><td>安全规范 (safety)</td><td class="num">56</td><td class="num">100%</td><td class="num">100%</td><td class="num">100%</td><td>—</td></tr>
+  </tbody>
+</table>
+<p class="small">澄清用例集中于故障诊断，符合工程直觉：故障描述的信息量最少（"不转了"可能对应供电、卡滞、过热、磨损五种原因），最难在单轮内判定，因此设计上就该走追问。</p>
+
+<!-- ══════════════════ 六、流程探针 ══════════════════ -->
+<h2>六、端到端流程效果</h2>
+<p>除业务问答外，本项目对三条<b>非业务分支</b>做了专项验证。这三条分支恰好是客服系统最容易出问题、也最容易被评委现场追问的地方。</p>
+<table>
+  <thead><tr><th style="width:36%">探针</th><th class="num">样本量</th><th class="num">正确进入分支</th><th class="num">触发率</th><th>判定口径</th></tr></thead>
+  <tbody>
+    <tr><td>转人工请求<br><span class="small">应生成工单并转出</span></td><td class="num">32</td><td class="num">32</td><td class="num"><b>100%</b></td><td>答复中含格式化工单号</td></tr>
+    <tr><td>信息不足的模糊提问<br><span class="small">应主动追问</span></td><td class="num">24</td><td class="num">24</td><td class="num"><b>100%</b></td><td>触发澄清追问 <b>或</b> 答复中主动反问（含问号）</td></tr>
+    <tr><td>寒暄与致谢<br><span class="small">应直接应答，不污染业务上下文</span></td><td class="num">16</td><td class="num">16</td><td class="num"><b>100%</b></td><td>走寒暄通道，未进入业务知识库</td></tr>
+  </tbody>
+</table>
+<p class="small">探针文案为母语客服的真实问法，未使用引擎内置触发词表的直译版本。例如转人工探针包含"我想找真人聊一下""Pásame con un asesor de verdad""Mi passi con un addetto""Verbind mij met een adviseur"等非模板化表达。</p>
+
+<h3>6.1 引擎改进前后对照（同一探针集）</h3>
+<figure>
+<svg viewBox="0 0 900 224" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <text x="16" y="18" font-size="11" font-weight="bold" fill="#1c2318">改进前后对照：同一探针集上的触发率（%）</text>
+  <g font-size="9" fill="#3d4636">
+    <!-- group 1: handoff -->
+    <text x="150" y="42" text-anchor="middle" font-weight="bold" fill="#1c2318">转人工触发率</text>
+    <rect x="60" y="52" width="180" height="13" fill="#eef2ea"/><rect x="60" y="52" width="79" height="13" fill="#a8631b"/>
+    <text x="246" y="63" fill="#a8631b" font-weight="bold">43.8%</text>
+    <text x="60" y="80" fill="#8a6d3b" font-size="8">修复前</text>
+    <rect x="60" y="94" width="180" height="13" fill="#eef2ea"/><rect x="60" y="94" width="180" height="13" fill="#2f6b3f"/>
+    <text x="246" y="105" fill="#2f6b3f" font-weight="bold">100%</text>
+    <text x="60" y="122" fill="#6b7360" font-size="8">修复后</text>
+
+    <!-- group 2: vague -->
+    <text x="440" y="42" text-anchor="middle" font-weight="bold" fill="#1c2318">模糊提问澄清率</text>
+    <rect x="350" y="52" width="180" height="13" fill="#eef2ea"/><rect x="350" y="52" width="135" height="13" fill="#a8631b"/>
+    <text x="536" y="63" fill="#a8631b" font-weight="bold">75%</text>
+    <text x="350" y="80" fill="#8a6d3b" font-size="8">修复前</text>
+    <rect x="350" y="94" width="180" height="13" fill="#eef2ea"/><rect x="350" y="94" width="180" height="13" fill="#2f6b3f"/>
+    <text x="536" y="105" fill="#2f6b3f" font-weight="bold">100%</text>
+    <text x="350" y="122" fill="#6b7360" font-size="8">修复后</text>
+
+    <!-- group 3: smalltalk -->
+    <text x="730" y="42" text-anchor="middle" font-weight="bold" fill="#1c2318">寒暄直答率</text>
+    <rect x="640" y="52" width="180" height="13" fill="#eef2ea"/><rect x="640" y="52" width="158" height="13" fill="#a8631b"/>
+    <text x="826" y="63" fill="#a8631b" font-weight="bold">87.5%</text>
+    <text x="640" y="80" fill="#8a6d3b" font-size="8">修复前</text>
+    <rect x="640" y="94" width="180" height="13" fill="#eef2ea"/><rect x="640" y="94" width="180" height="13" fill="#2f6b3f"/>
+    <text x="826" y="105" fill="#2f6b3f" font-weight="bold">100%</text>
+    <text x="640" y="122" fill="#6b7360" font-size="8">修复后</text>
+  </g>
+  <line x1="16" y1="140" x2="884" y2="140" stroke="#d8ddcf"/>
+  <g font-size="8.5" fill="#3d4636">
+    <text x="16" y="158" font-weight="bold" fill="#1c2318">修复内容：</text>
+    <text x="76" y="158">① 转人工由「8 语种各 6–9 条固定短语表」改为「人工对象词 / 服务渠道词 × 联系动词 / 请求词」复合判定，覆盖真实问法；</text>
+    <text x="76" y="174">② 寒暄由整句精确匹配改为「精确匹配 + 短句包含匹配」，致谢不再落入业务兜底；</text>
+    <text x="76" y="190">③ 补充法语故障表达（ça ne marche pas / ne fonctionne plus 等），使 8 语种同义句识别一致；</text>
+    <text x="76" y="206">④ 无品类时的通用故障答复由「启动排查」改为跨场景分诊（供电 / 安全开关 / 异物 / 过热 / 磨损），并反问设备与现象。</text>
+  </g>
+</svg>
+<figcaption>图 6-1　同一探针集上的改进前后对照</figcaption>
+</figure>
+
+<div class="note">
+<span class="note-title">为什么把这张对照表放进报告</span>
+智能体作品的可信度不来自"我做得很好"，而来自"我知道自己哪里做得不好，并且能量化地改进它"。上表的每一项改进都对应探针集上可复现的失败用例，而非主观优化。<code>node tests/metrics.js</code> 每次运行都会<b>自动复测</b>这一组探针，因此任何回归都会立即暴露。
+</div>
+
+<!-- ══════════════════ 七、覆盖能力 ══════════════════ -->
+<h2>七、覆盖能力</h2>
+<table>
+  <thead><tr><th style="width:40%">项</th><th class="num" style="width:20%">数量</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>支持语种</td><td class="num">8</td><td>en / zh / fr / de / es / it / nl / pt，每语种独立维护词表与知识文本</td></tr>
+    <tr><td>意图类别</td><td class="num">6</td><td>故障诊断 / 养护保养 / 配件订购 / 保修咨询 / 选型对比 / 安全规范</td></tr>
+    <tr><td>产品品类</td><td class="num">10</td><td>界面分类筛选条已覆盖全部 10 个品类</td></tr>
+    <tr><td>知识库条目</td><td class="num">241</td><td>按 意图 × 品类 × 语种 三维索引</td></tr>
+    <tr><td>意图词表</td><td class="num">48 张</td><td>6 意图 × 8 语种</td></tr>
+    <tr><td>意图词条</td><td class="num">1939</td><td>强特征 + 弱特征合计</td></tr>
+    <tr><td>寒暄类别</td><td class="num">3</td><td>问候 / 致谢 / 告别，8 语种各一组</td></tr>
+    <tr><td>情绪词表</td><td class="num">8 组</td><td>负面情绪词，各语种独立维护</td></tr>
+    <tr><td>演示场景</td><td class="num">4</td><td>英文 / 法语 / 德语 / 中文各一，支持三档播放速度</td></tr>
+    <tr><td>交付文件数</td><td class="num">1</td><td>index.html（含字体、词表、知识库，零外部依赖）</td></tr>
+  </tbody>
+</table>
+<h3>7.1 分语种知识库覆盖</h3>
+<table class="compact">
+  <thead><tr><th>语种</th><th class="num">英语 en</th><th class="num">中文 zh</th><th class="num">法语 fr</th><th class="num">德语 de</th><th class="num">西语 es</th><th class="num">意语 it</th><th class="num">荷兰语 nl</th><th class="num">葡语 pt</th></tr></thead>
+  <tbody>
+    <tr><td>知识条目</td><td class="num">34</td><td class="num">33</td><td class="num">29</td><td class="num">29</td><td class="num">29</td><td class="num">29</td><td class="num">29</td><td class="num">29</td></tr>
+    <tr><td>占比</td><td class="num">14.1%</td><td class="num">13.7%</td><td class="num">12.0%</td><td class="num">12.0%</td><td class="num">12.0%</td><td class="num">12.0%</td><td class="num">12.0%</td><td class="num">12.0%</td></tr>
+  </tbody>
+</table>
+<p class="small">各语种条目数不完全相等，是因为部分条目（如故障分诊、选型对比）按语种撰写时长度与条目切分不同，并非"某语种覆盖不足"。<b>知识库命中率在 8 个语种上均为 100%</b>，说明覆盖均衡性在效果层面已达标。</p>
+
+<!-- ══════════════════ 八、交互效果 ══════════════════ -->
+<h2>八、前端交互与时延实测</h2>
+<h3>8.1 端到端时延（浏览器实测）</h3>
+<table class="compact">
+  <thead><tr><th>用例</th><th class="num">首字可见 (ms)</th><th class="num">全量渲染 (ms)</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>en · "My mower will not start"</td><td class="num">572 / 595</td><td class="num">4242 / 4152</td><td rowspan="2">每条用例重复 2 次取样；共 4 次采样</td></tr>
+    <tr><td>zh · "草坪机无法启动怎么办"</td><td class="num">1009 / 1032</td><td class="num">1939 / 1926</td></tr>
+  </tbody>
+</table>
+<p class="small"><b>测量方法</b>：覆写 <code>window.sendMessage</code> 记录提交时刻与整轮完成时刻，用 <code>MutationObserver</code> 记录机器人气泡首次出现非空文本的时刻作为"首字渲染"。</p>
+<div class="callout warn">
+<span class="callout-title">⚠ 口径</span>
+端到端时延包含产品刻意设计的<b>拟人化节奏</b>：思考停顿 360–1200 ms（随机抖动）+ 逐字流式呈现 14 ms/步。其数值随答复长度变化，属于<b>体验指标</b>；引擎决策时延（0.05 ms 级）才是<b>性能指标</b>，二者不可混用。
+</div>
+
+<h3>8.2 「判定依据」透明化卡片</h3>
+<p>每条机器人答复下方附一张卡片，展示引擎的判定链路。这是本项目在"技术创新性"维度的关键设计——把智能体的内部决策变成用户与运营<b>可核验的对象</b>。</p>
+<table class="compact">
+  <thead><tr><th style="width:24%">卡片字段</th><th>示例（英语 · 草坪机无法启动）</th></tr></thead>
+  <tbody>
+    <tr><td>意图判定</td><td>故障诊断（Troubleshooting）</td></tr>
+    <tr><td>强特征命中</td><td>won't start</td></tr>
+    <tr><td>品类</td><td>草坪修剪机 / Lawn Mower</td></tr>
+    <tr><td>检索方式</td><td>精确条目命中 / 模糊命中 / 同语种通用条目</td></tr>
+    <tr><td>置信度</td><td>100%</td></tr>
+    <tr><td>转人工时</td><td>触发转人工规则 · 已生成工单 GC-XXXXXX</td></tr>
+  </tbody>
+</table>
+
+<h3>8.3 其他可现场验证的特性</h3>
+<ul>
+  <li><b>零外部请求</b>：浏览器 Performance 资源条目为空，无第三方脚本、无字体 CDN、无埋点。</li>
+  <li><b>字体本地兜底</b>：字体以 base64 内嵌为 woff2，同时配置系统字体栈，断网环境下排版不塌。</li>
+  <li><b>矮屏适配</b>：针对 <code>max-height: 820px</code> 与 <code>max-height: 660px</code> 两档做布局压缩，笔记本投屏与 16:9 投影均可用。</li>
+  <li><b>导出与清空</b>：顶栏提供对话导出与清空，便于运营留存与演示复位。</li>
+</ul>
+
+<!-- ══════════════════ 九、边界 ══════════════════ -->
+<h2>九、已知边界与未采集指标</h2>
+<div class="callout warn">
+<span class="callout-title">⚠ 明确列出"我们没有的数据"</span>
+以下指标<b>当前没有实测值</b>，本报告不做任何数字呈现，也不得在答辩中以任何形式声称已有实测值。它们需要与真实出海品牌开展试点后采集。
+</div>
+<table>
+  <thead><tr><th style="width:30%">指标</th><th style="width:24%">状态</th><th>采集方式与前置条件</th></tr></thead>
+  <tbody>
+    <tr><td>客户满意度 CSAT</td><td><span class="tag tag-est">无实测值</span></td><td>需接入真实会话并采集用户评分</td></tr>
+    <tr><td>真实转人工率</td><td><span class="tag tag-est">无实测值</span></td><td>需真实流量；当前 0% 仅为回归集口径</td></tr>
+    <tr><td>真实一次解决率</td><td><span class="tag tag-est">无实测值</span></td><td>98.6% 为标注回归集口径，非生产口径</td></tr>
+    <tr><td>退货率变化</td><td><span class="tag tag-est">无实测值</span></td><td>需接入订单与退货数据</td></tr>
+    <tr><td>复购率变化</td><td><span class="tag tag-est">无实测值</span></td><td>需接入复购数据</td></tr>
+    <tr><td>人力成本节省</td><td><span class="tag tag-est">无实测值</span></td><td>需真实客服规模与工时数据</td></tr>
+  </tbody>
+</table>
+
+<h3>9.1 技术边界</h3>
+<table class="compact">
+  <thead><tr><th style="width:30%">边界</th><th>说明与后续动作</th></tr></thead>
+  <tbody>
+    <tr><td>跨语种输入</td><td>意图识别按<b>当前 UI 语种</b>的词表匹配。用户在英语界面输入法语提问，需先切换界面语种。当前<b>未实现</b>自动语种识别，计划在 V3 以轻量语种识别器解决（该能力已在《方案设计文档》演进路线中标注为规划中）。</td></tr>
+    <tr><td>知识库规模</td><td>241 条属于"精编小样本"，覆盖深度好但广度有限。扩至万级需要接入厂商 FAQ 与维修手册并解决术语校对与增量更新。</td></tr>
+    <tr><td>工单不落库</td><td>工单号在浏览器端生成，不写入工单系统、不派发坐席。真实落地需接工单 API。</td></tr>
+    <tr><td>IoT 与 AR</td><td>均<b>未实现</b>，属于路线图能力。演示脚本中出现的"电池 145 次循环"等为场景设定文案，非真实数据采集。</td></tr>
+    <tr><td>无大模型</td><td>引擎为封闭标签集规则引擎，不做开放域生成。大模型作为 V3 的<b>兜底层</b>接入，而非主决策层。</td></tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════ 十、结论 ══════════════════ -->
+<h2>十、结论</h2>
+<p>在可复现的回归口径下，GreenCraft Pro 的意图识别准确率 100%、品类识别准确率 100%、知识库命中率 100%、一次解决率 98.6%，三类流程探针触发率均为 100%，单次引擎决策 0.05 ms（P95 0.10 ms），且全程零外部网络请求。</p>
+<p>比数字更重要的是这些数字的<b>可核验性</b>：测试直接运行在生产产物上，脚本随代码提交，任何人执行三条命令即可复现全部结论；对无法在本阶段实测的指标，本报告选择留白而非填充估算值。</p>
+<p>这一取舍本身即是本作品对"OPC 智能体"命题的回答——在售后这类<b>答错代价不对称</b>的场景里，一个能被审计、能被证伪、能被部署到客户自己服务器上的智能体，比一个更能"自由发挥"的智能体更有商业价值。</p>
+
+<div class="note" style="margin-top:20pt;">
+<span class="note-title">报告生成与版本</span>
+本报告数据由 <code>node tests/metrics.js</code> 于 2026-11-02 生成，代码版本见 <code>tests/report/metrics-summary.json</code> 的 <code>build</code> 字段。失败用例：<b>0 条</b>。
+</div>
+
+</body>
+</html>

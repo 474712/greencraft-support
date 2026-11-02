@@ -1,0 +1,35 @@
+{
+  "note": "同一探针集（tests/probes.json）在引擎修复前后的实测对比，用于《应用效果说明》与答辩的「改进前后」证据。前一行为修复前的历史实测，后一行由 tests/metrics.js 每次运行时用当前线上代码自动填充。",
+  "runs": [
+    {
+      "id": "before",
+      "label": "修复前（2026-11-02 修复前的一次完整实测）",
+      "handoffRate": 43.8,
+      "vagueRate": 75,
+      "smalltalkRate": 87.5,
+      "intentAccuracy": 100,
+      "productAccuracy": 100,
+      "changes": [
+        "转人工仅靠 8 语种各 6–9 条固定短语表匹配，真实问法（如「我想找真人聊一下」「Pásame con un asesor」）漏判",
+        "寒暄必须整句精确匹配，「Thanks a lot for your help」「Hartelijk dank」落到兜底",
+        "法语「Ça ne marche pas」未被识别为故障意图（其余 7 语种同义句均可识别）",
+        "无品类时的通用答复是「启动排查」，与「设备不工作」这类非启动类问题不匹配"
+      ]
+    },
+    {
+      "id": "after",
+      "label": "修复后（当前线上代码，每次运行自动复测）",
+      "handoffRate": 100,
+      "vagueRate": 100,
+      "smalltalkRate": 100,
+      "intentAccuracy": 100,
+      "productAccuracy": 100,
+      "changes": [
+        "转人工改为「人工对象词/服务渠道词 × 联系动词/请求词」复合判定，8 语种真实问法全覆盖",
+        "寒暄改为整句精确匹配 + 短句包含匹配，致谢/问候不再落入业务兜底",
+        "补充法语故障表达（ça ne marche pas / ne fonctionne plus 等），8 语种同义句识别一致",
+        "无品类的通用故障答复改为跨场景分诊（供电/安全开关/异物/过热/磨损），并反问设备与现象"
+      ]
+    }
+  ]
+}

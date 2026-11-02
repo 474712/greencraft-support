@@ -1,0 +1,137 @@
+/* GreenCraft Pro · 提交文档打印样式（用于导出 PDF） */
+@page { size: A4; margin: 16mm 14mm 16mm 14mm; }
+
+:root {
+  --ink: #1c2318;
+  --ink-2: #3d4636;
+  --muted: #6b7360;
+  --line: #d8ddcf;
+  --accent: #2f6b3f;
+  --accent-2: #6b8f4e;
+  --soft: #f2f5ee;
+  --soft-2: #e7ede1;
+  --warn: #a8631b;
+  --warn-bg: #fdf4e6;
+  --done: #2f6b3f;
+  --done-bg: #eef4ec;
+  --plan: #8a6d3b;
+  --plan-bg: #f6f1e4;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  font-family: "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.75;
+  color: var(--ink);
+  background: #fff;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+h1, h2, h3, h4 { font-family: "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif; color: var(--ink); }
+h1 { font-size: 20pt; margin: 0 0 6pt; letter-spacing: .5px; }
+h2 {
+  font-size: 14pt; margin: 20pt 0 8pt; padding: 0 0 5pt;
+  border-bottom: 1.6pt solid var(--accent); color: var(--accent);
+}
+h3 { font-size: 11.5pt; margin: 13pt 0 5pt; color: var(--ink); }
+h3::before { content: "▍"; color: var(--accent-2); margin-right: 5px; }
+h4 { font-size: 10.5pt; margin: 10pt 0 4pt; color: var(--ink-2); }
+p { margin: 5pt 0; text-align: justify; }
+
+a { color: var(--accent); text-decoration: none; }
+
+ul, ol { margin: 5pt 0; padding-left: 20pt; }
+li { margin: 2pt 0; }
+
+code, .mono { font-family: "JetBrains Mono", Consolas, "Courier New", monospace; font-size: 9pt; background: var(--soft); padding: 0 3px; border-radius: 2px; }
+
+/* ---------- 封面 ---------- */
+.cover { height: 248mm; display: flex; flex-direction: column; justify-content: center; page-break-after: always; text-align: center; }
+.cover .brand { font-size: 9pt; letter-spacing: 4pt; color: var(--accent-2); text-transform: uppercase; }
+.cover h1 { font-size: 28pt; margin: 14pt 0 6pt; }
+.cover .subtitle { font-size: 15pt; color: var(--ink-2); margin-bottom: 26pt; }
+.cover .rule { width: 58mm; height: 2pt; background: var(--accent); margin: 0 auto 26pt; }
+.cover .meta { font-size: 10pt; color: var(--muted); line-height: 2.1; }
+.cover .meta b { color: var(--ink); font-weight: 600; }
+.cover .badges { margin-top: 22pt; }
+.cover .badge {
+  display: inline-block; border: .8pt solid var(--accent); color: var(--accent);
+  border-radius: 12pt; padding: 2pt 12pt; font-size: 9pt; margin: 3pt 4pt;
+}
+
+/* ---------- 目录 ---------- */
+.toc { page-break-after: always; }
+.toc ol { list-style: none; padding-left: 0; counter-reset: toc; }
+.toc ol > li { counter-increment: toc; margin: 3pt 0; font-size: 10pt; }
+.toc ol > li::before { content: counter(toc) ". "; color: var(--accent); font-weight: 600; }
+.toc ol ol { padding-left: 18pt; font-size: 9.5pt; color: var(--ink-2); }
+.toc ol ol > li { counter-increment: none; margin: 1pt 0; }
+.toc ol ol > li::before { content: "· "; color: var(--accent-2); }
+
+/* ---------- 表格 ---------- */
+table { width: 100%; border-collapse: collapse; margin: 8pt 0 10pt; font-size: 9pt; }
+th, td { border: .7pt solid var(--line); padding: 4.5pt 6pt; vertical-align: top; text-align: left; line-height: 1.55; }
+th { background: var(--soft-2); font-weight: 600; color: var(--ink); }
+tbody tr:nth-child(even) td { background: #fafbf8; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.compact { font-size: 8.5pt; }
+table.compact th, table.compact td { padding: 3.5pt 5pt; }
+
+/* ---------- 提示块 ---------- */
+.note, .callout {
+  border-left: 2.5pt solid var(--accent); background: var(--soft);
+  padding: 7pt 11pt; margin: 9pt 0; border-radius: 0 3px 3px 0; font-size: 9.5pt;
+}
+.callout.warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.callout.title { border-left-color: var(--accent-2); }
+.note b, .callout b { color: var(--ink); }
+.note-title, .callout-title { font-weight: 600; font-size: 10pt; display: block; margin-bottom: 3pt; }
+
+/* ---------- 状态标签 ---------- */
+.tag { display: inline-block; border-radius: 3px; padding: 0.5pt 6pt; font-size: 8.5pt; font-weight: 600; white-space: nowrap; }
+.tag-done { background: var(--done-bg); color: var(--done); border: .7pt solid var(--done); }
+.tag-plan { background: var(--plan-bg); color: var(--plan); border: .7pt solid var(--plan); }
+.tag-measured { background: #e8f0f6; color: #245a86; border: .7pt solid #245a86; }
+.tag-est { background: #f6e9f2; color: #8a3f78; border: .7pt solid #8a3f78; }
+
+/* ---------- 图 ---------- */
+figure { margin: 12pt 0 14pt; page-break-inside: avoid; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-size: 9pt; color: var(--muted); text-align: center; margin-top: 5pt; }
+
+/* ---------- 代码块 ---------- */
+pre {
+  background: #1e2418; color: #e8ecdf; padding: 9pt 12pt; border-radius: 4px;
+  font-family: "JetBrains Mono", Consolas, "Courier New", monospace;
+  font-size: 8.5pt; line-height: 1.6; overflow: visible; white-space: pre-wrap;
+  margin: 8pt 0;
+}
+pre code { background: none; color: inherit; padding: 0; font-size: 8.5pt; }
+
+/* ---------- 其他 ---------- */
+.kv { display: grid; grid-template-columns: 26mm 1fr; gap: 2pt 10pt; font-size: 9.5pt; margin: 6pt 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+
+.pill-row { margin: 6pt 0; }
+.small { font-size: 9pt; color: var(--muted); }
+.center { text-align: center; }
+.pb { page-break-after: always; }
+.avoid-break { page-break-inside: avoid; }
+
+.legend { font-size: 9pt; color: var(--muted); margin: -4pt 0 8pt; }
+.legend span { margin-right: 14px; white-space: nowrap; }
+.legend i { display: inline-block; width: 9pt; height: 9pt; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+
+@media print {
+  a { color: inherit; }
+  h2, h3 { page-break-after: avoid; }
+  figure, .callout, .note { page-break-inside: avoid; }
+  table { page-break-inside: auto; }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+}

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>GreenCraft Pro 园林电动工具跨境智能客服系统 · 方案设计文档</title>
+<link rel="stylesheet" href="assets/print.css">
+</head>
+<body>
+
+<!-- ══════════════════ 封面 ══════════════════ -->
+<div class="cover">
+  <div class="brand">GreenCraft Pro</div>
+  <h1>园林电动工具跨境智能客服系统</h1>
+  <div class="subtitle">方案设计文档</div>
+  <div class="rule"></div>
+  <div class="meta">
+    <div><b>作品名称</b>　园林电动工具多语种智能客服系统</div>
+    <div><b>参赛赛道</b>　第三届江苏省高校"丝路电商"创新挑战赛 · 赛道一 OPC 智能体创新应用</div>
+    <div><b>参赛团队</b>　丝路智算队</div>
+    <div><b>演示形态</b>　单文件 HTML 应用（零依赖 · 零构建 · 离线可用）</div>
+    <div><b>文档版本</b>　v2.0（口径对齐版 · 2026-11-03）</div>
+  </div>
+  <div class="badges">
+    <span class="badge">8 语种</span>
+    <span class="badge">10 品类</span>
+    <span class="badge">6 意图</span>
+    <span class="badge">241 条知识条目</span>
+    <span class="badge">决策时延 0.05 ms</span>
+    <span class="badge">零外部请求</span>
+  </div>
+</div>
+
+<!-- ══════════════════ 目录 ══════════════════ -->
+<div class="toc">
+  <h1 style="text-align:center;font-size:16pt;margin-bottom:16pt;">目　录</h1>
+  <ol>
+    <li>项目背景与赛道定位
+      <ol><li>行业痛点与市场机会</li><li>赛道要求逐条对齐</li><li>设计目标与取舍原则</li></ol>
+    </li>
+    <li>系统架构与技术实现
+      <ol><li>总体架构</li><li>技术选型六轴对比</li><li>文本归一化与拼写纠错</li><li>意图识别：加权评分算法</li><li>品类识别与型号解析</li><li>知识检索链路</li><li>交互层与决策透明化</li><li>工程化与可复现性</li></ol>
+    </li>
+    <li>核心功能模块
+      <ol><li>八语种全链路覆盖</li><li>六类意图自动路由</li><li>十个产品品类</li><li>故障分诊与主动追问</li><li>澄清追问机制</li><li>转人工工单</li><li>寒暄与情绪路由</li><li>演示模式与透明化</li></ol>
+    </li>
+    <li>实现边界：已实现与规划中
+      <ol><li>边界总表</li><li>口径声明</li></ol>
+    </li>
+    <li>业务流程与工作流规范
+      <ol><li>Before / After 流程对比</li><li>业务时序图</li><li>工作流规范状态机</li></ol>
+    </li>
+    <li>实测效果与验证方法</li>
+    <li>落地可行性与部署形态</li>
+    <li>商业化路径与定价</li>
+    <li>履约与运营可行性</li>
+    <li>演进路线</li>
+    <li>原创性说明</li>
+  </ol>
+</div>
+
+<!-- ══════════════════ 一、项目背景 ══════════════════ -->
+<h2>一、项目背景与赛道定位</h2>
+
+<div class="callout warn">
+<span class="callout-title">⚠ 全文口径声明</span>
+本文档严格区分四类信息，并在正文中逐一标注：
+<span class="tag tag-done">已实现</span>＝可直接在演示原型中复现；
+<span class="tag tag-plan">规划中</span>＝路线图内的下一阶段，当前<b>不可演示</b>；
+<span class="tag tag-measured">实测</span>＝由可复现脚本跑出的真实数字；
+<span class="tag tag-est">测算</span>＝基于行业基准的<b>推算值</b>，非本系统实测值。
+凡未标注"实测"的数字，一律不得在答辩中表述为"我们已经做到"。
+</div>
+
+<h3>1.1 行业痛点与市场机会</h3>
+<p>园林电动工具（草坪修剪机、电动修枝剪、电链锯、绿篱修剪机、高压清洗机、割灌机、微耕机、碎木机、吹叶机、智能割草机器人）是中国出海占比最高的机电品类之一。与一般消费品不同，这类产品具有三个硬特征，直接决定了售后服务的形态：</p>
+<ul>
+  <li><b>故障即咨询。</b>用户购买后最常发生的动作不是"退货"，而是"启动不了 / 没劲 / 异响 / 漏油"。这类问题占售后的绝大多数，且多数可由用户自行解决——前提是有人告诉他怎么排查。</li>
+  <li><b>语言即门槛。</b>终端市场分布在欧美本地化电商渠道，同一品牌要面对英、法、德、西、意、荷、葡多套语言与多套安全规范（CE / ANSI / EN 等）。</li>
+  <li><b>时区即成本。</b>中国与欧美主要市场存在 6–12 小时时差，人工客服不可能覆盖 24 小时，排班成本与响应时延同时被放大。</li>
+</ul>
+<p>本项目把"多语种 + 全时段 + 低成本"这三个约束同时作为硬指标，用一套可离线运行的规则引擎解决，目标是让中小型出海品牌用<b>一台电脑、一个文件</b>就能开出一条 8 语种售后通道。</p>
+
+<h3>1.2 赛道要求逐条对齐</h3>
+<p>依据《江苏银行杯第三届江苏省高校丝路电商创新挑战赛评审细则》，赛道一为 OPC 智能体创新应用赛道，评审从六个维度打分，业务场景中"跨境客服"权重 20%。下表为本作品与评审维度的对应关系与达成方式，具体得分预估见随附《评审对照与答辩准备》。</p>
+<table>
+  <thead><tr><th style="width:26%">评审维度（权重）</th><th style="width:37%">赛道期望</th><th>本作品的达成方式</th><th style="width:12%">状态</th></tr></thead>
+  <tbody>
+    <tr><td>技术创新性<br><span class="small">20%</span></td><td>智能体具备可解释的自主决策能力，技术路线有差异化</td><td>加权评分意图引擎 + 词边界模糊检索 + <b>决策依据透明化</b>（每条答复下方给出命中特征、品类、置信度、检索方式），把"黑箱生成"改造成"可核验路由"</td><td><span class="tag tag-done">已实现</span></td></tr>
+    <tr><td>场景贴合度<br><span class="small">20%</span></td><td>贴合跨境电商真实场景，业务闭环清晰</td><td>以园林工具售后为唯一垂直场景做到 8 语种 × 10 品类 × 6 意图；覆盖直答、追问、转人工三类出口</td><td><span class="tag tag-done">已实现</span></td></tr>
+    <tr><td>落地可行性<br><span class="small">15%</span></td><td>可部署、可运营、成本可控</td><td>单文件零依赖交付，双击即用；零外部请求、零数据外传，可直接内嵌到品牌官网或电商 IM</td><td><span class="tag tag-done">已实现</span></td></tr>
+    <tr><td>方案完整性<br><span class="small">15%</span></td><td>架构、数据、流程、部署方案齐备</td><td>本文档 + 应用效果说明 + 可演示原型 + 可复现测试脚本四件套，架构、算法、状态机、部署、演进路线完整</td><td><span class="tag tag-done">已实现</span></td></tr>
+    <tr><td>产业应用价值<br><span class="small">15%</span></td><td>为产业创造可衡量的价值</td><td>以"减少一次往返沟通"和"拦截退货"为价值主线，<b>价值指标全部以可复现脚本实测</b>，测算值单独标注</td><td><span class="tag tag-done">已实现</span></td></tr>
+    <tr><td>履约与运营可行性<br><span class="small">15%</span></td><td>团队有能力按时交付并运营</td><td>已在原型上跑通端到端链路，测试脚本与指标生成器随代码提交，可复现；商业化路径见第八章</td><td><span class="tag tag-done">已实现</span></td></tr>
+  </tbody>
+</table>
+
+<h3>1.3 设计目标与取舍原则</h3>
+<p>面对"要不要上大模型"这一选项，我们先明确本项目要解决的是<b>售后知识路由</b>问题，而非开放域生成问题。据此确立四条取舍原则：</p>
+<ol>
+  <li><b>可核验优先于生成质量。</b>售后回答错一条代价极高（可能导致损坏或安全事故）。规则引擎的每一条结论都可回溯到命中词与知识条目，能被审计。</li>
+  <li><b>可离线优先于能力上限。</b>出海品牌的客服数据涉及订单与设备信息，纯前端方案意味着数据不出浏览器，从根上规避数据合规成本。</li>
+  <li><b>可解释优先于流畅度。</b>我们把引擎内部的判定依据直接展示给用户与运营，这既是产品特性，也是本赛道"智能体自主决策可解释"命题的直接答案。</li>
+  <li><b>实测优先于宣称。</b>凡是能测的数字一律用脚本跑出来并公开复现命令；不能测的（如 CSAT、真实退货率）明确写为"需企业试点采集"。</li>
+</ol>
+
+<!-- ══════════════════ 二、系统架构 ══════════════════ -->
+<h2>二、系统架构与技术实现</h2>
+
+<h3>2.1 总体架构</h3>
+<p>系统采用四层结构，全部逻辑与数据封装在单个 HTML 文件中，浏览器解析即运行，无构建步骤、无运行时依赖、无网络请求。</p>
+
+<figure>
+<svg viewBox="0 0 900 448" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2f6b3f"/></marker>
+    <marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8a6d3b"/></marker>
+  </defs>
+  <!-- layer band helper: 接入层 -->
+  <rect x="12" y="8" width="876" height="76" rx="6" fill="#f2f5ee" stroke="#d8ddcf"/>
+  <text x="24" y="26" font-size="11" font-weight="bold" fill="#2f6b3f">接入层</text>
+  <rect x="30" y="34" width="196" height="40" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="128" y="50" font-size="9.5" text-anchor="middle" fill="#1c2318">浏览器 · 单文件 HTML</text>
+  <text x="128" y="65" font-size="8" text-anchor="middle" fill="#6b7360">已实现 · 演示形态</text>
+  <rect x="240" y="34" width="196" height="40" rx="4" fill="#fff" stroke="#c9d0be" stroke-dasharray="4 3"/>
+  <text x="338" y="50" font-size="9.5" text-anchor="middle" fill="#3d4636">电商平台 IM 适配器</text>
+  <text x="338" y="65" font-size="8" text-anchor="middle" fill="#8a6d3b">规划中</text>
+  <rect x="450" y="34" width="196" height="40" rx="4" fill="#fff" stroke="#c9d0be" stroke-dasharray="4 3"/>
+  <text x="548" y="50" font-size="9.5" text-anchor="middle" fill="#3d4636">WhatsApp / 邮件渠道</text>
+  <text x="548" y="65" font-size="8" text-anchor="middle" fill="#8a6d3b">规划中</text>
+  <rect x="660" y="34" width="216" height="40" rx="4" fill="#fff" stroke="#c9d0be" stroke-dasharray="4 3"/>
+  <text x="768" y="50" font-size="9.5" text-anchor="middle" fill="#3d4636">语音 / 配件商城下单</text>
+  <text x="768" y="65" font-size="8" text-anchor="middle" fill="#8a6d3b">规划中</text>
+
+  <!-- 交互层 -->
+  <rect x="12" y="104" width="876" height="76" rx="6" fill="#f2f5ee" stroke="#d8ddcf"/>
+  <text x="24" y="122" font-size="11" font-weight="bold" fill="#2f6b3f">交互层</text>
+  <rect x="30" y="130" width="196" height="40" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="128" y="146" font-size="9.5" text-anchor="middle" fill="#1c2318">流式渲染 · 拟人化节奏</text>
+  <text x="128" y="161" font-size="8" text-anchor="middle" fill="#6b7360">逐字呈现 · 思考停顿</text>
+  <rect x="240" y="130" width="196" height="40" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="338" y="146" font-size="9.5" text-anchor="middle" fill="#1c2318">快捷回复 · 判定依据卡片</text>
+  <text x="338" y="161" font-size="8" text-anchor="middle" fill="#6b7360">命中特征 · 置信度</text>
+  <rect x="450" y="130" width="196" height="40" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="548" y="146" font-size="9.5" text-anchor="middle" fill="#1c2318">多轮上下文追踪</text>
+  <text x="548" y="161" font-size="8" text-anchor="middle" fill="#6b7360">品类 / 主题 / 追问链</text>
+  <rect x="660" y="130" width="216" height="40" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="768" y="146" font-size="9.5" text-anchor="middle" fill="#1c2318">演示模式 · 标注浮层</text>
+  <text x="768" y="161" font-size="8" text-anchor="middle" fill="#6b7360">4 场景 · 3 档速度</text>
+
+  <!-- 决策层 -->
+  <rect x="12" y="200" width="876" height="96" rx="6" fill="#eef2ea" stroke="#c2cdb6"/>
+  <text x="24" y="218" font-size="11" font-weight="bold" fill="#2f6b3f">决策层（引擎内核，全部在浏览器执行）</text>
+  <rect x="30" y="228" width="150" height="54" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="105" y="248" font-size="9.5" text-anchor="middle" fill="#1c2318">文本归一化</text>
+  <text x="105" y="262" font-size="8" text-anchor="middle" fill="#6b7360">_normText</text>
+  <text x="105" y="275" font-size="7.5" text-anchor="middle" fill="#6b7360">小写·纠错·去音标</text>
+  <rect x="194" y="228" width="150" height="54" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="269" y="248" font-size="9.5" text-anchor="middle" fill="#1c2318">意图识别</text>
+  <text x="269" y="262" font-size="8" text-anchor="middle" fill="#6b7360">detectIntent</text>
+  <text x="269" y="275" font-size="7.5" text-anchor="middle" fill="#6b7360">强/弱特征加权评分</text>
+  <rect x="358" y="228" width="150" height="54" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="433" y="248" font-size="9.5" text-anchor="middle" fill="#1c2318">品类识别</text>
+  <text x="433" y="262" font-size="8" text-anchor="middle" fill="#6b7360">detectProduct</text>
+  <text x="433" y="275" font-size="7.5" text-anchor="middle" fill="#6b7360">关键词·系列·型号码</text>
+  <rect x="522" y="228" width="150" height="54" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="597" y="248" font-size="9.5" text-anchor="middle" fill="#1c2318">置信度与路由</text>
+  <text x="597" y="262" font-size="8" text-anchor="middle" fill="#6b7360">_decision</text>
+  <text x="597" y="275" font-size="7.5" text-anchor="middle" fill="#6b7360">强命中/弱命中/无</text>
+  <rect x="686" y="228" width="190" height="54" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="781" y="248" font-size="9.5" text-anchor="middle" fill="#1c2318">答复生成 · 工单</text>
+  <text x="781" y="262" font-size="8" text-anchor="middle" fill="#6b7360">generateResponse / makeTicket</text>
+  <text x="781" y="275" font-size="7.5" text-anchor="middle" fill="#6b7360">直答 · 追问 · 转人工</text>
+
+  <!-- 数据层 -->
+  <rect x="12" y="316" width="876" height="96" rx="6" fill="#eef2ea" stroke="#c2cdb6"/>
+  <text x="24" y="334" font-size="11" font-weight="bold" fill="#2f6b3f">数据层</text>
+  <rect x="30" y="344" width="196" height="56" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="128" y="364" font-size="9.5" text-anchor="middle" fill="#1c2318">意图词表</text>
+  <text x="128" y="378" font-size="8" text-anchor="middle" fill="#6b7360">48 张（6 意图 × 8 语种）</text>
+  <text x="128" y="391" font-size="8" text-anchor="middle" fill="#6b7360">共 1939 条词条</text>
+  <rect x="240" y="344" width="196" height="56" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="338" y="364" font-size="9.5" text-anchor="middle" fill="#1c2318">产品知识库</text>
+  <text x="338" y="378" font-size="8" text-anchor="middle" fill="#6b7360">241 条问答条目</text>
+  <text x="338" y="391" font-size="8" text-anchor="middle" fill="#6b7360">按 意图/品类/语种 三维索引</text>
+  <rect x="450" y="344" width="196" height="56" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="548" y="364" font-size="9.5" text-anchor="middle" fill="#1c2318">产品参数库</text>
+  <text x="548" y="378" font-size="8" text-anchor="middle" fill="#6b7360">10 个品类规格</text>
+  <text x="548" y="391" font-size="8" text-anchor="middle" fill="#6b7360">型号 · 料号 · 安全规范</text>
+  <rect x="660" y="344" width="216" height="56" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="768" y="364" font-size="9.5" text-anchor="middle" fill="#1c2318">运营规则表</text>
+  <text x="768" y="378" font-size="8" text-anchor="middle" fill="#6b7360">寒暄 · 情绪 · 转人工词表</text>
+  <text x="768" y="391" font-size="8" text-anchor="middle" fill="#6b7360">共情语 · 快捷回复集</text>
+
+  <!-- arrows -->
+  <path d="M450,86 L450,100" stroke="#2f6b3f" stroke-width="1.6" marker-end="url(#ar)"/>
+  <path d="M450,182 L450,196" stroke="#2f6b3f" stroke-width="1.6" marker-end="url(#ar)"/>
+  <path d="M450,298 L450,312" stroke="#2f6b3f" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="458" y="96" font-size="7.5" fill="#6b7360">请求</text>
+  <text x="458" y="192" font-size="7.5" fill="#6b7360">调用</text>
+  <text x="458" y="308" font-size="7.5" fill="#6b7360">查表</text>
+</svg>
+<figcaption>图 2-1　GreenCraft Pro 四层系统架构（实线＝已实现，虚线＝规划中）</figcaption>
+</figure>
+
+<div class="note">
+<span class="note-title">交付形态的关键含义</span>
+四层全部位于同一个 HTML 文件中：不需要 Node、不需要 npm、不需要构建工具、不需要后端、不需要 API Key。评委可直接双击打开 <code>index.html</code>，或访问已部署的线上地址。这既是"落地可行性"维度的直接证据，也决定了本方案在中小客户处的部署成本接近于零。
+</div>
+
+<h3>2.2 技术选型六轴对比</h3>
+<p>在赛道允许的各类技术路线中，我们按下表六个维度做了对比。评分越高越优，"本方案"一列即当前实现的真实水平。</p>
+<table class="compact">
+  <thead><tr>
+    <th style="width:15%">技术路线</th>
+    <th class="num">意图准确率</th><th class="num">首字时延</th><th class="num">离线可用</th><th class="num">单位成本</th><th class="num">术语可控</th><th class="num">数据合规</th><th style="width:22%">结论</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>传统 IVR / 工单系统</td><td class="num">低</td><td class="num">快</td><td class="num">是</td><td class="num">高</td><td class="num">低</td><td class="num">是</td><td>无法处理自由文本，非本赛道"智能体"</td></tr>
+    <tr><td>关键词 + 同义词词典</td><td class="num">中</td><td class="num">快</td><td class="num">是</td><td class="num">低</td><td class="num">中</td><td class="num">是</td><td>同义改写即漏判，跨语种几乎不可维护</td></tr>
+    <tr><td>大模型 API 直答</td><td class="num">高</td><td class="num">慢</td><td class="num">否</td><td class="num">按量</td><td class="num">中</td><td class="num">否</td><td>成本随会话线性增长，数据出域，错误不可控</td></tr>
+    <tr><td>RAG + 大模型</td><td class="num">高</td><td class="num">慢</td><td class="num">否</td><td class="num">高</td><td class="num">高</td><td class="num">否</td><td>知识库仍需维护，且引入向量库与外部依赖</td></tr>
+    <tr><td>本地小模型（7B 级）</td><td class="num">中</td><td class="num">慢</td><td class="num">是</td><td class="num">高</td><td class="num">中</td><td class="num">是</td><td>需 GPU 与运维，售后 PC 场景不现实</td></tr>
+    <tr style="background:#eef4ec !important;"><td><b>本方案：规则引擎 + 加权评分 + 词边界模糊检索</b></td><td class="num"><b>100%</b></td><td class="num"><b>0.05 ms</b></td><td class="num"><b>是</b></td><td class="num"><b>近零</b></td><td class="num"><b>高</b></td><td class="num"><b>是</b></td><td>选它：售后场景下<b>可核验</b>与<b>可离线</b>比"生成上限"更重要</td></tr>
+  </tbody>
+</table>
+<div class="callout warn">
+<span class="callout-title">⚠ 关于"100%"的诚实表述</span>
+上表的 100% 指<b>本项目 352 条标注用例</b>上的意图识别准确率（见第六章实测），不是对任意真实问法的普适承诺。样本规模、标注口径与复现命令全部公开在《应用效果说明》中。评委可自行运行脚本核验。
+</div>
+
+<h3>2.3 文本归一化与拼写纠错</h3>
+<p>所有匹配都建立在归一化文本之上，顺序不可调换：</p>
+<ol>
+  <li><b>小写化</b>：消除大小写差异。</li>
+  <li><b>拼写纠错（TYPO_MAP）</b>：覆盖售后场景高频手输错误与 OCR 错误，如 <code>wont start</code> → <code>won't start</code>、<code>shoud</code> → <code>should</code>、<code>batery</code> → <code>battery</code>。</li>
+  <li><b>音标折叠</b>：法语 <code>ça</code>、德语 <code>ä/ö/ü</code>、西班牙语 <code>í/ñ</code>、葡萄牙语 <code>ã/ç</code> 等统一折叠为基础字母，德语 <code>ß</code> → <code>ss</code>。这样同一套词表可同时覆盖带音标与不带音标两种输入习惯。</li>
+</ol>
+<p>词边界匹配采用 Unicode 属性类 <code>(?&lt;![\p{L}\p{N}])…(?![\p{L}\p{N}])</code>，对拉丁语种按词边界命中（避免 <code>person</code> 误中 <code>personal</code>），对中日韩字符按包含匹配。匹配正则按词条缓存，避免重复编译。</p>
+
+<h3>2.4 意图识别：加权评分算法</h3>
+<p>每个意图在每个语种下维护一张<strong>强特征词表</strong>与一张<strong>弱特征词表</strong>（共 48 张表、1939 条词条）。识别时对用户文本逐条比对并加权累加：</p>
+<ul>
+  <li>强特征：最长匹配 × 3.0，其余命中 × 1.0；</li>
+  <li>弱特征：每条 × 0.4；</li>
+  <li>最终得分最高者胜出；<b>只有弱特征命中而无强特征时，不判定意图</b>（转由澄清机制处理）。</li>
+</ul>
+<p>"最长匹配 × 3.0"的用意是抑制短词淹没长词：<code>start</code> 与 <code>won't start</code> 同时命中时，后者应当主导判定。弱特征低权重的用意是保留"用户在描述问题但信号不足"的状态，交由主动追问而非强行作答。</p>
+
+<h4>为什么不用大模型做意图识别</h4>
+<p>售后意图是<strong>封闭标签集</strong>（6 类），且每类都有可枚举的判别特征。用模型去做一个封闭分类问题，等于用不可核验的手段解决一个可核验的问题。更重要的是：售后场景下"漏判"（该转人工却硬答）与"误判"（该走故障却走了配件）代价不对称——前者会造成安全事故。因此引擎采取<b>宁可追问、不可硬答</b>的策略：证据不足时主动反问，绝不编造。</p>
+
+<h3>2.5 品类识别与型号解析</h3>
+<p>品类识别独立于意图识别，输出三路证据并加权：</p>
+<ul>
+  <li>产品关键词命中：最长关键词 × 3.0，其余 × 1.0；</li>
+  <li>型号编码命中（如 <code>GC-480E</code>、<code>LM2100SP</code>、<code>GC-2000PW</code>）：直接 +100，可同时确定品牌与品类；</li>
+  <li>产品系列命中（如 <code>P-500</code>、<code>Pro P-800</code>）：+30。</li>
+</ul>
+<p>由于当前状态（<code>state.context</code>）在多轮中保持，用户的追问（"I tried charging it but still nothing"）即使不再重复产品名，也能继承上一轮的品类，不会掉入通用兜底。</p>
+
+<h3>2.6 知识检索链路</h3>
+<p>知识库以 <code>KB[意图][品类][语种]</code> 三维组织，每条为一组问句与答复（<code>{q, a}</code>）。检索顺序为一条固定的降级链：</p>
+<figure>
+<svg viewBox="0 0 900 168" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <defs><marker id="ar3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2f6b3f"/></marker></defs>
+  <rect x="16" y="52" width="128" height="46" rx="4" fill="#fff" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="80" y="72" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">用户问题</text>
+  <text x="80" y="87" font-size="8" text-anchor="middle" fill="#6b7360">8 语种</text>
+  <path d="M148,75 L184,75" stroke="#2f6b3f" stroke-width="1.4" marker-end="url(#ar3)"/>
+
+  <rect x="188" y="20" width="140" height="40" rx="4" fill="#eef4ec" stroke="#2f6b3f"/>
+  <text x="258" y="37" font-size="9" text-anchor="middle" fill="#1c2318">① 品类 + 语种精确命中</text>
+  <text x="258" y="51" font-size="8" text-anchor="middle" fill="#6b7360">KB[意图][品类][语种]</text>
+
+  <rect x="188" y="66" width="140" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="258" y="83" font-size="9" text-anchor="middle" fill="#1c2318">② 通用 + 语种</text>
+  <text x="258" y="97" font-size="8" text-anchor="middle" fill="#6b7360">KB[意图][general][语种]</text>
+
+  <rect x="188" y="112" width="140" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="258" y="129" font-size="9" text-anchor="middle" fill="#1c2318">③ 默认 + 语种</text>
+  <text x="258" y="143" font-size="8" text-anchor="middle" fill="#6b7360">KB[意图][default][语种]</text>
+
+  <path d="M332,40 L364,62" stroke="#2f6b3f" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <path d="M332,86 L364,86" stroke="#2f6b3f" stroke-width="1.2" marker-end="url(#ar3)"/>
+  <path d="M332,132 L364,108" stroke="#2f6b3f" stroke-width="1.2" marker-end="url(#ar3)"/>
+
+  <rect x="368" y="52" width="150" height="62" rx="4" fill="#eef2ea" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="443" y="74" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">模糊评分检索</text>
+  <text x="443" y="89" font-size="8" text-anchor="middle" fill="#6b7360">findFuzzyScored</text>
+  <text x="443" y="102" font-size="8" text-anchor="middle" fill="#6b7360">CJK 二元组 · 拉丁词边界</text>
+
+  <path d="M522,83 L556,83" stroke="#2f6b3f" stroke-width="1.4" marker-end="url(#ar3)"/>
+  <rect x="560" y="20" width="150" height="40" rx="4" fill="#fff" stroke="#2f6b3f"/>
+  <text x="635" y="37" font-size="9" text-anchor="middle" fill="#1c2318">精确条目命中</text>
+  <text x="635" y="51" font-size="8" text-anchor="middle" fill="#6b7360">直接返回标准答复</text>
+  <rect x="560" y="66" width="150" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="635" y="83" font-size="9" text-anchor="middle" fill="#1c2318">模糊条目命中</text>
+  <text x="635" y="97" font-size="8" text-anchor="middle" fill="#6b7360">按置信度加权排序</text>
+  <rect x="560" y="112" width="150" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="635" y="129" font-size="9" text-anchor="middle" fill="#1c2318">同语种通用条目</text>
+  <text x="635" y="143" font-size="8" text-anchor="middle" fill="#6b7360">跨品类兜底</text>
+
+  <path d="M714,83 L748,83" stroke="#2f6b3f" stroke-width="1.4" marker-end="url(#ar3)"/>
+  <rect x="752" y="52" width="132" height="62" rx="4" fill="#eef4ec" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="818" y="76" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">答复 + 判定依据</text>
+  <text x="818" y="92" font-size="8" text-anchor="middle" fill="#6b7360">含命中特征与检索方式</text>
+  <text x="818" y="105" font-size="8" text-anchor="middle" fill="#6b7360">用户可核验</text>
+</svg>
+<figcaption>图 2-2　知识检索降级链与模糊匹配</figcaption>
+</figure>
+<p>模糊检索对中文采用<b>二元组（bigram）</b>重叠度，对拉丁语种采用<b>词边界</b>重叠度，置信度 = 命中片段数 / 分母，条目得分 = 基础分 × (1 + 置信度 × 0.5)。该链路保证：在 241 条条目规模下，任何一个能判定意图的问题都能命中至少一条同语种条目。</p>
+
+<h3>2.7 交互层与决策透明化</h3>
+<p>本项目区别于普通客服 Demo 的一个设计：<strong>每条机器人答复下方都附一张「判定依据」卡片</strong>，展示引擎的内部决策链路：</p>
+<ul>
+  <li>命中的<b>强特征</b>原文（如"无法启动""won't start"）；</li>
+  <li>命中的<b>弱特征</b>（如有）；</li>
+  <li>识别出的<b>品类</b>；</li>
+  <li>识别出的<b>型号</b>（如 <code>GC-480E</code>）；</li>
+  <li><b>检索方式</b>：精确命中 / 模糊命中 / 同语种通用条目 / 冷启动问候 / 触发转人工规则；</li>
+  <li><b>置信度百分比</b>。</li>
+</ul>
+<p>这一设计把智能体的决策过程从"黑箱"变成"可审计对象"，同时也是演示中最有说服力的一段——评委可以指着任意一条答复追问"它为什么这么答"，答案就在卡片里。</p>
+
+<h3>2.8 工程化与可复现性</h3>
+<p>测试与指标生成脚本随代码提交，<b>直接抽取线上 <code>index.html</code> 中的 <code>&lt;script&gt;</code> 块在 Node 中执行真实引擎函数</b>，不做任何 mock：</p>
+<pre><code>tests/
+├── engine.js        # 引擎加载器：抽取 index.html 的 script，在最小 DOM 桩中执行真实函数
+├── testset.json     # 调优集 280 条（6 意图 × 8 语种，人工标注）
+├── holdout.json     # 留出集  72 条（调优完成后新写，用于检验泛化）
+├── probes.json      # 流程探针：转人工 32 / 澄清 24 / 寒暄 16
+├── run-tests.js     # 意图与品类回归
+├── metrics.js       # 实测指标生成器（输出 JSON + Markdown 报告）
+└── report/          # 生成的指标报告</code></pre>
+<p>复现命令：</p>
+<pre><code>node tests/run-tests.js
+node tests/run-tests.js --set holdout.json
+node tests/metrics.js</code></pre>
+
+<!-- ══════════════════ 三、核心功能 ══════════════════ -->
+<h2>三、核心功能模块</h2>
+
+<h3>3.1 八语种全链路覆盖</h3>
+<p>语言覆盖不是"UI 翻译"，而是<b>三处同时本地化</b>：界面文案（<code>I18N</code>）、意图词表（<code>INTENT_PATTERNS[intent][lang]</code>）、知识条目（<code>KB[...][lang]</code>）。当前覆盖英、中、法、德、西、意、荷、葡 8 语种，每种语言都独立维护了自己的意图词表与知识文本，而非机翻后共用。</p>
+<table class="compact">
+  <thead><tr><th>语种</th><th class="num">意图词条</th><th class="num">知识条目</th><th>代表问法（真实用户口吻）</th></tr></thead>
+  <tbody>
+    <tr><td>英语 en</td><td class="num">—</td><td class="num">34</td><td>"My mower just stopped working, it was fine yesterday."</td></tr>
+    <tr><td>中文 zh</td><td class="num">—</td><td class="num">33</td><td>"草坪机无法启动怎么办"</td></tr>
+    <tr><td>法语 fr</td><td class="num">—</td><td class="num">29</td><td>"Ça ne marche pas, qu'est-ce que je fais ?"</td></tr>
+    <tr><td>德语 de</td><td class="num">—</td><td class="num">29</td><td>"Meine Kettensäge verliert Öl und schneidet nicht mehr richtig."</td></tr>
+    <tr><td>西班牙语 es</td><td class="num">—</td><td class="num">29</td><td>"La batería de mi cortacésped dura cada vez menos."</td></tr>
+    <tr><td>意大利语 it</td><td class="num">—</td><td class="num">29</td><td>"Il mio tosaerba non si accende, cosa devo fare?"</td></tr>
+    <tr><td>荷兰语 nl</td><td class="num">—</td><td class="num">29</td><td>"Mijn grasmaaier start niet meer, help!"</td></tr>
+    <tr><td>葡萄牙语 pt</td><td class="num">—</td><td class="num">29</td><td>"O meu cortador não liga, o que faço?"</td></tr>
+  </tbody>
+</table>
+<p class="small">意图词条为 48 张表的合计 1939 条（6 意图 × 8 语种），不按语种单独披露，避免因强/弱特征切分口径差异产生歧义。</p>
+
+<h3>3.2 六类意图自动路由</h3>
+<table>
+  <thead><tr><th style="width:16%">意图</th><th style="width:30%">判定依据（示例强特征）</th><th style="width:26%">处理出口</th><th>典型答复形态</th></tr></thead>
+  <tbody>
+    <tr><td>故障诊断<br><code>troubleshoot</code></td><td>无法启动、没反应、异响、漏油、不转、won't start、not working、ça ne marche pas、ne fonctionne plus</td><td>分步排查清单 → 若仍无解则转人工</td><td>编号步骤 + 安全提示</td></tr>
+    <tr><td>养护保养<br><code>maintenance</code></td><td>保养、清洁、磨刀、上油、换刀、wartung、entretien、manutenção</td><td>保养周期表 + 频次建议</td><td>按使用时长分档的建议</td></tr>
+    <tr><td>配件订购<br><code>parts</code></td><td>买、哪里买、型号、料号、备件、ersatzteil、pièce détachée、peça</td><td>配件表（料号 + 规格 + 自换难度）</td><td>Markdown 表格</td></tr>
+    <tr><td>保修咨询<br><code>warranty</code></td><td>保修、质保、多久、还在保吗、garantie、garanzía、garantia</td><td>期限 + 覆盖范围 + 所需凭证</td><td>结构化说明</td></tr>
+    <tr><td>选型对比<br><code>compare</code></td><td>哪个好、区别、推荐哪款、有什么区别、quelle、qual、welche</td><td>按用户约束条件推荐 + 排除说明</td><td>分档推荐 + 排除理由</td></tr>
+    <tr><td>安全规范<br><code>safety</code></td><td>安全、危险、护目镜、能用吗、sécurité、sicurezza、veiligheid</td><td>安全清单 + 法规标注</td><td>警示条目</td></tr>
+  </tbody>
+</table>
+
+<h3>3.3 十个产品品类</h3>
+<p>产品谱系覆盖 10 个品类：草坪修剪机、电动修枝剪、电链锯、绿篱修剪机、吹叶机、高压清洗机、割灌机、微耕机、碎木机、智能割草机器人。界面顶部的分类筛选条可直接锁定品类，配合品类级知识条目，使答复精度从"通用建议"提升到"该型号的料号与参数"。</p>
+
+<h3>3.4 故障分诊与主动追问</h3>
+<p>当用户描述故障但未指明品类时，系统不再笼统回答，而是给出<b>跨场景五路分诊</b>并反问关键信息：</p>
+<ul>
+  <li>供电（电池是否充满、是否插到位）；</li>
+  <li>安全开关（安全钥匙、扳机开关是否同时到位）；</li>
+  <li>异物（刀片/链条/叶轮卡草、树脂、石子）；</li>
+  <li>过热（重载后需 15–20 分钟冷却）；</li>
+  <li>磨损（刀片钝化、链条松、螺栓松动、滤网堵塞）。</li>
+</ul>
+<p>反问模板统一为"<b>是哪一款工具？具体表现是没反应 / 自动停机 / 力度不足 / 异响 / 震动？</b>"——既收集了后续排查所需的信息，又避免了在信息不足时给出可能有害的错误指导。</p>
+
+<h3>3.5 澄清追问机制</h3>
+<p>当仅有弱特征命中（置信度不足）时，系统不猜答案，而是用当前语种反问以补齐信息，并把连续未命中计数（<code>missCount</code>）纳入上下文：连续两次未命中即引导转人工，避免用户陷入"反复问、反复答不上来"的死循环。</p>
+
+<h3>3.6 转人工工单</h3>
+<p>转人工由<b>复合规则</b>判定，而非固定短语表：</p>
+<p class="mono">(人工对象词 ∨ 服务渠道词) ∧ (联系动词 ∨ 请求词)</p>
+<p>例如"人工 / 真人 / 客服 / 专员"、"hotline / help desk"、"sprechen / verbinden"、"转接 / 联系 / 对接"、"quiero / por favor"、"vorrei / per favore"、"ik wil / graag"、"quero / por favor" 等 8 语种词族，与连接词组合命中。转人工时系统生成结构化工单（工单号形如 <code>GC-XXXXXX</code>），附带用户问题、已识别意图与品类、已给建议摘要，并给出等待期自助路径。</p>
+<div class="note">
+<span class="note-title">为什么要改成复合规则</span>
+初版采用"8 语种各 6–9 条固定短语"的白名单表，在 32 条真实问法探针上仅 <b>43.8%</b> 触发率——像"我想找真人聊一下""Pásame con un asesor"这类自然表达全部漏判。改为复合规则后，同一探针集触发率升至 <b>100%</b>。这一改动已在《应用效果说明》第 5.1 节以"改进前后对照"形式公开。
+</div>
+
+<h3>3.7 寒暄与情绪路由</h3>
+<p>寒暄（问候 / 致谢 / 告别）与负面情绪被识别为<b>独立通道</b>：不进入业务知识库检索，不污染 <code>missCount</code> 与故障上下文，因此"谢谢"不会被误当作新问题开启一轮排查。情绪识别命中后，系统先输出共情语句再给方案（8 语种各自独立的共情文案），若仍无有效意图，则主动提供人工出口。</p>
+
+<h3>3.8 演示模式与标注浮层</h3>
+<p>顶栏「▶ 演示模式」提供 4 个预设场景（英文草坪机故障排查 / 法语修枝剪选型 / 德语链锯养护与配件 / 中文综合售后），支持慢 / 中 / 快三档播放速度，并以浮层标注演示者需要强调的观察点。该模式与真实交互走<b>同一条渲染链路</b>，不存在"演示专用逻辑"，因此演示所见即产品所得。</p>
+
+<!-- ══════════════════ 四、实现边界 ══════════════════ -->
+<h2>四、实现边界：已实现与规划中</h2>
+
+<h3>4.1 边界总表</h3>
+<p>本表是全文最重要的口径对照。左半部分为<strong>已实现</strong>（现场可演示、可复现），右半部分为<strong>规划中</strong>（下一阶段路线，<strong>当前不可演示</strong>）。</p>
+<table class="compact">
+  <thead><tr>
+    <th style="width:18%">能力域</th><th style="width:26%">已实现（可演示）</th><th style="width:30%">规划中（下一阶段）</th><th style="width:26%">当前边界说明</th>
+  </tr></thead>
+  <tbody>
+    <tr><td>对话引擎</td><td>规则引擎：加权评分意图识别 + 词边界模糊检索</td><td>接入大模型做开放域兜底；模型可配置切换</td><td>当前为封闭标签集分类，不做开放域生成</td></tr>
+    <tr><td>多语种</td><td>8 语种界面 / 词表 / 知识三处本地化</td><td>跨语种输入自动识别语种（免切换界面）</td><td>当前按 UI 语种匹配词表，跨语种输入需先切界面</td></tr>
+    <tr><td>翻译</td><td><b>无机器翻译</b>；各语种为独立撰写的内容</td><td>接入 LLM 或翻译 API 实现双向实时翻译</td><td>每条知识各语种独立维护，非机译</td></tr>
+    <tr><td>知识库规模</td><td>241 条问答条目，8 语种</td><td>接入厂商 FAQ / 维修手册，扩至万级</td><td>当前为可精编的高质量小样本</td></tr>
+    <tr><td>IoT 联动</td><td><b>无</b></td><td>接入设备端遥测（电池循环次数、电机温度）做预测性主动服务</td><td>演示中出现"电池 145 次循环"等内容属于<b>场景脚本设定</b>，非真实数据采集</td></tr>
+    <tr><td>AR 远程指导</td><td><b>无</b></td><td>AR 标注式远程指导（后续版本）</td><td>不作为当前能力宣称</td></tr>
+    <tr><td>配件交易</td><td>配件型号 / 料号 / 自换步骤 / 下单链接占位</td><td>对接配件商城与真实下单、支付、物流</td><td>当前不产生真实订单</td></tr>
+    <tr><td>工单</td><td>前端生成结构化工单号与摘要</td><td>写入工单系统并对接坐席工作台</td><td>工单不落库、不派发</td></tr>
+    <tr><td>数据采集</td><td><b>零外部请求</b>：无 fetch / XHR / 第三方脚本</td><td>可选埋点（默认关闭）</td><td>全部数据留在浏览器，可离线运行</td></tr>
+    <tr><td>品牌</td><td>GreenCraft Pro 为<strong>自建演示品牌</strong></td><td>换用真实合作品牌商标与产品库</td><td>GreenCraft 非真实注册商标，型号与料号均为演示虚构</td></tr>
+  </tbody>
+</table>
+
+<h3>4.2 口径声明</h3>
+<div class="callout warn">
+<span class="callout-title">⚠ 三条不可逾越的红线</span>
+<b>一、</b>不得把"规划中"的功能说成"已实现"。演示视频与答辩中若出现"大模型""实时翻译""IoT 联动""AR 指导"等词，必须同时说明这是路线图能力。<br>
+<b>二、</b>不得把"测算值"说成"实测值"。人力成本、响应时间、退货率、复购率等来自行业基准推算的数字，只能表述为"按行业基准测算"，且必须标注前提假设。<br>
+<b>三、</b>不得把"本系统 352 条用例上的准确率"说成"行业通用准确率"。样本规模、标注方式与复现命令必须同时出示。
+</div>
+
+<!-- ══════════════════ 五、业务流程 ══════════════════ -->
+<h2>五、业务流程与工作流规范</h2>
+
+<h3>5.1 Before / After 流程对比</h3>
+<figure>
+<svg viewBox="0 0 900 372" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <defs><marker id="ar4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#6b7360"/></marker>
+  <marker id="ar5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2f6b3f"/></marker></defs>
+
+  <text x="215" y="22" font-size="12" font-weight="bold" fill="#6b7360" text-anchor="middle">现状：多语种人工售后</text>
+  <text x="685" y="22" font-size="12" font-weight="bold" fill="#2f6b3f" text-anchor="middle">GreenCraft Pro</text>
+
+  <!-- left chain -->
+  <g stroke="#c9d0be" stroke-width="1" fill="#fff">
+    <rect x="95" y="38" width="240" height="34" rx="4" stroke="#c9d0be"/>
+    <rect x="95" y="86" width="240" height="34" rx="4" stroke="#c9d0be"/>
+    <rect x="95" y="134" width="240" height="34" rx="4" stroke="#c9d0be"/>
+    <rect x="95" y="182" width="240" height="34" rx="4" stroke="#c9d0be"/>
+    <rect x="95" y="230" width="240" height="34" rx="4" stroke="#c9d0be"/>
+  </g>
+  <g font-size="9.5" text-anchor="middle" fill="#3d4636">
+    <text x="215" y="59">用户提问（英/法/德/西…）</text>
+    <text x="215" y="107">人工翻译为中文理解</text>
+    <text x="215" y="155">等待时区重叠（6–12 h）</text>
+    <text x="215" y="203">单语种人工排查</text>
+    <text x="215" y="251">邮件回复，需重复描述问题</text>
+  </g>
+  <g stroke="#6b7360" stroke-width="1.2" marker-end="url(#ar4)">
+    <path d="M215,74 L215,84"/><path d="M215,122 L215,132"/><path d="M215,170 L215,180"/><path d="M215,218 L215,228"/>
+  </g>
+
+  <!-- right chain -->
+  <g stroke="#2f6b3f" stroke-width="1" fill="#eef4ec">
+    <rect x="565" y="38" width="240" height="34" rx="4" stroke="#2f6b3f"/>
+    <rect x="565" y="86" width="240" height="34" rx="4" stroke="#2f6b3f"/>
+    <rect x="565" y="134" width="240" height="34" rx="4" stroke="#2f6b3f"/>
+    <rect x="565" y="182" width="240" height="34" rx="4" stroke="#2f6b3f"/>
+    <rect x="565" y="230" width="240" height="34" rx="4" stroke="#2f6b3f"/>
+  </g>
+  <g font-size="9.5" text-anchor="middle" fill="#1c2318">
+    <text x="685" y="59">用户提问（8 语种）</text>
+    <text x="685" y="107">浏览器内归一化 + 意图判定</text>
+    <text x="685" y="155">知识检索（0.05 ms）</text>
+    <text x="685" y="203">直答 / 追问 / 转人工工单</text>
+    <text x="685" y="251">原语种答复 + 判定依据可核验</text>
+  </g>
+  <g stroke="#2f6b3f" stroke-width="1.4" marker-end="url(#ar5)">
+    <path d="M685,74 L685,84"/><path d="M685,122 L685,132"/><path d="M685,170 L685,180"/><path d="M685,218 L685,228"/>
+  </g>
+
+  <!-- comparison metrics -->
+  <rect x="16" y="284" width="868" height="72" rx="4" fill="#fafbf8" stroke="#d8ddcf"/>
+  <text x="30" y="304" font-size="9.5" font-weight="bold" fill="#1c2318">关键差异</text>
+  <g font-size="9">
+    <text x="30" y="324" fill="#6b7360">服务语种</text><text x="96" y="324" fill="#6b7360">1–2 种</text>
+    <text x="176" y="324" fill="#6b7360">→</text><text x="192" y="324" fill="#2f6b3f" font-weight="bold">8 种</text>
+    <text x="262" y="324" fill="#6b7360">服务时段</text><text x="328" y="324" fill="#6b7360">8 h/工作日</text>
+    <text x="418" y="324" fill="#6b7360">→</text><text x="434" y="324" fill="#2f6b3f" font-weight="bold">24/7</text>
+    <text x="504" y="324" fill="#6b7360">首次响应</text><text x="570" y="324" fill="#6b7360">5–15 min</text>
+    <text x="640" y="324" fill="#6b7360">→</text><text x="656" y="324" fill="#2f6b3f" font-weight="bold">802 ms（实测首字）</text>
+
+    <text x="30" y="344" fill="#6b7360">跨时区等待</text><text x="110" y="344" fill="#6b7360">6–12 h</text>
+    <text x="176" y="344" fill="#6b7360">→</text><text x="192" y="344" fill="#2f6b3f" font-weight="bold">0</text>
+    <text x="262" y="344" fill="#6b7360">重复描述</text><text x="328" y="344" fill="#6b7360">每次都要</text>
+    <text x="418" y="344" fill="#6b7360">→</text><text x="434" y="344" fill="#2f6b3f" font-weight="bold">上下文继承，不用重复</text>
+    <text x="504" y="344" fill="#6b7360">可审计</text><text x="570" y="344" fill="#6b7360">不可查</text>
+    <text x="640" y="344" fill="#6b7360">→</text><text x="656" y="344" fill="#2f6b3f" font-weight="bold">判定依据卡片</text>
+  </g>
+  <text x="30" y="362" font-size="7.5" fill="#8a6d3b">注：首次响应 802 ms 为浏览器实测值（4 次采样均值，含产品刻意设计的拟人化思考停顿与逐字流式呈现）；引擎决策本身为 0.05 ms。</text>
+</svg>
+<figcaption>图 5-1　售后处理流程 Before / After 对比</figcaption>
+</figure>
+
+<h3>5.2 业务时序图</h3>
+<figure>
+<svg viewBox="0 0 900 396" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <defs><marker id="ar6" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2f6b3f"/></marker>
+  <marker id="ar7" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#6b7360"/></marker></defs>
+  <!-- lifelines -->
+  <g stroke="#c9d0be" stroke-dasharray="4 3">
+    <path d="M90,56 L90,384"/><path d="M300,56 L300,384"/><path d="M510,56 L510,384"/><path d="M700,56 L700,384"/>
+  </g>
+  <g fill="#2f6b3f" font-size="9.5" font-weight="bold" text-anchor="middle">
+    <rect x="46" y="30" width="88" height="24" rx="12" fill="#eef4ec" stroke="#2f6b3f"/><text x="90" y="46">用户</text>
+    <rect x="248" y="30" width="104" height="24" rx="12" fill="#eef4ec" stroke="#2f6b3f"/><text x="300" y="46">前端引擎</text>
+    <rect x="452" y="30" width="116" height="24" rx="12" fill="#eef4ec" stroke="#2f6b3f"/><text x="510" y="46">意图 / 品类引擎</text>
+    <rect x="648" y="30" width="104" height="24" rx="12" fill="#eef4ec" stroke="#2f6b3f"/><text x="700" y="46">知识库</text>
+  </g>
+
+  <g font-size="8.5" fill="#3d4636">
+    <!-- 1 -->
+    <path d="M90,74 L296,74" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar6)"/>
+    <text x="110" y="69">① 用户提交问题（8 语种自由文本）</text>
+    <!-- 2 -->
+    <path d="M300,100 L506,100" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar6)"/>
+    <text x="320" y="95">② 归一化后请求意图判定</text>
+    <!-- 3 -->
+    <path d="M510,126 L696,126" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar6)"/>
+    <text x="530" y="121">③ 按 意图/品类/语种 取候选条目</text>
+    <!-- 4 -->
+    <path d="M700,152 L514,152" stroke="#6b7360" stroke-width="1.2" marker-end="url(#ar7)"/>
+    <text x="530" y="147">④ 返回候选条目与相似度</text>
+    <!-- 5 -->
+    <path d="M300,178 L94,178" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar6)"/>
+    <text x="120" y="173">⑤ 生成答复（含判定依据卡片）</text>
+    <!-- 6 clarify -->
+    <path d="M90,236 L296,236" stroke="#6b7360" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#ar7)"/>
+    <text x="110" y="231">⑥ 证据不足 → 反问补充信息（用户补充型号/现象）</text>
+    <path d="M300,262 L506,262" stroke="#6b7360" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#ar7)"/>
+    <text x="320" y="257">⑦ 重新判定（上下文继承品类）</text>
+    <!-- 8 handoff -->
+    <path d="M90,320 L296,320" stroke="#6b7360" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#ar7)"/>
+    <text x="110" y="315">⑧ 用户要求真人 / 连续未命中 → 生成工单转人工</text>
+    <path d="M300,346 L94,346" stroke="#6b7360" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#ar7)"/>
+    <text x="120" y="341">⑨ 返回工单号 + 等待期自助路径</text>
+  </g>
+</svg>
+<figcaption>图 5-2　一次售后咨询的完整业务时序</figcaption>
+</figure>
+
+<h3>5.3 工作流规范状态机</h3>
+<p>为保证不同语种、不同品类的出口行为一致，引擎遵循统一的工作流规范，每个状态只允许四类出口：<b>直答（DIRECT）</b>、<b>追问（CLARIFY）</b>、<b>转人工（HANDOFF）</b>、<b>兜底（FALLBACK）</b>。</p>
+<figure>
+<svg viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <defs><marker id="ar8" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2f6b3f"/></marker>
+  <marker id="ar9" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8a6d3b"/></marker></defs>
+
+  <rect x="20" y="134" width="96" height="40" rx="20" fill="#fff" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="68" y="152" font-size="10" text-anchor="middle" fill="#1c2318">输入</text>
+  <text x="68" y="166" font-size="7.5" text-anchor="middle" fill="#6b7360">state.lang</text>
+
+  <rect x="152" y="134" width="108" height="40" rx="4" fill="#fff" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="206" y="152" font-size="10" text-anchor="middle" fill="#1c2318">归一化</text>
+  <text x="206" y="166" font-size="7.5" text-anchor="middle" fill="#6b7360">_normText</text>
+  <path d="M118,154 L148,154" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar8)"/>
+
+  <rect x="296" y="30" width="116" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="354" y="48" font-size="10" text-anchor="middle" fill="#1c2318">寒暄判定</text>
+  <text x="354" y="62" font-size="7.5" text-anchor="middle" fill="#6b7360">问候 / 致谢 / 告别</text>
+
+  <rect x="296" y="134" width="116" height="40" rx="4" fill="#fff" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="354" y="152" font-size="10" text-anchor="middle" fill="#1c2318">意图判定</text>
+  <text x="354" y="166" font-size="7.5" text-anchor="middle" fill="#6b7360">强 / 弱特征评分</text>
+
+  <rect x="296" y="238" width="116" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
+  <text x="354" y="256" font-size="10" text-anchor="middle" fill="#1c2318">情绪判定</text>
+  <text x="354" y="270" font-size="7.5" text-anchor="middle" fill="#6b7360">负面情绪优先安抚</text>
+
+  <path d="M262,154 L292,154" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar8)"/>
+  <path d="M262,140 L272,140 L272,50 L292,50" stroke="#6b8f4e" stroke-width="1.2" fill="none" marker-end="url(#ar9)"/>
+  <path d="M262,168 L284,168 L284,258 L292,258" stroke="#6b8f4e" stroke-width="1.2" fill="none" marker-end="url(#ar9)"/>
+  <path d="M354,236 L354,178" stroke="#6b8f4e" stroke-width="1.2" fill="none" marker-end="url(#ar9)"/>
+  <text x="360" y="212" font-size="7.5" fill="#6b7360">情绪 → 先安抚再答复</text>
+
+  <rect x="452" y="134" width="116" height="40" rx="4" fill="#fff" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="510" y="152" font-size="10" text-anchor="middle" fill="#1c2318">品类判定</text>
+  <text x="510" y="166" font-size="7.5" text-anchor="middle" fill="#6b7360">关键词 / 型号码</text>
+  <path d="M414,154 L448,154" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar8)"/>
+
+  <rect x="452" y="238" width="116" height="40" rx="4" fill="#fff" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="510" y="256" font-size="10" text-anchor="middle" fill="#1c2318">置信度判定</text>
+  <text x="510" y="270" font-size="7.5" text-anchor="middle" fill="#6b7360">route = 强 / 弱 / 无</text>
+  <path d="M510,178 L510,234" stroke="#2f6b3f" stroke-width="1.3" marker-end="url(#ar8)"/>
+
+  <rect x="628" y="20" width="112" height="40" rx="4" fill="#eef4ec" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="684" y="38" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">SMALLTALK</text>
+  <text x="684" y="52" font-size="7.5" text-anchor="middle" fill="#6b7360">直接应答，不检索</text>
+  <path d="M414,50 L624,40" stroke="#6b8f4e" stroke-width="1.2" fill="none" marker-end="url(#ar9)"/>
+
+  <rect x="628" y="92" width="112" height="40" rx="4" fill="#eef4ec" stroke="#2f6b3f" stroke-width="1.4"/>
+  <text x="684" y="110" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">DIRECT 直答</text>
+  <text x="684" y="124" font-size="7.5" text-anchor="middle" fill="#6b7360">命中知识条目</text>
+
+  <rect x="628" y="156" width="112" height="40" rx="4" fill="#f6f1e4" stroke="#8a6d3b" stroke-width="1.4"/>
+  <text x="684" y="174" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">CLARIFY 追问</text>
+  <text x="684" y="188" font-size="7.5" text-anchor="middle" fill="#6b7360">仅弱命中 / 缺品类</text>
+
+  <rect x="628" y="220" width="112" height="40" rx="4" fill="#fdf4e6" stroke="#a8631b" stroke-width="1.4"/>
+  <text x="684" y="238" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">HANDOFF 转人工</text>
+  <text x="684" y="252" font-size="7.5" text-anchor="middle" fill="#6b7360">生成工单</text>
+
+  <rect x="628" y="284" width="112" height="40" rx="4" fill="#f2f5ee" stroke="#6b7360" stroke-width="1.4"/>
+  <text x="684" y="302" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">FALLBACK 兜底</text>
+  <text x="684" y="316" font-size="7.5" text-anchor="middle" fill="#6b7360">兜底 + 引导</text>
+
+  <path d="M568,242 L588,242 L588,112 L624,112" stroke="#2f6b3f" stroke-width="1.3" fill="none" marker-end="url(#ar8)"/>
+  <path d="M568,252 L600,252 L600,176 L624,176" stroke="#8a6d3b" stroke-width="1.3" fill="none" marker-end="url(#ar9)"/>
+  <path d="M568,262 L612,262 L612,240 L624,240" stroke="#a8631b" stroke-width="1.2" fill="none" marker-end="url(#ar9)"/>
+  <path d="M568,272 L624,304" stroke="#6b7360" stroke-width="1.2" fill="none" marker-end="url(#ar9)"/>
+
+  <text x="750" y="34" font-size="7.5" fill="#6b7360">不进入知识库检索</text>
+  <text x="750" y="46" font-size="7.5" fill="#6b7360">不累加未命中计数</text>
+  <text x="750" y="106" font-size="7.5" fill="#6b7360">含判定依据卡片</text>
+  <text x="750" y="118" font-size="7.5" fill="#6b7360">原语种输出</text>
+  <text x="750" y="170" font-size="7.5" fill="#6b7360">记 missCount</text>
+  <text x="750" y="182" font-size="7.5" fill="#6b7360">两次未中转人工</text>
+  <text x="750" y="234" font-size="7.5" fill="#6b7360">工单含完整上下文</text>
+  <text x="750" y="298" font-size="7.5" fill="#6b7360">反问缺失信息</text>
+</svg>
+<figcaption>图 5-3　售后答复工作流状态机</figcaption>
+</figure>
+
+<div class="note">
+<span class="note-title">规范要点</span>
+① 寒暄通道<b>不</b>进入知识库检索，<b>不</b>累加未命中计数；② 情绪命中时先安抚再给方案；③ 只有强特征命中才允许直接出答案，弱特征一律转 CLARIFY；④ HANDOFF 与 FALLBACK 两条路径互不重叠，工单一旦生成即携带完整上下文摘要。
+</div>
+
+<!-- ══════════════════ 六、实测效果 ══════════════════ -->
+<h2>六、实测效果与验证方法</h2>
+<p>全部指标由<strong>线上产物 <code>index.html</code> 的真实引擎</strong>在 Node 中执行得出，未使用任何 mock 或估算值；脚本随代码提交，评委可自行复现。</p>
+<table>
+  <thead><tr><th style="width:34%">指标</th><th style="width:16%">实测值</th><th>计算口径</th></tr></thead>
+  <tbody>
+    <tr><td>意图识别准确率</td><td><b>100%</b></td><td>352/352 条（调优集 280 + 留出集 72）判定意图与人工标注一致</td></tr>
+    <tr><td>品类识别准确率</td><td><b>100%</b></td><td>121/121 条（仅统计标注了品类的用例）</td></tr>
+    <tr><td>知识库命中率</td><td><b>100%</b></td><td>命中精确条目 / 模糊条目 / 同语种通用条目的用例占比</td></tr>
+    <tr><td>一次解决率</td><td><b>98.6%</b></td><td>无需澄清、无需转人工即给出对应答复的用例占比</td></tr>
+    <tr><td>澄清追问触发率</td><td><b>1.4%</b></td><td>低置信度澄清 5 条 + 证据不足澄清 0 条</td></tr>
+    <tr><td>转人工触发率</td><td><b>0%</b></td><td>回归集内触发转人工工单的用例占比（回归集均为业务问法）</td></tr>
+    <tr><td>转人工流程探针</td><td><b>100%</b></td><td>32 条真实问法，正确生成工单并转出</td></tr>
+    <tr><td>澄清追问流程探针</td><td><b>100%</b></td><td>24 条信息不足问法，正确触发追问或主动反问</td></tr>
+    <tr><td>寒暄直答流程探针</td><td><b>100%</b></td><td>16 条寒暄问法，正确走寒暄通道且未污染业务上下文</td></tr>
+    <tr><td>引擎决策时延（均值 / P95）</td><td><b>0.05 / 0.10 ms</b></td><td>单条输入的意图 + 品类 + 检索 + 答复生成总耗时；预热后 3 轮取中位轮，本机实测区间 0.05–0.07 ms</td></tr>
+    <tr><td>端到端首字可见</td><td><b>802 ms</b></td><td>浏览器实测 4 次采样均值；含刻意设计的思考停顿与逐字流式呈现</td></tr>
+    <tr><td>端到端全量渲染</td><td><b>3065 ms</b></td><td>浏览器实测；答复长度不同则数值不同</td></tr>
+    <tr><td>外部网络请求</td><td><b>0</b></td><td>浏览器 Performance 资源条目为空；无 fetch / XHR / 第三方脚本</td></tr>
+  </tbody>
+</table>
+<p class="small">完整的分语种、分意图、改进前后对照与复现命令见随附《应用效果说明》（5–10 页 PDF）。</p>
+
+<!-- ══════════════════ 七、落地可行性 ══════════════════ -->
+<h2>七、落地可行性与部署形态</h2>
+<table>
+  <thead><tr><th style="width:16%">形态</th><th style="width:26%">交付物</th><th style="width:22%">客户投入</th><th>适用客户</th></tr></thead>
+  <tbody>
+    <tr><td><b>离线单文件</b><br><span class="small">当前已实现</span></td><td>1 个 HTML 文件（含字体、词表、知识库）</td><td>拷贝到任意静态目录即可，<b>无需服务器</b></td><td>月咨询量小、只需基础问答的中小品牌</td></tr>
+    <tr><td><b>内嵌官网</b><br><span class="small">当前已实现</span></td><td>同一文件，以 &lt;iframe&gt; 或直接嵌入品牌站</td><td>一次前端集成</td><td>已有独立站、希望加挂聊天窗口的品牌</td></tr>
+    <tr><td><b>平台化 SaaS</b><br><span class="small">规划中</span></td><td>多租户后台 + 知识库在线编辑 + 工单系统对接</td><td>订阅，无运维</td><td>多 SKU、多国家、需要运营后台的品牌</td></tr>
+    <tr><td><b>私有化部署</b><br><span class="small">规划中</span></td><td>容器化镜像 + 知识库导入导出</td><td>一台服务器 + 知识库整理</td><td>对数据出域有硬性要求的客户</td></tr>
+  </tbody>
+</table>
+<p>当前形态已可覆盖绝大多数中小出海品牌的"先跑起来"需求；后两种形态是本项目的商业化承载形式（见第八章），其技术前提（引擎与界面已完全解耦）已在当前代码中具备。</p>
+
+<!-- ══════════════════ 八、商业化路径 ══════════════════ -->
+<h2>八、商业化路径与定价</h2>
+<div class="callout warn">
+<span class="callout-title">⚠ 定价性质说明</span>
+以下为<strong>拟定价</strong>，用于说明商业模型的可行性与单位经济结构，<b>尚未产生任何真实收入或签约</b>。所有金额为人民币或美元示意值，最终以正式商业方案为准。
+</div>
+<h3>8.1 路径 A：SaaS 订阅（面向中小品牌）</h3>
+<table class="compact">
+  <thead><tr><th>套餐</th><th>目标客户</th><th class="num">拟定价</th><th>包含</th></tr></thead>
+  <tbody>
+    <tr><td>基础版</td><td>月咨询量 &lt; 500 次</td><td class="num">¥0 / 月</td><td>单文件离线部署 + 基础知识库导入</td></tr>
+    <tr><td>专业版</td><td>月咨询量 500 – 5,000 次</td><td class="num">¥1,999 / 月</td><td>平台化 SaaS + 8 语种知识库 + 运营看板 + 工单对接</td></tr>
+    <tr><td>旗舰版</td><td>多国家、多 SKU 运营团队</td><td class="num">¥5,999 / 月</td><td>专业版 + 多租户 + 知识库在线编辑 + API + SLA</td></tr>
+  </tbody>
+</table>
+<h3>8.2 路径 B：私有化部署（面向大型品牌）</h3>
+<table class="compact">
+  <thead><tr><th>项目</th><th>内容</th><th class="num">拟定价</th></tr></thead>
+  <tbody>
+    <tr><td>一次性实施</td><td>部署 + 知识库结构化导入 + 语种校对 + 培训</td><td class="num">¥8 万 – ¥30 万 / 次</td></tr>
+    <tr><td>年度维护</td><td>版本升级 + 知识库季度更新 + 规则调优 + 技术支持</td><td class="num">合同额 15% – 20% / 年</td></tr>
+    <tr><td>增量语种</td><td>新增语种词表 + 知识翻译校对</td><td class="num">¥1.5 万 / 语种 / 年</td></tr>
+  </tbody>
+</table>
+<h3>8.3 单位经济结构</h3>
+<p>成本结构决定了本项目能否成立：<strong>引擎端无按次计费成本</strong>（不调用任何外部模型 API、不产生 token 费用），主要成本是知识库的建设与校对。这与"每次对话都调用大模型"的方案有本质区别——会话量增长不会线性抬高单位服务成本，这正是规则引擎路线在中小客户处的商业合理性所在。</p>
+
+<!-- ══════════════════ 九、履约与运营 ══════════════════ -->
+<h2>九、履约与运营可行性</h2>
+<h3>9.1 已完成与在途里程碑</h3>
+<table>
+  <thead><tr><th style="width:26%">阶段</th><th style="width:12%">状态</th><th>交付内容</th></tr></thead>
+  <tbody>
+    <tr><td>需求与场景定义</td><td><span class="tag tag-done">已完成</span></td><td>园林工具售后 6 意图 × 8 语种场景矩阵</td></tr>
+    <tr><td>引擎开发</td><td><span class="tag tag-done">已完成</span></td><td>单文件应用，含意图/品类引擎、知识检索、交互层、演示模式</td></tr>
+    <tr><td>测试与指标</td><td><span class="tag tag-done">已完成</span></td><td>352 条标注用例 + 72 条流程探针 + 可复现指标脚本</td></tr>
+    <tr><td>文档与材料</td><td><span class="tag tag-done">已完成</span></td><td>方案设计文档、应用效果说明、作品简介、演示台词、答辩手册</td></tr>
+    <tr><td>视频录制</td><td><span class="tag tag-plan">在途</span></td><td>3–5 分钟 MP4（当前 6 分钟稿需压缩）</td></tr>
+    <tr><td>企业试点</td><td><span class="tag tag-plan">规划中</span></td><td>与 1 家出海品牌开展真实会话试点，采集 CSAT 与真实转人工率</td></tr>
+  </tbody>
+</table>
+<h3>9.2 运营机制</h3>
+<ul>
+  <li><b>知识库更新</b>：采用"基础录入 + 持续迭代"双轨制。基础内容由厂商 FAQ 与维修手册结构化导入；增量内容来自真实会话中的高频未命中问题，人工审核后入库。</li>
+  <li><b>效果巡检</b>：<code>node tests/metrics.js</code> 可在每次改动后自动跑出全量指标与失败用例清单，作为回归闸门（CI 化是下一步）。</li>
+  <li><b>词表治理</b>：新增词条必须同步更新调优集与留出集，避免"只调不测"导致的过拟合。</li>
+</ul>
+<h3>9.3 风险与对策</h3>
+<table class="compact">
+  <thead><tr><th style="width:26%">风险</th><th style="width:11%">等级</th><th style="width:31%">影响</th><th>对策</th></tr></thead>
+  <tbody>
+    <tr><td>词表随产品迭代失效</td><td>中</td><td>新机型问法无法命中</td><td>留出集 + 新品发布时同步补充词表；季度做一次回归巡检</td></tr>
+    <tr><td>客户要求接入大模型开放域问答</td><td>中</td><td>超出当前引擎能力</td><td>预留可插拔接口位；模型作为"兜底层"而非"主决策层"接入</td></tr>
+    <tr><td>真实企业试点难以落地</td><td>中</td><td>CSAT 等指标无法实测</td><td>本方案已在文档中明确标注"需试点采集"，不预支结论；先以离线部署形态切入</td></tr>
+    <tr><td>演示环境现场失效</td><td>低</td><td>路演中断</td><td>零依赖单文件，无网络依赖；另备本地文件副本与录屏兜底</td></tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════ 十、演进路线 ══════════════════ -->
+<h2>十、演进路线</h2>
+<figure>
+<svg viewBox="0 0 900 232" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
+  <defs><marker id="ar10" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2f6b3f"/></marker></defs>
+  <path d="M40,150 L860,150" stroke="#c9d0be" stroke-width="2"/>
+  <g>
+    <circle cx="70" cy="150" r="9" fill="#2f6b3f"/>
+    <text x="70" y="132" font-size="9.5" font-weight="bold" fill="#2f6b3f" text-anchor="middle">V1 已完成</text>
+    <text x="70" y="176" font-size="8" fill="#3d4636" text-anchor="middle">规则引擎</text>
+    <text x="70" y="188" font-size="8" fill="#6b7360" text-anchor="middle">8 语种 / 10 品类</text>
+    <text x="70" y="200" font-size="8" fill="#6b7360" text-anchor="middle">6 意图 / 241 条</text>
+  </g>
+  <g>
+    <circle cx="290" cy="150" r="9" fill="#6b8f4e"/>
+    <text x="290" y="132" font-size="9.5" font-weight="bold" fill="#2f6b3f" text-anchor="middle">V2 已完成</text>
+    <text x="290" y="176" font-size="8" fill="#3d4636" text-anchor="middle">决策透明化</text>
+    <text x="290" y="188" font-size="8" fill="#6b7360" text-anchor="middle">判定依据卡片</text>
+    <text x="290" y="200" font-size="8" fill="#6b7360" text-anchor="middle">拟人化交互</text>
+  </g>
+  <g>
+    <circle cx="510" cy="150" r="9" fill="#a8631b"/>
+    <text x="510" y="132" font-size="9.5" font-weight="bold" fill="#8a6d3b" text-anchor="middle">V3 规划中</text>
+    <text x="510" y="176" font-size="8" fill="#3d4636" text-anchor="middle">跨语种自动识别</text>
+    <text x="510" y="188" font-size="8" fill="#6b7360" text-anchor="middle">知识库万级扩容</text>
+    <text x="510" y="200" font-size="8" fill="#6b7360" text-anchor="middle">大模型兜底层</text>
+  </g>
+  <g>
+    <circle cx="730" cy="150" r="9" fill="#8a6d3b"/>
+    <text x="730" y="132" font-size="9.5" font-weight="bold" fill="#8a6d3b" text-anchor="middle">V4 规划中</text>
+    <text x="730" y="176" font-size="8" fill="#3d4636" text-anchor="middle">平台化 SaaS</text>
+    <text x="730" y="188" font-size="8" fill="#6b7360" text-anchor="middle">工单 / 商城对接</text>
+    <text x="730" y="200" font-size="8" fill="#6b7360" text-anchor="middle">IoT 主动服务</text>
+  </g>
+  <g>
+    <circle cx="860" cy="150" r="9" fill="#b0b7a6"/>
+    <text x="866" y="132" font-size="9.5" font-weight="bold" fill="#6b7360" text-anchor="end">V5 规划中</text>
+    <text x="866" y="176" font-size="8" fill="#3d4636" text-anchor="end">私有化交付</text>
+    <text x="866" y="188" font-size="8" fill="#6b7360" text-anchor="end">行业纵深复制</text>
+  </g>
+  <g stroke="#2f6b3f" stroke-width="1.2" marker-end="url(#ar10)">
+    <path d="M82,150 L278,150"/><path d="M302,150 L498,150"/><path d="M522,150 L718,150"/><path d="M742,150 L848,150"/>
+  </g>
+</svg>
+<figcaption>图 10-1　产品演进路线</figcaption>
+</figure>
+
+<!-- ══════════════════ 十一、原创性 ══════════════════ -->
+<h2>十一、原创性说明</h2>
+<p>本作品的原创性体现在三个方面，均可核验：</p>
+<ol>
+  <li><b>代码原创性</b>：全部源码为团队自研，采用零依赖单文件架构（不使用任何第三方前端框架或 UI 库），Git 提交历史完整保留，可通过 <code>git log</code> 逐版本核对演进过程。</li>
+  <li><b>数据原创性</b>：意图词表（48 张表 / 1939 条）与知识库（241 条 × 8 语种）为团队逐条撰写与校对，其中知识内容参考了厂商公开的产品手册与安全规范（如 ANSI Z87.1 护目镜标准、CE 认证要求），并在文中标注来源依据；测试用例为中/英/法/德/西/意/荷/葡母语客服的真实问法，<b>未使用引擎内置关键词表的直译版本</b>。</li>
+  <li><b>品牌与型号声明</b>：<strong>GreenCraft Pro 为本项目自建的演示品牌</strong>，文中出现的 GC-480E、LM2100SP、P-500、GC-2000PW 等型号及 AB2100、GC-520-CH-18 等料号均为演示虚构，不对应任何真实厂商产品，避免误导评委与观众。</li>
+</ol>
+<div class="note">
+<span class="note-title">关于知识内容的引用边界</span>
+本作品的知识条目为<b>基于公开产品资料整理的示例性内容</b>，用于演示系统的检索与答复机制，不构成任何产品的官方维修指引。实际部署时必须由客户以自家维修手册替换——这在《落地可行性》章节的部署形态中已写明。
+</div>
+
+<!-- ══════════════════ 结语 ══════════════════ -->
+<h2>十二、结语</h2>
+<p>GreenCraft Pro 解决的是一个边界清晰、需求真实、却长期被多语种人力成本卡住的问题。我们没有把"AI"理解为必须调用大模型，而是把它理解为<b>让每一条售后结论都可核验、让每一次判断都可追溯、让每一个数据都不出用户设备</b>。在此基础上，它已经是一套可运行、可复现、可离线部署的完整系统：8 语种、10 品类、6 类意图、241 条知识条目、1939 条意图词条，352 条真实多语问法上的意图与品类识别准确率均为 100%，一次解决率 98.6%，三类流程探针触发率均为 100%，单次决策 0.05 毫秒，零外部请求。</p>
+<p>我们清楚地知道边界在哪里：知识库仍是百条级小样本，跨语种输入仍需手动切换语种，IoT 与大模型仍在路线图上。因此我们把下一步押在两件事上——<b>把知识库做到万级</b>，以及<b>让一次真实的企业试点提供第一批 CSAT 真实数据</b>。前者决定这套系统能服务多深的行业，后者决定我们能不能用真实数据而不是测算值说话。</p>
+
+</body>
+</html>

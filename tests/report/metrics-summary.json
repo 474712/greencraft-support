@@ -1,0 +1,257 @@
+{
+  "generatedAt": "2026-11-02T16:33:49.297Z",
+  "build": "8f60cd4",
+  "scope": "线下回归测试（对线上单文件 index.html 的真实引擎执行，非 mock）",
+  "sampleSize": 352,
+  "sets": [
+    {
+      "name": "tuning",
+      "label": "调优集 testset.json",
+      "n": 280
+    },
+    {
+      "name": "holdout",
+      "label": "留出集 holdout.json",
+      "n": 72
+    }
+  ],
+  "intentAccuracy": 100,
+  "productAccuracy": 100,
+  "kbHitRate": 100,
+  "oneShotRate": 98.6,
+  "clarifyRate": 1.4,
+  "handoffRate": 0,
+  "engineLatencyMs": {
+    "avg": 0.048,
+    "p95": 0.089,
+    "rounds": [
+      {
+        "avg": 0.057,
+        "p95": 0.106
+      },
+      {
+        "avg": 0.047,
+        "p95": 0.091
+      },
+      {
+        "avg": 0.048,
+        "p95": 0.089
+      }
+    ],
+    "method": "预热后重复 3 轮全量 352 条，取均值居中的一轮为对外口径；计时区间只含 generateResponse()（线上一次请求的完整决策链）"
+  },
+  "uiLatency": {
+    "measuredAt": "2026-11-02",
+    "browser": "headless Chromium (browser-use MCP)",
+    "target": "file:///C:/Users/user/Documents/Qoder/2026-11-02/4b0346c6/greencraft-support/index.html",
+    "method": "覆写 window.sendMessage 记录提交时刻与整轮完成时刻，用 MutationObserver 记录机器人气泡首次出现非空文本的时刻（首字渲染）；每条用例重复 2 次取样",
+    "samples": 4,
+    "firstCharMs": {
+      "avg": 802,
+      "min": 572,
+      "max": 1032
+    },
+    "fullMs": {
+      "avg": 3065,
+      "min": 1926,
+      "max": 4242
+    },
+    "byCase": [
+      {
+        "lang": "en",
+        "text": "My mower will not start",
+        "firstCharMs": [
+          572,
+          595
+        ],
+        "fullMs": [
+          4242,
+          4152
+        ]
+      },
+      {
+        "lang": "zh",
+        "text": "草坪机无法启动怎么办",
+        "firstCharMs": [
+          1009,
+          1032
+        ],
+        "fullMs": [
+          1939,
+          1926
+        ]
+      }
+    ],
+    "note": "端到端时延含产品刻意设计的拟人化节奏：思考停顿 360–1200ms（随机抖动）+ 逐字流式呈现 14ms/步；因此其数值由答复长度决定，与引擎决策耗时（0.5ms）不是同一量级。前者是体验指标，后者是性能指标。"
+  },
+  "perLang": {
+    "en": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 95.5,
+      "avgMs": 0.069
+    },
+    "zh": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100,
+      "avgMs": 0.048
+    },
+    "fr": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100,
+      "avgMs": 0.043
+    },
+    "de": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 97.7,
+      "avgMs": 0.048
+    },
+    "es": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100,
+      "avgMs": 0.046
+    },
+    "it": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 97.7,
+      "avgMs": 0.044
+    },
+    "nl": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 97.7,
+      "avgMs": 0.034
+    },
+    "pt": {
+      "n": 44,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100,
+      "avgMs": 0.051
+    }
+  },
+  "perIntent": {
+    "troubleshoot": {
+      "n": 65,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 92.3
+    },
+    "maintenance": {
+      "n": 63,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100
+    },
+    "parts": {
+      "n": 64,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100
+    },
+    "warranty": {
+      "n": 56,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100
+    },
+    "compare": {
+      "n": 48,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100
+    },
+    "safety": {
+      "n": 56,
+      "intentAcc": 100,
+      "kbHitRate": 100,
+      "oneShotRate": 100
+    }
+  },
+  "probes": {
+    "handoff": {
+      "n": 32,
+      "hit": 32,
+      "rate": 100,
+      "perLang": {
+        "en": 100,
+        "zh": 100,
+        "fr": 100,
+        "de": 100,
+        "es": 100,
+        "it": 100,
+        "nl": 100,
+        "pt": 100
+      }
+    },
+    "vague": {
+      "n": 24,
+      "hit": 24,
+      "rate": 100,
+      "perLang": {
+        "en": 100,
+        "zh": 100,
+        "fr": 100,
+        "de": 100,
+        "es": 100,
+        "it": 100,
+        "nl": 100,
+        "pt": 100
+      }
+    },
+    "smalltalk": {
+      "n": 16,
+      "hit": 16,
+      "rate": 100,
+      "perLang": {
+        "en": 100,
+        "zh": 100,
+        "fr": 100,
+        "de": 100,
+        "es": 100,
+        "it": 100,
+        "nl": 100,
+        "pt": 100
+      }
+    }
+  },
+  "coverage": {
+    "languages": 8,
+    "intents": 6,
+    "products": 10,
+    "kbEntries": 241,
+    "kbPerLang": {
+      "en": 34,
+      "zh": 33,
+      "fr": 29,
+      "de": 29,
+      "es": 29,
+      "it": 29,
+      "nl": 29,
+      "pt": 29
+    },
+    "patternTables": 48,
+    "patternEntries": 1939
+  },
+  "outcomeBreakdown": {
+    "direct": 347,
+    "clarifyLowConf": 5,
+    "clarifyEvidence": 0,
+    "handoff": 0,
+    "smalltalk": 0,
+    "fallback": 0
+  },
+  "failures": []
+}

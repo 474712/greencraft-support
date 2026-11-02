@@ -1,0 +1,14 @@
+{
+  "measuredAt": "2026-11-02",
+  "browser": "headless Chromium (browser-use MCP)",
+  "target": "file:///C:/Users/user/Documents/Qoder/2026-11-02/4b0346c6/greencraft-support/index.html",
+  "method": "覆写 window.sendMessage 记录提交时刻与整轮完成时刻，用 MutationObserver 记录机器人气泡首次出现非空文本的时刻（首字渲染）；每条用例重复 2 次取样",
+  "samples": 4,
+  "firstCharMs": { "avg": 802, "min": 572, "max": 1032 },
+  "fullMs": { "avg": 3065, "min": 1926, "max": 4242 },
+  "byCase": [
+    { "lang": "en", "text": "My mower will not start", "firstCharMs": [572, 595], "fullMs": [4242, 4152] },
+    { "lang": "zh", "text": "草坪机无法启动怎么办", "firstCharMs": [1009, 1032], "fullMs": [1939, 1926] }
+  ],
+  "note": "端到端时延含产品刻意设计的拟人化节奏：思考停顿 360–1200ms（随机抖动）+ 逐字流式呈现 14ms/步；因此其数值由答复长度决定，与引擎决策耗时（0.5ms）不是同一量级。前者是体验指标，后者是性能指标。"
+}
