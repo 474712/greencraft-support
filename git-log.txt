@@ -1,0 +1,165 @@
+# GreenCraft Pro · Git 提交历史（原创性证据）
+#
+# 重新导出： git log --oneline --decorate --stat
+# 用途：证明代码为参赛期间独立开发，且提交记录与提交物版本一致。
+# 注：本文件由脚本生成，内容截止到生成时的 HEAD（本文件自身所在提交之后的新提交不会出现在其中）。
+
+## 提交列表
+
+61611f9 (HEAD -> main) chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
+2f3c373 v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
+8f60cd4 (origin/main, origin/HEAD) v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
+5c03b40 v9: interaction-layer humanization (incremental insert / semantic split / streaming)
+b839ac1 v8: smarter engine (typo tolerance, emotion routing, clarify loop, smalltalk, dynamic quick replies)
+4bf7264 v7g: engine matching algorithm upgrade (CJK bigram, word boundary, pattern cache)
+3f2fa6f v7: expand KB +72 entries (8 langs x 9 scenarios from manufacturer docs), fix 7 routing patterns
+a20db8e v6: KB expansion (+70 entries, 8 langs x 7 categories)
+b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unchanged)
+56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
+
+## 变更统计
+
+commit 61611f9
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 00:34:38
+
+    chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
+
+
+ docs/应用效果说明.html            |  16 ++++++++--------
+ docs/应用效果说明.pdf             | Bin 735834 -> 735828 bytes
+ tests/report/metrics-summary.json |  36 ++++++++++++++++++------------------
+ tests/report/实测指标报告.md      |  26 +++++++++++++-------------
+ 4 files changed, 39 insertions(+), 39 deletions(-)
+commit 2f3c373
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 00:34:04
+
+    v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
+
+
+ .gitignore                        |   2 +
+ docs/assets/print.css             | 137 +++++++
+ docs/作品简介.md                  |  96 +++++
+ docs/应用效果说明.html            | 377 ++++++++++++++++++
+ docs/应用效果说明.pdf             | Bin 0 -> 735834 bytes
+ docs/提交物清单.md                | 140 +++++++
+ docs/方案设计文档.html            | 803 ++++++++++++++++++++++++++++++++++++++
+ docs/方案设计文档.pdf             | Bin 0 -> 1073557 bytes
+ docs/演示讲解台词.md              | 202 ++++++++++
+ docs/评审对照与答辩准备.md        | 288 ++++++++++++++
+ index.html                        | 540 ++++++++++++++++++++-----
+ tests/changelog.json              |  35 ++
+ tests/debug.js                    |  95 +++++
+ tests/engine.js                   |  87 +++++
+ tests/holdout.json                |  99 +++++
+ tests/metrics.js                  | 454 +++++++++++++++++++++
+ tests/probes.json                 |  86 ++++
+ tests/report/metrics-summary.json | 257 ++++++++++++
+ tests/report/ui-latency.json      |  14 +
+ tests/report/实测指标报告.md      | 129 ++++++
+ tests/run-tests.js                | 146 +++++++
+ tests/testset.json                | 348 +++++++++++++++++
+ 22 files changed, 4236 insertions(+), 99 deletions(-)
+commit 8f60cd4
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-19 22:59:14
+
+    v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
+
+
+ index.html | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+commit 5c03b40
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-19 12:06:06
+
+    v9: interaction-layer humanization (incremental insert / semantic split / streaming)
+
+
+ index.html | 182 +++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 166 insertions(+), 16 deletions(-)
+commit b839ac1
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-19 07:47:46
+
+    v8: smarter engine (typo tolerance, emotion routing, clarify loop, smalltalk, dynamic quick replies)
+
+
+ index.html | 265 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 235 insertions(+), 30 deletions(-)
+commit 4bf7264
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 23:58:24
+
+    v7g: engine matching algorithm upgrade (CJK bigram, word boundary, pattern cache)
+
+
+ index.html | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 60 insertions(+), 7 deletions(-)
+commit 3f2fa6f
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 23:33:36
+
+    v7: expand KB +72 entries (8 langs x 9 scenarios from manufacturer docs), fix 7 routing patterns
+
+
+ index.html | 2404 ++++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 1202 insertions(+), 1202 deletions(-)
+commit a20db8e
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 22:33:37
+
+    v6: KB expansion (+70 entries, 8 langs x 7 categories)
+
+
+ index.html | 68 +++++++++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 54 insertions(+), 14 deletions(-)
+commit b648719
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 21:58:20
+
+    UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unchanged)
+
+
+ index.html | 361 ++++++++++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 260 insertions(+), 101 deletions(-)
+commit 56f33e5
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 21:41:40
+
+    deploy: GreenCraft multilingual AI support agent (v5)
+
+
+ index.html | 1004 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1004 insertions(+)
+
+## 统计
+
+提交总数: 10
+首次提交: 2026-10-18 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
+最近提交: 2026-11-03 61611f9 chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
+本文件生成时的 HEAD: 61611f9335ebba536e7e4e146eb962cb856012e6
+
+## 追踪文件清单（按提交次数）
+
+      9 index.html
+      2 tests/report/实测指标报告.md
+      2 tests/report/metrics-summary.json
+      2 docs/应用效果说明.pdf
+      2 docs/应用效果说明.html
+      1 tests/testset.json
+      1 tests/run-tests.js
+      1 tests/report/ui-latency.json
+      1 tests/probes.json
+      1 tests/metrics.js
+      1 tests/holdout.json
+      1 tests/engine.js
+      1 tests/debug.js
+      1 tests/changelog.json
+      1 docs/评审对照与答辩准备.md
+      1 docs/演示讲解台词.md
+      1 docs/方案设计文档.pdf
+      1 docs/方案设计文档.html
+      1 docs/提交物清单.md
+      1 docs/作品简介.md
