@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-02T16:33:49.297Z",
-  "build": "8f60cd4",
+  "generatedAt": "2026-11-02T16:34:12.095Z",
+  "build": "2f3c373",
   "scope": "线下回归测试（对线上单文件 index.html 的真实引擎执行，非 mock）",
   "sampleSize": 352,
   "sets": [
@@ -22,20 +22,20 @@
   "clarifyRate": 1.4,
   "handoffRate": 0,
   "engineLatencyMs": {
-    "avg": 0.048,
-    "p95": 0.089,
+    "avg": 0.051,
+    "p95": 0.109,
     "rounds": [
       {
-        "avg": 0.057,
-        "p95": 0.106
+        "avg": 0.061,
+        "p95": 0.14
       },
       {
-        "avg": 0.047,
-        "p95": 0.091
+        "avg": 0.051,
+        "p95": 0.109
       },
       {
-        "avg": 0.048,
-        "p95": 0.089
+        "avg": 0.049,
+        "p95": 0.097
       }
     ],
     "method": "预热后重复 3 轮全量 352 条，取均值居中的一轮为对外口径；计时区间只含 generateResponse()（线上一次请求的完整决策链）"
@@ -90,56 +90,56 @@
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 95.5,
-      "avgMs": 0.069
+      "avgMs": 0.078
     },
     "zh": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.048
+      "avgMs": 0.053
     },
     "fr": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.043
+      "avgMs": 0.047
     },
     "de": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 97.7,
-      "avgMs": 0.048
+      "avgMs": 0.056
     },
     "es": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.046
+      "avgMs": 0.045
     },
     "it": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 97.7,
-      "avgMs": 0.044
+      "avgMs": 0.035
     },
     "nl": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 97.7,
-      "avgMs": 0.034
+      "avgMs": 0.038
     },
     "pt": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.051
+      "avgMs": 0.059
     }
   },
   "perIntent": {
