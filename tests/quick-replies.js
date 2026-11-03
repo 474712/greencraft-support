@@ -81,6 +81,21 @@ if (CHIPS) {
         `与通用卡重复：${set.filter(c => generic.includes(c.q)).map(c => c.q).join(' / ')}`);
     }
   }
+
+  /* ------------------------- 2b. 中文文案必须与品类标签同名（不「张冠李戴」） */
+  // 用户点的是「草坪机」，卡片却写「割草机」——即便识别结果正确，看上去也像串了品类。
+  // 中文是路演主界面，强制每条专属文案都带上该品类在筛选条上的中文短名。
+  // 其余语种标签是缩写形式（如 de「Mäher」对应文案「Rasenmäher」），不做子串强制。
+  for (const pid of PRODS) {
+    const cat = (E.CATEGORIES || []).find(c => c.id === pid);
+    const short = cat && cat.names && cat.names.zh;
+    check(`zh/${pid} 能取到品类中文短名`, !!short, 'CATEGORIES 中未找到该品类中文名');
+    if (!short) continue;
+    for (const c of (CHIPS.zh[pid] || [])) {
+      check(`zh/${pid}「${c.q}」与标签「${short}」同名`, c.q.includes(short),
+        `文案未出现标签用词「${short}」`);
+    }
+  }
 }
 
 /* --------------------------------------------- 3. 卡片选取逻辑（行为层） */
