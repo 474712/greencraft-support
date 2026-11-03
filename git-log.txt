@@ -6,7 +6,9 @@
 
 ## 提交列表
 
-652927b (HEAD -> main) fix(quick-replies): 统一草坪机中文快捷卡术语
+a31be2f (HEAD -> main) docs(manifest): sync verified submission zip size
+b7b80e5 chore: refresh git-log.txt originality evidence to build 652927b
+652927b fix(quick-replies): 统一草坪机中文快捷卡术语
 c55da6f (origin/main, origin/HEAD) chore: refresh git-log.txt originality evidence to build f16d92a
 f16d92a feat(demo): 把演示讲解气泡改为对话区顶部解说条
 1659ac1 docs(manifest): sync submission zip size after re-verification
@@ -35,6 +37,26 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit a31be2f
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 22:27:29 +0800
+
+    docs(manifest): sync verified submission zip size
+
+
+ docs/提交物清单.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b7b80e5
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 22:26:33 +0800
+
+    chore: refresh git-log.txt originality evidence to build 652927b
+
+
+ git-log.txt | 63 +++++++++++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 47 insertions(+), 16 deletions(-)
 
 commit 652927b
 Author: 竹川南 <19850260536@163.com>
@@ -403,20 +425,20 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 27
+提交总数: 29
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-03 22:26:23 +0800 652927b fix(quick-replies): 统一草坪机中文快捷卡术语
-本文件生成时的 HEAD: 652927bb24bfe472551764cf5c06321764b5ca11
+最近提交: 2026-11-03 22:27:29 +0800 a31be2f docs(manifest): sync verified submission zip size
+本文件生成时的 HEAD: a31be2f7f88a8e879b28bcbe82d15088f4b6763d
 
 ## 追踪文件清单（按提交次数）
 
      14 index.html
-     13 docs/提交物清单.md
+     14 docs/提交物清单.md
+      8 git-log.txt
       8 docs/应用效果说明.pdf
       8 docs/应用效果说明.html
       7 tests/report/实测指标报告.md
       7 tests/report/metrics-summary.json
-      7 git-log.txt
       7 docs/演示讲解台词.md
       7 docs/方案设计文档.pdf
       7 docs/方案设计文档.html
