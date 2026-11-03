@@ -6,8 +6,10 @@
 
 ## 提交列表
 
-f16d92a (HEAD -> main) feat(demo): 把演示讲解气泡改为对话区顶部解说条
-1659ac1 (origin/main, origin/HEAD) docs(manifest): sync submission zip size after re-verification
+652927b (HEAD -> main) fix(quick-replies): 统一草坪机中文快捷卡术语
+c55da6f (origin/main, origin/HEAD) chore: refresh git-log.txt originality evidence to build f16d92a
+f16d92a feat(demo): 把演示讲解气泡改为对话区顶部解说条
+1659ac1 docs(manifest): sync submission zip size after re-verification
 f1106df docs: 把引擎时延改为区间口径，避免评委复现时对不上
 ca296ca chore: refresh git-log.txt originality evidence to build 8b0c6ae
 8b0c6ae feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
@@ -33,6 +35,35 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit 652927b
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 22:26:23 +0800
+
+    fix(quick-replies): 统一草坪机中文快捷卡术语
+
+
+ docs/应用效果说明.html            |   4 ++--
+ docs/应用效果说明.pdf             | Bin 792533 -> 792533 bytes
+ docs/提交物清单.md                |   6 +++---
+ docs/方案设计文档.html            |   2 +-
+ docs/方案设计文档.pdf             | Bin 1124281 -> 1124281 bytes
+ docs/演示讲解台词.md              |   2 +-
+ index.html                        |   2 +-
+ tests/quick-replies.js            |  15 +++++++++++++++
+ tests/report/metrics-summary.json |  36 ++++++++++++++++++------------------
+ tests/report/实测指标报告.md      |  26 +++++++++++++-------------
+ 10 files changed, 54 insertions(+), 39 deletions(-)
+
+commit c55da6f
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 21:18:53 +0800
+
+    chore: refresh git-log.txt originality evidence to build f16d92a
+
+
+ git-log.txt | 109 ++++++++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 88 insertions(+), 21 deletions(-)
 
 commit f16d92a
 Author: 竹川南 <19850260536@163.com>
@@ -372,23 +403,23 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 25
+提交总数: 27
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-03 21:18:39 +0800 f16d92a feat(demo): 把演示讲解气泡改为对话区顶部解说条
-本文件生成时的 HEAD: f16d92aa58c2cb9acfc2fac4475a2c3e4f66744f
+最近提交: 2026-11-03 22:26:23 +0800 652927b fix(quick-replies): 统一草坪机中文快捷卡术语
+本文件生成时的 HEAD: 652927bb24bfe472551764cf5c06321764b5ca11
 
 ## 追踪文件清单（按提交次数）
 
-     13 index.html
-     12 docs/提交物清单.md
-      7 docs/应用效果说明.pdf
-      7 docs/应用效果说明.html
-      6 tests/report/实测指标报告.md
-      6 tests/report/metrics-summary.json
-      6 git-log.txt
-      6 docs/演示讲解台词.md
-      6 docs/方案设计文档.pdf
-      6 docs/方案设计文档.html
+     14 index.html
+     13 docs/提交物清单.md
+      8 docs/应用效果说明.pdf
+      8 docs/应用效果说明.html
+      7 tests/report/实测指标报告.md
+      7 tests/report/metrics-summary.json
+      7 git-log.txt
+      7 docs/演示讲解台词.md
+      7 docs/方案设计文档.pdf
+      7 docs/方案设计文档.html
       5 docs/作品简介.md
       4 docs/评审对照与答辩准备.md
       3 tests/engine.js
@@ -396,10 +427,10 @@ Date:   2026-10-18 21:41:40 +0800
       3 docs/作品简介.pdf
       3 docs/作品简介.html
       2 tests/report/ui-latency.json
+      2 tests/quick-replies.js
       2 docs/团队信息与原创性声明.html
       1 tests/testset.json
       1 tests/run-tests.js
-      1 tests/quick-replies.js
       1 tests/probes.json
       1 tests/metrics.js
       1 tests/holdout.json
