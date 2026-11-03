@@ -1126,7 +1126,7 @@ function detectHandoff(text) {
   const viaRequest = (HANDOFF_REQUEST[L] || HANDOFF_REQUEST.en).some(w => _hMatch(lower, w));
   return viaVerb || viaRequest;
 }
-// 检索降级链各档位对应的「检索方式」标识：品类精确 → 同语种通用 → 默认 → 英文回落
+// 降级链各档位对应的「检索方式」标识（模糊评分已在链前先行）：品类精确 → 同语种通用 → 默认 → 英文回落
 const _KB_PATH_BY_STEP = ['exact', 'general', 'default', 'en-fallback', 'en-fallback', 'en-fallback'];
 function findKBResponse(intent, product) {
   const lang = state.lang; const kbSec = KB[intent];
