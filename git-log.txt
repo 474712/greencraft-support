@@ -6,7 +6,9 @@
 
 ## 提交列表
 
-05d8ded (HEAD -> main) chore: refresh git-log.txt originality evidence
+8b0c6ae (HEAD -> main) feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
+7348c3f (origin/main, origin/HEAD) docs(manifest): record package verification in pre-submission checklist
+05d8ded chore: refresh git-log.txt originality evidence
 308c975 feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
 d5b9e87 docs: align retrieval-order wording in abstract and clarify fallback-chain comment
 3e1c553 docs(manifest): mark script-verified pre-submission checks as done
@@ -17,7 +19,7 @@ b15fb46 chore(metrics): re-measure UI latency on build 67bea86 and sync docs
 94e63a7 docs: correct stale page/size figures and add git-log originality evidence
 61611f9 chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
 2f3c373 v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
-8f60cd4 (origin/main, origin/HEAD) v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
+8f60cd4 v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
 5c03b40 v9: interaction-layer humanization (incremental insert / semantic split / streaming)
 b839ac1 v8: smarter engine (typo tolerance, emotion routing, clarify loop, smalltalk, dynamic quick replies)
 4bf7264 v7g: engine matching algorithm upgrade (CJK bigram, word boundary, pattern cache)
@@ -27,6 +29,43 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit 8b0c6ae
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:12:46 +0800
+
+    feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
+
+
+ docs/作品简介.html                |   2 +-
+ docs/作品简介.md                  |   7 +-
+ docs/作品简介.pdf                 | Bin 188301 -> 189323 bytes
+ docs/团队信息与原创性声明.html    |   2 +-
+ docs/团队信息与原创性声明.pdf     | Bin 304844 -> 305970 bytes
+ docs/应用效果说明.html            |  52 ++++++++--
+ docs/应用效果说明.pdf             | Bin 736911 -> 790496 bytes
+ docs/提交物清单.md                |  19 ++--
+ docs/方案设计文档.html            |  25 ++++-
+ docs/方案设计文档.pdf             | Bin 1076160 -> 1114164 bytes
+ docs/演示讲解台词.md              |  31 +++---
+ docs/评审对照与答辩准备.md        |  10 +-
+ index.html                        | 139 ++++++++++++++++++++++++-
+ tests/engine.js                   |  23 ++++-
+ tests/quick-replies.js            | 206 ++++++++++++++++++++++++++++++++++++++
+ tests/report/metrics-summary.json |  36 +++----
+ tests/report/实测指标报告.md      |  26 ++---
+ 17 files changed, 497 insertions(+), 81 deletions(-)
+
+commit 7348c3f
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 12:00:59 +0800
+
+    docs(manifest): record package verification in pre-submission checklist
+
+
+ docs/提交物清单.md |  2 +-
+ git-log.txt        | 21 ++++++++++++++++-----
+ 2 files changed, 17 insertions(+), 6 deletions(-)
 
 commit 05d8ded
 Author: 竹川南 <19850260536@163.com>
@@ -267,37 +306,38 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 19
+提交总数: 21
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-03 12:00:30 +0800 05d8ded chore: refresh git-log.txt originality evidence
-本文件生成时的 HEAD: 05d8ded7eec0bab44b3322b2eb27f9f999ee6c49
+最近提交: 2026-11-03 14:12:46 +0800 8b0c6ae feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
+本文件生成时的 HEAD: 8b0c6aec64a798f6cb5ef8a82bf98b345bf1db13
 
 ## 追踪文件清单（按提交次数）
 
-     11 index.html
-      7 docs/提交物清单.md
-      4 git-log.txt
-      4 docs/应用效果说明.pdf
-      4 docs/应用效果说明.html
-      3 tests/report/实测指标报告.md
-      3 tests/report/metrics-summary.json
-      3 docs/演示讲解台词.md
-      3 docs/方案设计文档.pdf
-      3 docs/方案设计文档.html
-      3 docs/作品简介.md
+     12 index.html
+      9 docs/提交物清单.md
+      5 git-log.txt
+      5 docs/应用效果说明.pdf
+      5 docs/应用效果说明.html
+      4 tests/report/实测指标报告.md
+      4 tests/report/metrics-summary.json
+      4 docs/演示讲解台词.md
+      4 docs/方案设计文档.pdf
+      4 docs/方案设计文档.html
+      4 docs/作品简介.md
+      3 docs/评审对照与答辩准备.md
       2 tests/report/ui-latency.json
-      2 docs/评审对照与答辩准备.md
+      2 tests/engine.js
+      2 docs/团队信息与原创性声明.pdf
+      2 docs/团队信息与原创性声明.html
+      2 docs/作品简介.pdf
+      2 docs/作品简介.html
       1 tests/testset.json
       1 tests/run-tests.js
+      1 tests/quick-replies.js
       1 tests/probes.json
       1 tests/metrics.js
       1 tests/holdout.json
-      1 tests/engine.js
       1 tests/debug.js
       1 tests/changelog.json
-      1 docs/团队信息与原创性声明.pdf
-      1 docs/团队信息与原创性声明.html
-      1 docs/作品简介.pdf
-      1 docs/作品简介.html
       1 docs/assets/print.css
       1 .gitignore
