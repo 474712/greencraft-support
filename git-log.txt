@@ -6,8 +6,12 @@
 
 ## 提交列表
 
-8b0c6ae (HEAD -> main) feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
-7348c3f (origin/main, origin/HEAD) docs(manifest): record package verification in pre-submission checklist
+f16d92a (HEAD -> main) feat(demo): 把演示讲解气泡改为对话区顶部解说条
+1659ac1 (origin/main, origin/HEAD) docs(manifest): sync submission zip size after re-verification
+f1106df docs: 把引擎时延改为区间口径，避免评委复现时对不上
+ca296ca chore: refresh git-log.txt originality evidence to build 8b0c6ae
+8b0c6ae feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
+7348c3f docs(manifest): record package verification in pre-submission checklist
 05d8ded chore: refresh git-log.txt originality evidence
 308c975 feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
 d5b9e87 docs: align retrieval-order wording in abstract and clarify fallback-chain comment
@@ -29,6 +33,68 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit f16d92a
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 21:18:39 +0800
+
+    feat(demo): 把演示讲解气泡改为对话区顶部解说条
+
+
+ docs/应用效果说明.html            |   8 +-
+ docs/应用效果说明.pdf             | Bin 791761 -> 792533 bytes
+ docs/提交物清单.md                |   6 +-
+ docs/方案设计文档.html            |   7 +-
+ docs/方案设计文档.pdf             | Bin 1114325 -> 1124281 bytes
+ docs/演示讲解台词.md              |   2 +
+ index.html                        | 209 ++++++++++++++++++++++----------------
+ tests/annotations.js              | 132 ++++++++++++++++++++++++
+ tests/engine.js                   |   4 +-
+ tests/report/metrics-summary.json |  36 +++----
+ tests/report/实测指标报告.md      |  26 ++---
+ 11 files changed, 301 insertions(+), 129 deletions(-)
+
+commit 1659ac1
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:19:55 +0800
+
+    docs(manifest): sync submission zip size after re-verification
+
+
+ docs/提交物清单.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f1106df
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:17:41 +0800
+
+    docs: 把引擎时延改为区间口径，避免评委复现时对不上
+
+
+ docs/作品简介.html                |   2 +-
+ docs/作品简介.md                  |   4 ++--
+ docs/作品简介.pdf                 | Bin 189323 -> 188113 bytes
+ docs/团队信息与原创性声明.pdf     | Bin 305970 -> 305970 bytes
+ docs/应用效果说明.html            |  16 ++++++++--------
+ docs/应用效果说明.pdf             | Bin 790496 -> 791761 bytes
+ docs/提交物清单.md                |   6 ++++--
+ docs/方案设计文档.html            |  12 ++++++------
+ docs/方案设计文档.pdf             | Bin 1114164 -> 1114325 bytes
+ docs/演示讲解台词.md              |   4 ++--
+ docs/评审对照与答辩准备.md        |  12 ++++++------
+ tests/report/metrics-summary.json |  36 ++++++++++++++++++------------------
+ tests/report/实测指标报告.md      |  26 +++++++++++++-------------
+ 13 files changed, 60 insertions(+), 58 deletions(-)
+
+commit ca296ca
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:12:57 +0800
+
+    chore: refresh git-log.txt originality evidence to build 8b0c6ae
+
+
+ git-log.txt | 84 +++++++++++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 62 insertions(+), 22 deletions(-)
 
 commit 8b0c6ae
 Author: 竹川南 <19850260536@163.com>
@@ -306,31 +372,31 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 21
+提交总数: 25
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-03 14:12:46 +0800 8b0c6ae feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
-本文件生成时的 HEAD: 8b0c6aec64a798f6cb5ef8a82bf98b345bf1db13
+最近提交: 2026-11-03 21:18:39 +0800 f16d92a feat(demo): 把演示讲解气泡改为对话区顶部解说条
+本文件生成时的 HEAD: f16d92aa58c2cb9acfc2fac4475a2c3e4f66744f
 
 ## 追踪文件清单（按提交次数）
 
-     12 index.html
-      9 docs/提交物清单.md
-      5 git-log.txt
-      5 docs/应用效果说明.pdf
-      5 docs/应用效果说明.html
-      4 tests/report/实测指标报告.md
-      4 tests/report/metrics-summary.json
-      4 docs/演示讲解台词.md
-      4 docs/方案设计文档.pdf
-      4 docs/方案设计文档.html
-      4 docs/作品简介.md
-      3 docs/评审对照与答辩准备.md
+     13 index.html
+     12 docs/提交物清单.md
+      7 docs/应用效果说明.pdf
+      7 docs/应用效果说明.html
+      6 tests/report/实测指标报告.md
+      6 tests/report/metrics-summary.json
+      6 git-log.txt
+      6 docs/演示讲解台词.md
+      6 docs/方案设计文档.pdf
+      6 docs/方案设计文档.html
+      5 docs/作品简介.md
+      4 docs/评审对照与答辩准备.md
+      3 tests/engine.js
+      3 docs/团队信息与原创性声明.pdf
+      3 docs/作品简介.pdf
+      3 docs/作品简介.html
       2 tests/report/ui-latency.json
-      2 tests/engine.js
-      2 docs/团队信息与原创性声明.pdf
       2 docs/团队信息与原创性声明.html
-      2 docs/作品简介.pdf
-      2 docs/作品简介.html
       1 tests/testset.json
       1 tests/run-tests.js
       1 tests/quick-replies.js
@@ -339,5 +405,6 @@ Date:   2026-10-18 21:41:40 +0800
       1 tests/holdout.json
       1 tests/debug.js
       1 tests/changelog.json
+      1 tests/annotations.js
       1 docs/assets/print.css
       1 .gitignore
