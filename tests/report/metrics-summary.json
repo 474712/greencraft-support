@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-02T16:34:12.095Z",
-  "build": "2f3c373",
+  "generatedAt": "2026-11-03T03:41:18.615Z",
+  "build": "67bea86",
   "scope": "线下回归测试（对线上单文件 index.html 的真实引擎执行，非 mock）",
   "sampleSize": 352,
   "sets": [
@@ -22,67 +22,67 @@
   "clarifyRate": 1.4,
   "handoffRate": 0,
   "engineLatencyMs": {
-    "avg": 0.051,
-    "p95": 0.109,
+    "avg": 0.048,
+    "p95": 0.092,
     "rounds": [
       {
-        "avg": 0.061,
-        "p95": 0.14
+        "avg": 0.048,
+        "p95": 0.092
       },
       {
-        "avg": 0.051,
-        "p95": 0.109
+        "avg": 0.044,
+        "p95": 0.075
       },
       {
-        "avg": 0.049,
-        "p95": 0.097
+        "avg": 0.048,
+        "p95": 0.082
       }
     ],
     "method": "预热后重复 3 轮全量 352 条，取均值居中的一轮为对外口径；计时区间只含 generateResponse()（线上一次请求的完整决策链）"
   },
   "uiLatency": {
-    "measuredAt": "2026-11-02",
+    "measuredAt": "2026-11-03",
     "browser": "headless Chromium (browser-use MCP)",
     "target": "file:///C:/Users/user/Documents/Qoder/2026-11-02/4b0346c6/greencraft-support/index.html",
     "method": "覆写 window.sendMessage 记录提交时刻与整轮完成时刻，用 MutationObserver 记录机器人气泡首次出现非空文本的时刻（首字渲染）；每条用例重复 2 次取样",
     "samples": 4,
     "firstCharMs": {
-      "avg": 802,
-      "min": 572,
-      "max": 1032
+      "avg": 838,
+      "min": 545,
+      "max": 1089
     },
     "fullMs": {
-      "avg": 3065,
-      "min": 1926,
-      "max": 4242
+      "avg": 3085,
+      "min": 1982,
+      "max": 4238
     },
     "byCase": [
       {
         "lang": "en",
         "text": "My mower will not start",
         "firstCharMs": [
-          572,
-          595
+          664,
+          545
         ],
         "fullMs": [
-          4242,
-          4152
+          4238,
+          4078
         ]
       },
       {
         "lang": "zh",
         "text": "草坪机无法启动怎么办",
         "firstCharMs": [
-          1009,
-          1032
+          1053,
+          1089
         ],
         "fullMs": [
-          1939,
-          1926
+          2041,
+          1982
         ]
       }
     ],
-    "note": "端到端时延含产品刻意设计的拟人化节奏：思考停顿 360–1200ms（随机抖动）+ 逐字流式呈现 14ms/步；因此其数值由答复长度决定，与引擎决策耗时（0.5ms）不是同一量级。前者是体验指标，后者是性能指标。"
+    "note": "端到端时延含产品刻意设计的拟人化节奏：思考停顿 360–1200ms（随机抖动）+ 逐字流式呈现 14ms/步；因此其数值由答复长度决定，与引擎决策耗时（0.05ms）不是同一量级。前者是体验指标，后者是性能指标。"
   },
   "perLang": {
     "en": {
@@ -90,35 +90,35 @@
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 95.5,
-      "avgMs": 0.078
+      "avgMs": 0.065
     },
     "zh": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.053
+      "avgMs": 0.052
     },
     "fr": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.047
+      "avgMs": 0.054
     },
     "de": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 97.7,
-      "avgMs": 0.056
+      "avgMs": 0.05
     },
     "es": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.045
+      "avgMs": 0.052
     },
     "it": {
       "n": 44,
@@ -132,14 +132,14 @@
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 97.7,
-      "avgMs": 0.038
+      "avgMs": 0.033
     },
     "pt": {
       "n": 44,
       "intentAcc": 100,
       "kbHitRate": 100,
       "oneShotRate": 100,
-      "avgMs": 0.059
+      "avgMs": 0.04
     }
   },
   "perIntent": {

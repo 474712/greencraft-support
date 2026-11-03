@@ -492,7 +492,7 @@ node tests/metrics.js</code></pre>
     <text x="262" y="324" fill="#6b7360">服务时段</text><text x="328" y="324" fill="#6b7360">8 h/工作日</text>
     <text x="418" y="324" fill="#6b7360">→</text><text x="434" y="324" fill="#2f6b3f" font-weight="bold">24/7</text>
     <text x="504" y="324" fill="#6b7360">首次响应</text><text x="570" y="324" fill="#6b7360">5–15 min</text>
-    <text x="640" y="324" fill="#6b7360">→</text><text x="656" y="324" fill="#2f6b3f" font-weight="bold">802 ms（实测首字）</text>
+    <text x="640" y="324" fill="#6b7360">→</text><text x="656" y="324" fill="#2f6b3f" font-weight="bold">838 ms（实测首字）</text>
 
     <text x="30" y="344" fill="#6b7360">跨时区等待</text><text x="110" y="344" fill="#6b7360">6–12 h</text>
     <text x="176" y="344" fill="#6b7360">→</text><text x="192" y="344" fill="#2f6b3f" font-weight="bold">0</text>
@@ -501,7 +501,7 @@ node tests/metrics.js</code></pre>
     <text x="504" y="344" fill="#6b7360">可审计</text><text x="570" y="344" fill="#6b7360">不可查</text>
     <text x="640" y="344" fill="#6b7360">→</text><text x="656" y="344" fill="#2f6b3f" font-weight="bold">判定依据卡片</text>
   </g>
-  <text x="30" y="362" font-size="7.5" fill="#8a6d3b">注：首次响应 802 ms 为浏览器实测值（4 次采样均值，含产品刻意设计的拟人化思考停顿与逐字流式呈现）；引擎决策本身为 0.05 ms。</text>
+  <text x="30" y="362" font-size="7.5" fill="#8a6d3b">注：首次响应 838 ms 为浏览器实测值（4 次采样均值，含产品刻意设计的拟人化思考停顿与逐字流式呈现）；引擎决策本身为 0.05 ms。</text>
 </svg>
 <figcaption>图 5-1　售后处理流程 Before / After 对比</figcaption>
 </figure>
@@ -655,9 +655,9 @@ node tests/metrics.js</code></pre>
     <tr><td>转人工流程探针</td><td><b>100%</b></td><td>32 条真实问法，正确生成工单并转出</td></tr>
     <tr><td>澄清追问流程探针</td><td><b>100%</b></td><td>24 条信息不足问法，正确触发追问或主动反问</td></tr>
     <tr><td>寒暄直答流程探针</td><td><b>100%</b></td><td>16 条寒暄问法，正确走寒暄通道且未污染业务上下文</td></tr>
-    <tr><td>引擎决策时延（均值 / P95）</td><td><b>0.05 / 0.10 ms</b></td><td>单条输入的意图 + 品类 + 检索 + 答复生成总耗时；预热后 3 轮取中位轮，本机实测区间 0.05–0.07 ms</td></tr>
-    <tr><td>端到端首字可见</td><td><b>802 ms</b></td><td>浏览器实测 4 次采样均值；含刻意设计的思考停顿与逐字流式呈现</td></tr>
-    <tr><td>端到端全量渲染</td><td><b>3065 ms</b></td><td>浏览器实测；答复长度不同则数值不同</td></tr>
+    <tr><td>引擎决策时延（均值 / P95）</td><td><b>0.05 / 0.09 ms</b></td><td>单条输入的意图 + 品类 + 检索 + 答复生成总耗时；预热后 3 轮取中位轮，本机实测区间 0.04–0.05 ms</td></tr>
+    <tr><td>端到端首字可见</td><td><b>838 ms</b></td><td>浏览器实测 4 次采样均值；含刻意设计的思考停顿与逐字流式呈现</td></tr>
+    <tr><td>端到端全量渲染</td><td><b>3085 ms</b></td><td>浏览器实测；答复长度不同则数值不同</td></tr>
     <tr><td>外部网络请求</td><td><b>0</b></td><td>浏览器 Performance 资源条目为空；无 fetch / XHR / 第三方脚本</td></tr>
   </tbody>
 </table>
