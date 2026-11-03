@@ -6,7 +6,10 @@
 
 ## 提交列表
 
-61611f9 (HEAD -> main) chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
+b15fb46 (HEAD -> main) chore(metrics): re-measure UI latency on build 67bea86 and sync docs
+67bea86 feat(evidence): surface retrieval path in the decision-basis card
+94e63a7 docs: correct stale page/size figures and add git-log originality evidence
+61611f9 chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
 2f3c373 v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
 8f60cd4 (origin/main, origin/HEAD) v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
 5c03b40 v9: interaction-layer humanization (incremental insert / semantic split / streaming)
@@ -19,9 +22,56 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 
 ## 变更统计
 
+commit b15fb46
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:42:52 +0800
+
+    chore(metrics): re-measure UI latency on build 67bea86 and sync docs
+
+
+ docs/作品简介.md                  |   4 +--
+ docs/应用效果说明.html            |  12 +++----
+ docs/应用效果说明.pdf             | Bin 736907 -> 736911 bytes
+ docs/提交物清单.md                |   2 +-
+ docs/方案设计文档.html            |  10 +++---
+ docs/方案设计文档.pdf             | Bin 1076167 -> 1076160 bytes
+ docs/演示讲解台词.md              |   2 +-
+ docs/评审对照与答辩准备.md        |   6 ++--
+ tests/report/metrics-summary.json |  66 +++++++++++++++++++-------------------
+ tests/report/ui-latency.json      |  42 ++++++++++++++++++++----
+ tests/report/实测指标报告.md      |  28 ++++++++--------
+ 11 files changed, 101 insertions(+), 71 deletions(-)
+
+commit 67bea86
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:37:15 +0800
+
+    feat(evidence): surface retrieval path in the decision-basis card
+
+
+ docs/应用效果说明.html |   2 +-
+ docs/应用效果说明.pdf  | Bin 735828 -> 736907 bytes
+ docs/提交物清单.md     |   4 ++--
+ docs/方案设计文档.html |  18 +++++++++---------
+ docs/方案设计文档.pdf  | Bin 1073557 -> 1076167 bytes
+ docs/演示讲解台词.md   |   4 ++--
+ index.html             |  47 ++++++++++++++++++++++++++++++++++++++---------
+ 7 files changed, 52 insertions(+), 23 deletions(-)
+
+commit 94e63a7
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 05:29:31 +0800
+
+    docs: correct stale page/size figures and add git-log originality evidence
+
+
+ docs/提交物清单.md |   8 +--
+ git-log.txt        | 165 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 169 insertions(+), 4 deletions(-)
+
 commit 61611f9
 Author: 竹川南 <19850260536@163.com>
-Date:   2026-11-03 00:34:38
+Date:   2026-11-03 00:34:38 +0800
 
     chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
 
@@ -31,9 +81,10 @@ Date:   2026-11-03 00:34:38
  tests/report/metrics-summary.json |  36 ++++++++++++++++++------------------
  tests/report/实测指标报告.md      |  26 +++++++++++++-------------
  4 files changed, 39 insertions(+), 39 deletions(-)
+
 commit 2f3c373
 Author: 竹川南 <19850260536@163.com>
-Date:   2026-11-03 00:34:04
+Date:   2026-11-03 00:34:04 +0800
 
     v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
 
@@ -61,72 +112,80 @@ Date:   2026-11-03 00:34:04
  tests/run-tests.js                | 146 +++++++
  tests/testset.json                | 348 +++++++++++++++++
  22 files changed, 4236 insertions(+), 99 deletions(-)
+
 commit 8f60cd4
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-19 22:59:14
+Date:   2026-10-19 22:59:14 +0800
 
     v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
 
 
  index.html | 11 +++++------
  1 file changed, 5 insertions(+), 6 deletions(-)
+
 commit 5c03b40
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-19 12:06:06
+Date:   2026-10-19 12:06:06 +0800
 
     v9: interaction-layer humanization (incremental insert / semantic split / streaming)
 
 
  index.html | 182 +++++++++++++++++++++++++++++++++++++++++++++++++++++++------
  1 file changed, 166 insertions(+), 16 deletions(-)
+
 commit b839ac1
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-19 07:47:46
+Date:   2026-10-19 07:47:46 +0800
 
     v8: smarter engine (typo tolerance, emotion routing, clarify loop, smalltalk, dynamic quick replies)
 
 
  index.html | 265 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
  1 file changed, 235 insertions(+), 30 deletions(-)
+
 commit 4bf7264
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-18 23:58:24
+Date:   2026-10-18 23:58:24 +0800
 
     v7g: engine matching algorithm upgrade (CJK bigram, word boundary, pattern cache)
 
 
  index.html | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
  1 file changed, 60 insertions(+), 7 deletions(-)
+
 commit 3f2fa6f
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-18 23:33:36
+Date:   2026-10-18 23:33:36 +0800
 
     v7: expand KB +72 entries (8 langs x 9 scenarios from manufacturer docs), fix 7 routing patterns
 
 
  index.html | 2404 ++++++++++++++++++++++++++++++------------------------------
  1 file changed, 1202 insertions(+), 1202 deletions(-)
+
 commit a20db8e
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-18 22:33:37
+Date:   2026-10-18 22:33:37 +0800
 
     v6: KB expansion (+70 entries, 8 langs x 7 categories)
 
 
  index.html | 68 +++++++++++++++++++++++++++++++++++++++++++++++++-------------
  1 file changed, 54 insertions(+), 14 deletions(-)
+
 commit b648719
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-18 21:58:20
+Date:   2026-10-18 21:58:20 +0800
 
     UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unchanged)
 
 
  index.html | 361 ++++++++++++++++++++++++++++++++++++++++++++-----------------
  1 file changed, 260 insertions(+), 101 deletions(-)
+
 commit 56f33e5
 Author: 474712 <19850260536@163.com>
-Date:   2026-10-18 21:41:40
+Date:   2026-10-18 21:41:40 +0800
 
     deploy: GreenCraft multilingual AI support agent (v5)
 
@@ -136,30 +195,33 @@ Date:   2026-10-18 21:41:40
 
 ## 统计
 
-提交总数: 10
-首次提交: 2026-10-18 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-03 61611f9 chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
-本文件生成时的 HEAD: 61611f9335ebba536e7e4e146eb962cb856012e6
+提交总数: 13
+首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
+最近提交: 2026-11-03 11:42:52 +0800 b15fb46 chore(metrics): re-measure UI latency on build 67bea86 and sync docs
+本文件生成时的 HEAD: b15fb464c4242b87de5a067b678b23eeed68d466
 
 ## 追踪文件清单（按提交次数）
 
-      9 index.html
-      2 tests/report/实测指标报告.md
-      2 tests/report/metrics-summary.json
-      2 docs/应用效果说明.pdf
-      2 docs/应用效果说明.html
+     10 index.html
+      4 "docs/\346\217\220\344\272\244\347\211\251\346\270\205\345\215\225.md"
+      4 "docs/\345\272\224\347\224\250\346\225\210\346\236\234\350\257\264\346\230\216.pdf"
+      4 "docs/\345\272\224\347\224\250\346\225\210\346\236\234\350\257\264\346\230\216.html"
+      3 tests/report/metrics-summary.json
+      3 "tests/report/\345\256\236\346\265\213\346\214\207\346\240\207\346\212\245\345\221\212.md"
+      3 "docs/\346\274\224\347\244\272\350\256\262\350\247\243\345\217\260\350\257\215.md"
+      3 "docs/\346\226\271\346\241\210\350\256\276\350\256\241\346\226\207\346\241\243.pdf"
+      3 "docs/\346\226\271\346\241\210\350\256\276\350\256\241\346\226\207\346\241\243.html"
+      2 tests/report/ui-latency.json
+      2 "docs/\350\257\204\345\256\241\345\257\271\347\205\247\344\270\216\347\255\224\350\276\251\345\207\206\345\244\207.md"
+      2 "docs/\344\275\234\345\223\201\347\256\200\344\273\213.md"
       1 tests/testset.json
       1 tests/run-tests.js
-      1 tests/report/ui-latency.json
       1 tests/probes.json
       1 tests/metrics.js
       1 tests/holdout.json
       1 tests/engine.js
       1 tests/debug.js
       1 tests/changelog.json
-      1 docs/评审对照与答辩准备.md
-      1 docs/演示讲解台词.md
-      1 docs/方案设计文档.pdf
-      1 docs/方案设计文档.html
-      1 docs/提交物清单.md
-      1 docs/作品简介.md
+      1 git-log.txt
+      1 docs/assets/print.css
+      1 .gitignore
