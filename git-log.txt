@@ -6,7 +6,8 @@
 
 ## 提交列表
 
-308c975 (HEAD -> main) feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
+05d8ded (HEAD -> main) chore: refresh git-log.txt originality evidence
+308c975 feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
 d5b9e87 docs: align retrieval-order wording in abstract and clarify fallback-chain comment
 3e1c553 docs(manifest): mark script-verified pre-submission checks as done
 5e83ec6 chore: restore readable Chinese paths in git-log.txt tracked-file list
@@ -26,6 +27,16 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit 05d8ded
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 12:00:30 +0800
+
+    chore: refresh git-log.txt originality evidence
+
+
+ git-log.txt | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 62 insertions(+), 8 deletions(-)
 
 commit 308c975
 Author: 竹川南 <19850260536@163.com>
@@ -256,20 +267,20 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 18
+提交总数: 19
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-03 12:00:28 +0800 308c975 feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
-本文件生成时的 HEAD: 308c975068579173e6e9a54ec4196f8a0e604b19
+最近提交: 2026-11-03 12:00:30 +0800 05d8ded chore: refresh git-log.txt originality evidence
+本文件生成时的 HEAD: 05d8ded7eec0bab44b3322b2eb27f9f999ee6c49
 
 ## 追踪文件清单（按提交次数）
 
      11 index.html
       7 docs/提交物清单.md
+      4 git-log.txt
       4 docs/应用效果说明.pdf
       4 docs/应用效果说明.html
       3 tests/report/实测指标报告.md
       3 tests/report/metrics-summary.json
-      3 git-log.txt
       3 docs/演示讲解台词.md
       3 docs/方案设计文档.pdf
       3 docs/方案设计文档.html
