@@ -56,6 +56,7 @@
     ├── probes.json          # 流程探针 72 条
     ├── run-tests.js         # 意图与品类回归
     ├── quick-replies.js     # 品类动态快捷提问回归（240 条卡片）
+    ├── annotations.js       # 演示顶部解说条回归（71 条断言）
     ├── metrics.js           # 实测指标生成器
     └── report/              # 本报告的生成产物</code></pre>
 
@@ -69,9 +70,12 @@ node tests/run-tests.js --set holdout.json
 # 3) 品类动态快捷提问回归（240 条卡片，2171 条断言）
 node tests/quick-replies.js
 
-# 4) 生成本报告的全部数字（输出 metrics-summary.json 与本文件的数据源）
+# 4) 演示顶部解说条回归（71 条断言）
+node tests/annotations.js
+
+# 5) 生成本报告的全部数字（输出 metrics-summary.json 与本文件的数据源）
 node tests/metrics.js</code></pre>
-<p>四条命令均无需安装任何依赖（仅需 Node ≥ 16），且直接读取仓库中的 <code>index.html</code>。</p>
+<p>五条命令均无需安装任何依赖（仅需 Node ≥ 16），且直接读取仓库中的 <code>index.html</code>。</p>
 
 <!-- ══════════════════ 二、样本构成 ══════════════════ -->
 <h2>二、样本构成</h2>

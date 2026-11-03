@@ -80,7 +80,7 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
 .sidebar > *:nth-child(1) { animation-delay:0.10s; } .sidebar > *:nth-child(2) { animation-delay:0.17s; }
 .sidebar > *:nth-child(3) { animation-delay:0.24s; } .sidebar > *:nth-child(4) { animation-delay:0.31s; }
 @keyframes riseIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
-.sidebar::after { content:''; position:absolute; top:0; right:-1px; height:100%; width:1px;
+.sidebar::after { content:''; position:absolute; top:0; right:0; height:100%; width:1px;
   background:linear-gradient(180deg, transparent, rgba(212,175,95,0.22) 30%, rgba(212,175,95,0.22) 70%, transparent); }
 .sidebar-header { text-align:center; }
 .sidebar-header .logo-icon { width:56px; height:56px; margin:0 auto 14px; position:relative;
@@ -278,7 +278,8 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
 
 @media (max-width:900px) { .sidebar { display:none; } .app-shell { max-width:100%; }
   .messages-container { padding:16px; } .chat-footer { padding:10px 16px 16px; }
-  .msg-bubble { font-size:13px; padding:12px 14px; } .quick-replies { padding:0 16px 10px; } }
+  .msg-bubble { font-size:13px; padding:12px 14px; } .quick-replies { padding:0 16px 10px; }
+  .anno-bar { margin:0 16px 10px; } }
 @media (max-width:500px) { .chat-topbar { padding:12px 16px; } .category-tags { display:none; } }
 
 /* ── 矮屏 / 投影分辨率适配（720p、768p 等评委机常见高度） ──
@@ -307,7 +308,8 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
   .chat-footer { padding:10px 30px 16px; }
   .chat-input { padding:11px 50px 11px 16px; font-size:13px; }
   .send-btn { width:42px; height:42px; font-size:16px; }
-  .annotation-bubble { max-width:330px; font-size:11.5px; padding:9px 13px; }
+  .anno-bar { margin:0 30px 10px; padding:8px 12px; }
+  .anno-bar-text { font-size:11.5px; }
 }
 @media (max-height:660px) {
   .sidebar { padding:12px 16px; gap:11px; }
@@ -347,30 +349,31 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
 .speed-btn:hover { border-color:var(--border-gold); color:var(--gold-light); }
 .speed-btn.active { background:rgba(212,175,95,0.16); border-color:var(--gold); color:var(--gold-light); font-weight:600; }
 
-/* ── ANNOTATION LAYER ────────── */
-.annotation-overlay { position:fixed; inset:0; pointer-events:none; z-index:10; }
-.annotation-bubble { position:absolute; pointer-events:none; padding:11px 15px; border-radius:var(--radius-md);
-  font-size:12px; line-height:1.55; color:#fff; max-width:270px; opacity:0; transform:translateY(10px);
-  transition:all 0.45s var(--transition-spring); font-family:var(--font-body);
-  box-shadow:0 12px 40px rgba(0,0,0,0.5); backdrop-filter:blur(8px); }
-.annotation-bubble.visible { opacity:1; transform:translateY(0); }
-.annotation-bubble.insight { background:linear-gradient(135deg, rgba(74,158,92,0.88), rgba(20,44,29,0.94));
-  border:1px solid rgba(143,196,155,0.5); }
-.annotation-bubble.tech { background:linear-gradient(135deg, rgba(107,159,196,0.88), rgba(15,35,23,0.94));
-  border:1px solid rgba(107,159,196,0.5); }
-.annotation-bubble.highlight { background:linear-gradient(135deg, rgba(212,175,95,0.92), rgba(163,130,58,0.95));
-  border:1px solid var(--gold-light); }
-.annotation-bubble .anno-icon { font-size:16px; margin-bottom:4px; display:block; }
-.annotation-ctrls { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:20; display:none;
-  gap:8px; pointer-events:all; }
-.annotation-ctrls.show { display:flex; }
-.anno-ctrl-btn { padding:8px 20px; border:1px solid var(--gold); border-radius:20px;
-  background:rgba(15,35,23,0.9); backdrop-filter:blur(10px); color:var(--gold-light); cursor:pointer;
-  font-family:var(--font-body); font-size:12px; font-weight:600; transition:all var(--transition-fast); pointer-events:all; }
-.anno-ctrl-btn:hover { background:rgba(212,175,95,0.16); transform:translateY(-1px); }
-.anno-ctrl-btn.primary { background:linear-gradient(135deg, var(--gold), var(--gold-dark)); color:var(--gold-ink); border:none;
-  box-shadow:0 4px 16px rgba(212,175,95,0.3), inset 0 1px 0 rgba(255,255,255,0.35); }
-.anno-ctrl-btn.primary:hover { box-shadow:0 6px 22px rgba(212,175,95,0.42); }
+/* ── ANNOTATION BAR ──────────
+   演示讲解条：chat-main 内的普通流元素，排在消息区之前。
+   消息区是 flex:1 + overflow-y:auto，因此讲解条永远是把消息区往下推，而不是盖住答案。 */
+.anno-bar { display:none; align-items:flex-start; gap:11px; margin:0 30px 12px; padding:10px 14px;
+  border-radius:var(--radius-md); border:1px solid rgba(212,175,95,0.26);
+  background:linear-gradient(135deg, rgba(24,48,32,0.94), rgba(14,30,20,0.96));
+  box-shadow:0 8px 26px rgba(0,0,0,0.35); backdrop-filter:blur(8px);
+  font-family:var(--font-body); animation:riseIn 0.35s var(--transition-smooth) both; }
+.anno-bar.show { display:flex; }
+.anno-bar-icon { font-size:15px; line-height:1.5; flex:0 0 auto; }
+.anno-bar-text { flex:1 1 auto; font-size:12.5px; line-height:1.6; color:#e6eee2; padding-left:10px; }
+.anno-bar-text.insight { border-left:3px solid rgba(143,196,155,0.85); }
+.anno-bar-text.tech { border-left:3px solid rgba(107,159,196,0.85); }
+.anno-bar-text.highlight { border-left:3px solid var(--gold); }
+.anno-bar-nav { display:flex; align-items:center; gap:5px; flex:0 0 auto; }
+.anno-bar-count { font-size:11px; color:var(--gold-light); letter-spacing:0.4px; margin-right:2px; }
+.anno-bar-badge { min-width:20px; height:20px; padding:0 6px; border-radius:10px; border:1px solid rgba(212,175,95,0.45);
+  background:rgba(212,175,95,0.12); color:var(--gold-light); font-size:11px; font-weight:600;
+  display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+.anno-bar-badge.active { background:var(--gold); color:var(--gold-ink); border-color:var(--gold); }
+.anno-bar-btn { width:24px; height:24px; border-radius:12px; border:1px solid rgba(212,175,95,0.45);
+  background:rgba(15,35,23,0.8); color:var(--gold-light); font-size:11px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; font-family:var(--font-body);
+  transition:all var(--transition-fast); }
+.anno-bar-btn:hover { background:rgba(212,175,95,0.2); }
 
 /* ── DEMO PROGRESS ────────── */
 .demo-progress { position:absolute; top:54px; left:30px; z-index:50; display:none; align-items:center; gap:9px; }
@@ -462,6 +465,11 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
       <span class="demo-progress-label" id="demoProgressLabel">演示中...</span>
     </div>
     <div class="category-tags" id="categoryTags"></div>
+    <div class="anno-bar" id="annoBar">
+      <span class="anno-bar-icon" id="annoBarIcon">💡</span>
+      <span class="anno-bar-text" id="annoBarText"></span>
+      <span class="anno-bar-nav" id="annoBarNav"></span>
+    </div>
     <div class="messages-container" id="messagesContainer"></div>
     <div class="quick-replies" id="quickReplies"></div>
     <div class="chat-footer">
@@ -474,13 +482,6 @@ body { font-family:var(--font-body); background:var(--bg-deep); color:var(--text
       </div>
     </div>
   </main>
-</div>
-
-<div class="annotation-overlay" id="annotationOverlay"></div>
-<div class="annotation-ctrls" id="annotationCtrls">
-  <button class="anno-ctrl-btn" onclick="prevAnnotation()">◀ 上一条</button>
-  <button class="anno-ctrl-btn primary" onclick="nextAnnotation()">下一条 ▶</button>
-  <button class="anno-ctrl-btn" onclick="hideAnnotation()">✕ 关闭讲解</button>
 </div>
 
 <script>
@@ -1585,13 +1586,13 @@ const DEMO_SCENARIOS = {
     lang: 'en',
     speed: 1.0,
     steps: [
-      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景一：一位英国用户新买的草坪修剪机无法启动，通过自然语言对话进行逐步故障排查。注意客服是如何引导用户自行诊断的。' },
+      { type:'annotation', style:'insight', icon:'💡', text:'场景一：一位英国用户新买的草坪修剪机无法启动，通过自然语言对话进行逐步故障排查。注意客服是如何引导用户自行诊断的。' },
       { delay: 800, type:'user', text:'Hi, I just bought your lawn mower model GC-480E last week. It was working fine yesterday but today it won\'t start at all. I\'m really frustrated.' },
       { delay: 1800, type:'bot', text:'I totally understand your frustration — that\'s not what you expect from a brand new mower! Let\'s get this sorted out together. 🔧\n\nFirst, the most common cause with new users: have you made sure the **safety key** is pushed all the way in? It\'s the red plastic tab near the battery compartment. Without it fully seated, the mower won\'t start — it\'s a safety feature.' },
-      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🔍', text:'注意AI客服的语气：先共情（"I totally understand"），再给出具体可执行的排查步骤，而不是抛出一堆技术术语。这是专业客服的关键技巧。' },
+      { type:'annotation', style:'tech', icon:'🔍', text:'注意AI客服的语气：先共情（"I totally understand"），再给出具体可执行的排查步骤，而不是抛出一堆技术术语。这是专业客服的关键技巧。' },
       { delay: 1200, type:'user', text:'Oh, the safety key? I didn\'t even notice that. Let me check... Yes, it was partially out! I pushed it in all the way and now it starts. But there\'s a weird vibration when I use it.' },
       { delay: 2000, type:'bot', text:'Great catch on the safety key — that fixes the startup issue! 👍\n\nNow, about the vibration — that\'s something we need to address carefully because it can be a safety concern. Let me ask you a few quick questions:\n\n• Have you checked under the deck for any dried grass buildup?\n• When was the last time you checked the blade bolt tightness?\n• Did you notice if the blade hit any rocks or hard objects recently?' },
-      { type:'annotation', pos:'top-right', style:'insight', icon:'🎯', text:'AI的追问策略：不是一次性列出所有可能原因，而是通过反问引导用户参与诊断过程。这样既收集了信息，也让用户感到被重视。' },
+      { type:'annotation', style:'insight', icon:'🎯', text:'AI的追问策略：不是一次性列出所有可能原因，而是通过反问引导用户参与诊断过程。这样既收集了信息，也让用户感到被重视。' },
       { delay: 1500, type:'user', text:'I haven\'t checked under the deck at all actually. I\'ve been using it for a week without cleaning it.' },
       { delay: 1800, type:'bot', text:'That explains it! After a week of mowing, especially in thicker grass, the underside of the deck collects a lot of dried grass clippings. This buildup throws the blade off balance and causes that vibration you\'re feeling.\n\nHere\'s what to do:\n1. **Remove the battery first** — always safety first.\n2. Tilt the mower on its side (carburetor/air filter side UP).\n3. Use a plastic scraper or stiff brush to clean the deck underside.\n4. While you\'re there, check the **blade bolt** is tight.\n\nThis should be done after every 2-3 mowing sessions. Any questions before you try this?' }
     ]
@@ -1601,10 +1602,10 @@ const DEMO_SCENARIOS = {
     lang: 'fr',
     speed: 1.0,
     steps: [
-      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景二：法国顾客想买电动修枝剪但不确定哪款适合。AI客服通过询问使用场景，引导顾客找到最优选择。注意多语种的自然切换。' },
+      { type:'annotation', style:'insight', icon:'💡', text:'场景二：法国顾客想买电动修枝剪但不确定哪款适合。AI客服通过询问使用场景，引导顾客找到最优选择。注意多语种的自然切换。' },
       { delay: 800, type:'user', text:'Bonjour, je cherche un sécateur électrique pour entretenir mon verger. J\'ai des pommiers et des cerisiers, certaines branches font 3-4 cm. Vous me conseillez quel modèle ?' },
       { delay: 2200, type:'bot', text:'Bonjour ! C\'est un excellent choix de s\'équiper pour votre verger. 🍎🍒\n\nAvec des branches de 3-4 cm, vous avez besoin d\'un modèle qui offre une bonne puissance de coupe. Notre gamme comprend :\n\n• **Eco Pruner P-200** — Max 25mm, idéal pour arbustes et rosiers\n• **Pro Pruner P-500** — Max 35mm, parfait pour votre usage !\n• **Elite Pruner P-800** — Max 45mm, usage professionnel intensif\n\nPour vos pommiers et cerisiers, le **Pro P-500** semble le meilleur compromis. Il coupe jusqu\'à 35mm confortablement et la batterie tient 4-5 heures en usage normal.' },
-      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🎯', text:'AI自动将产品参数与用户需求匹配：识别"3-4cm"关键词后，推荐了合适的Pro P-500型号，并排除了不适合的Eco型号。这是智能推荐的核心能力。' },
+      { type:'annotation', style:'tech', icon:'🎯', text:'AI自动将产品参数与用户需求匹配：识别"3-4cm"关键词后，推荐了合适的Pro P-500型号，并排除了不适合的Eco型号。这是智能推荐的核心能力。' },
       { delay: 1200, type:'user', text:'Merci ! Et pour l\'entretien, c\'est compliqué ? J\'ai peur que ça s\'use vite avec la sève des arbres.' },
       { delay: 2000, type:'bot', text:'Très bonne question — la sève est effectivement le principal ennemi des sécateurs électriques !\n\nVoici l\'entretien recommandé, c\'est très simple :\n\n**Après chaque utilisation :**\n• Nettoyez les lames avec un chiffon imbibé d\'alcool à friction\n• Cela dissout la sève en quelques secondes\n\n**Tous les 20-30 heures :**\n• Affûtez ou remplacez les lames\n• Appliquez de la graisse au lithium sur les engrenages\n\nAvec cet entretien basique, votre sécateur durera des années. Nous avons aussi des kits d\'entretien à prix réduit si vous achetez avec la machine.' }
     ]
@@ -1614,13 +1615,13 @@ const DEMO_SCENARIOS = {
     lang: 'de',
     speed: 1.0,
     steps: [
-      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景三：德国顾客的链锯使用一年后出现漏油和切割问题。客服诊断故障后顺势推荐配件，实现养护+销售的一站式服务。' },
+      { type:'annotation', style:'insight', icon:'💡', text:'场景三：德国顾客的链锯使用一年后出现漏油和切割问题。客服诊断故障后顺势推荐配件，实现养护+销售的一站式服务。' },
       { delay: 800, type:'user', text:'Hallo, meine Kettensäge GC-520 verliert Öl und schneidet nicht mehr richtig. Ich habe sie vor einem Jahr gekauft. Was kann ich tun?' },
       { delay: 2200, type:'bot', text:'Hallo! Zwei Probleme auf einmal — das kriegen wir Schritt für Schritt hin. 🔧\n\n**Zum Ölverlust:**\n1. Ist der Öltank vielleicht überfüllt? Nur bis 80% befüllen.\n2. Prüfen Sie den Tankdeckel — ist er fest verschlossen?\n3. Lagern Sie die Säge mit der Öltankseite nach OBEN?\n4. Die Dichtung am Tankdeckel könnte nach einem Jahr spröde sein.\n\n**Schneidproblem:**\nHaben Sie die Kette jemals geschärft? Nach einem Jahr Nutzung ist sie wahrscheinlich stumpf. Eine stumpfe Kette schneidet nicht nur schlecht, sondern erhöht auch den Motorverschleiß!' },
-      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🔍', text:'AI同时处理两个独立问题（漏油+切割），分别给出排查步骤。注意结尾自然过渡到配件推荐——不突兀地引导销售。' },
+      { type:'annotation', style:'tech', icon:'🔍', text:'AI同时处理两个独立问题（漏油+切割），分别给出排查步骤。注意结尾自然过渡到配件推荐——不突兀地引导销售。' },
       { delay: 1500, type:'user', text:'Nein, ich habe die Kette noch nie geschärft. Ich brauche wahrscheinlich eine neue. Und die Dichtung ist tatsächlich etwas spröde.' },
       { delay: 2000, type:'bot', text:'Verstanden! Dann empfehle ich Ihnen Folgendes:\n\n📦 **Ersatzteile für Ihre GC-520:**\n\n| Teil | Artikelnummer | Bemerkung |\n|------|--------------|----------|\n| Ersatzkette | GC-520-CH-18 | 18 Zoll, passend für Ihr Modell |\n| Tankdichtung | GC-520-SL-01 | Einfach selbst zu wechseln |\n| Kettenöl 1L | GC-OIL-BIO | Biologisch abbaubar, empfohlen |\n\n**Lieferung:** 3-5 Werktage innerhalb der EU. Möchten Sie, dass ich Ihnen direkt einen Bestell-Link sende? Oder haben Sie noch Fragen zum Selbsteinbau?' },
-      { type:'annotation', pos:'top-right', style:'highlight', icon:'📋', text:'配件推荐表格化展示——清晰列出料号、规格和备注。末尾给顾客选择权：下单或继续咨询。这是优秀售后的关键时刻。' },
+      { type:'annotation', style:'highlight', icon:'📋', text:'配件推荐表格化展示——清晰列出料号、规格和备注。末尾给顾客选择权：下单或继续咨询。这是优秀售后的关键时刻。' },
       { delay: 1200, type:'user', text:'Super, bitte schicken Sie mir den Bestell-Link. Und wie wechsle ich die Dichtung selbst?' },
       { delay: 1800, type:'bot', text:'Perfekt! 👍 Der Bestell-Link wurde an Ihre registrierte E-Mail gesendet.\n\n**Dichtung selbst wechseln (Dauer: 2 Minuten):**\n1. Akku entfernen — Sicherheit geht vor\n2. Alten Tankdeckel komplett abschrauben\n3. Alte Dichtung mit einem kleinen Schraubendreher vorsichtig heraushebeln\n4. Neue Dichtung einsetzen — sie rastet hörbar ein\n5. Deckel wieder aufschrauben, aber nicht zu fest!\n\nEin kleiner Tipp: Bewahren Sie die Säge immer liegend mit der Öltankseite nach oben auf. Das verhindert künftige Leckagen.' }
     ]
@@ -1630,13 +1631,13 @@ const DEMO_SCENARIOS = {
     lang: 'zh',
     speed: 1.0,
     steps: [
-      { type:'annotation', pos:'top-right', style:'insight', icon:'💡', text:'场景四：最有代表性的综合场景——中国运营团队查看后台，一位美国顾客同时涉及保修、配件和安全三个维度的问题。' },
+      { type:'annotation', style:'insight', icon:'💡', text:'场景四：最有代表性的综合场景——中国运营团队查看后台，一位美国顾客同时涉及保修、配件和安全三个维度的问题。' },
       { delay: 800, type:'user', text:'你好，我是在美国亚马逊购买了你们高压清洗机的顾客。用了三个月，现在出水压力变得很小，而且喷嘴好像坏了。这个在保修范围内吗？另外我之前没戴护目镜用，现在有点担心安全问题。' },
       { delay: 2500, type:'bot', text:'您好！感谢您选择GreenCraft产品。您提了三个问题，我一个一个帮您梳理清楚 😊\n\n**📋 关于保修：** 您购买三个月，完全在3年家用保修范围内！需要您提供亚马逊订单号和产品序列号（在机身铭牌上），我就可以帮您建立保修档案。\n\n**🔧 关于水压变小：** 这个问题80%的情况下不是机器故障。请先检查：\n1. 进水滤网是否堵塞？（最常见原因！）\n2. 喷嘴是否用通针清洁过？\n3. 水管是否有弯折？\n\n**🛡️ 关于安全：** 您能意识到护目镜的问题非常好！高压水流如果反弹到眼睛可能造成严重伤害。我强烈建议您从今天起每次使用都佩戴**ANSI Z87.1认证的护目镜**。我们官网有配套的安全套装，包含护目镜+防滑手套+耳塞。' },
-      { type:'annotation', pos:'bottom-left', style:'tech', icon:'🔍', text:'关键观察：AI同时处理三个维度的问题（保修/故障/安全），分别标注清晰，不混淆。对"水压变小"给出量化数据（"80%不是故障"），增强说服力。' },
+      { type:'annotation', style:'tech', icon:'🔍', text:'关键观察：AI同时处理三个维度的问题（保修/故障/安全），分别标注清晰，不混淆。对"水压变小"给出量化数据（"80%不是故障"），增强说服力。' },
       { delay: 1500, type:'user', text:'谢谢你这么详细的解答。进水滤网我确实没清理过。那喷嘴怎么办，需要买新的吗？还有那个安全套装多少钱？' },
       { delay: 2200, type:'bot', text:'不客气，能帮到您我很高兴！\n\n**🔩 关于喷嘴：** 先别急着买新的。您的清洗机包装里应该附带了一根**通针**（很小的金属针），用它疏通喷嘴孔就可以了。如果通针丢了，用回形针拉直也能应急。只有喷嘴明显变形或裂缝的情况下才需要更换。\n\n**🛡️ 安全套装 GC-SAFE-KIT：** $24.99，包含：\n• ANSI Z87.1 护目镜 ×1\n• 防滑防护手套 ×1双\n• SNR 28dB 降噪耳塞 ×1对\n\n美国仓库发货，3-5个工作日送达。需要我帮您下单吗？现在和喷嘴一起买可以免运费哦。' },
-      { type:'annotation', pos:'top-right', style:'highlight', icon:'🎯', text:'AI展现了三层智能：（1）帮顾客省钱——先教用通针而不是直接卖喷嘴；（2）灵活应变——通针丢了可以用回形针；（3）自然营销——安全套装价格清晰，搭配免运费提升转化。' },
+      { type:'annotation', style:'highlight', icon:'🎯', text:'AI展现了三层智能：（1）帮顾客省钱——先教用通针而不是直接卖喷嘴；（2）灵活应变——通针丢了可以用回形针；（3）自然营销——安全套装价格清晰，搭配免运费提升转化。' },
       { delay: 1200, type:'user', text:'好的，帮我下单安全套装。型号是GC-2000PW，订单号我找找... AMZ-2024-78342。对了，通针我找到了，确实通了之后压力恢复了！谢谢你。' },
       { delay: 2200, type:'bot', text:'太好了！三个好消息：\n\n✅ **喷嘴问题已解决** — 通针清理后压力恢复，说明机器本身没有问题。\n✅ **保修档案已建立** — 我已记录您的订单号 AMZ-2024-78342，型号 GC-2000PW，保修至2027年。\n✅ **安全套装已下单** — 订单号 #GC-88421，预计5月15日前送达您的地址。\n\n📧 所有详细信息已同步发送到您的注册邮箱。\n\n最后温馨提醒：每次使用后记得清洁进水滤网（只需10秒钟），这个习惯能让您的清洗机多用好几年！还有其他问题吗？' }
     ]
@@ -1644,7 +1645,7 @@ const DEMO_SCENARIOS = {
 };
 
 // ═══════════════ DEMO ENGINE ═══════════════
-let demoState = { running: false, scenarioId: null, currentStep: 0, speed: 1.0, steps: [], annotationIndex: -1, annotations: [] };
+let demoState = { running: false, scenarioId: null, currentStep: 0, speed: 1.0, steps: [], annotationIndex: -1, annotations: [], annoReview: false };
 
 function toggleDemoDropdown() {
   const dd = document.getElementById('demoDropdown');
@@ -1692,7 +1693,7 @@ async function startDemo(scenarioId) {
   document.getElementById('demoBtn').textContent = '⏸ 演示中';
   document.getElementById('demoBtn').classList.add('playing');
   document.getElementById('demoProgress').classList.add('show');
-  document.getElementById('annotationOverlay').innerHTML = '';
+  hideAnnotation();
 
   if (scenario.lang && LANGUAGES[scenario.lang]) {
     state.lang = scenario.lang;
@@ -1710,7 +1711,7 @@ async function startDemo(scenarioId) {
     updateDemoProgress();
 
     if (step.type === 'annotation') {
-      demoState.annotations.push({ index: i, pos: step.pos, style: step.style, icon: step.icon, text: step.text });
+      demoState.annotations.push({ index: i, style: step.style, icon: step.icon, text: step.text });
       showAnnotationSingle(demoState.annotations.length - 1);
       await sleep((step.delay || 2000) * demoState.speed);
       continue;
@@ -1751,7 +1752,6 @@ function finishDemo() {
   document.getElementById('demoBtn').classList.remove('playing');
   document.getElementById('demoProgress').classList.remove('show');
   showAllAnnotations();
-  document.getElementById('annotationCtrls').classList.add('show');
 }
 
 function stopDemo() {
@@ -1759,67 +1759,96 @@ function stopDemo() {
   document.getElementById('demoBtn').textContent = '▶ 演示模式';
   document.getElementById('demoBtn').classList.remove('playing');
   document.getElementById('demoProgress').classList.remove('show');
-  document.getElementById('annotationOverlay').innerHTML = '';
-  document.getElementById('annotationCtrls').classList.remove('show');
+  hideAnnotation();
+}
+
+function annoStyleCls(style) {
+  return style === 'insight' ? 'insight' : style === 'tech' ? 'tech' : 'highlight';
+}
+
+function renderAnnoBar() {
+  const bar = document.getElementById('annoBar');
+  const iconEl = document.getElementById('annoBarIcon');
+  const textEl = document.getElementById('annoBarText');
+  const navEl = document.getElementById('annoBarNav');
+  if (!bar || !textEl) return;
+
+  const annos = demoState.annotations;
+  if (!annos.length) {
+    bar.classList.remove('show');
+    textEl.textContent = '';
+    if (iconEl) iconEl.textContent = '';
+    if (navEl) navEl.innerHTML = '';
+    return;
+  }
+
+  const i = Math.max(0, Math.min(demoState.annotationIndex < 0 ? 0 : demoState.annotationIndex, annos.length - 1));
+  const a = annos[i];
+  if (iconEl) iconEl.textContent = a.icon || '💡';
+  textEl.textContent = a.text;
+  textEl.className = 'anno-bar-text ' + annoStyleCls(a.style);
+
+  if (navEl) {
+    if (demoState.annoReview) {
+      let html = '<span class="anno-bar-count">' + (i + 1) + '/' + annos.length + '</span>';
+      for (let k = 0; k < annos.length; k++) {
+        html += '<span class="anno-bar-badge' + (k === i ? ' active' : '') + '" data-anno-idx="' + k + '" onclick="showAnnotationAt(' + k + ')">' + (k + 1) + '</span>';
+      }
+      html += '<button class="anno-bar-btn" onclick="prevAnnotation()" title="上一条">◀</button>'
+        + '<button class="anno-bar-btn" onclick="nextAnnotation()" title="下一条">▶</button>'
+        + '<button class="anno-bar-btn" onclick="hideAnnotation()" title="关闭讲解">✕</button>';
+      navEl.innerHTML = html;
+    } else {
+      navEl.innerHTML = '';
+    }
+  }
+  bar.classList.add('show');
+}
+
+function showAnnotationAt(idx) {
+  if (!demoState.annotations[idx]) return;
+  demoState.annotationIndex = idx;
+  renderAnnoBar();
 }
 
 function showAnnotationSingle(idx) {
-  const overlay = document.getElementById('annotationOverlay');
-  const a = demoState.annotations[idx];
-  if (!a) return;
-  const cls = a.style === 'insight' ? 'insight' : a.style === 'tech' ? 'tech' : 'highlight';
-  overlay.innerHTML = `<div class="annotation-bubble visible ${cls}" style="${getAnnotationPos(a.pos)}"><span class="anno-icon">${a.icon}</span>${a.text}</div>`;
+  if (!demoState.annotations[idx]) return;
+  demoState.annotationIndex = idx;
+  demoState.annoReview = false;
+  renderAnnoBar();
 }
 
 function showAllAnnotations() {
-  const overlay = document.getElementById('annotationOverlay');
-  overlay.innerHTML = demoState.annotations.map((a, i) => {
-    const cls = a.style === 'insight' ? 'insight' : a.style === 'tech' ? 'tech' : 'highlight';
-    return `<div class="annotation-bubble visible ${cls}" style="${getAnnotationPos(a.pos)}" data-anno-idx="${i}">${a.text}</div>`;
-  }).join('');
+  if (!demoState.annotations.length) return;
+  demoState.annoReview = true;
   demoState.annotationIndex = 0;
-}
-
-function getAnnotationPos(pos) {
-  const positions = {
-    'top-right': 'top:80px;right:340px;',
-    'bottom-left': 'bottom:120px;left:340px;',
-    'top-left': 'top:80px;left:340px;',
-    'bottom-right': 'bottom:120px;right:340px;'
-  };
-  return positions[pos] || 'top:80px;right:340px;';
+  renderAnnoBar();
 }
 
 function nextAnnotation() {
-  if (demoState.annotations.length === 0) return;
+  if (!demoState.annotations.length) return;
   demoState.annotationIndex = (demoState.annotationIndex + 1) % demoState.annotations.length;
-  highlightAnnotation(demoState.annotationIndex);
+  renderAnnoBar();
 }
 
 function prevAnnotation() {
-  if (demoState.annotations.length === 0) return;
+  if (!demoState.annotations.length) return;
   demoState.annotationIndex = (demoState.annotationIndex - 1 + demoState.annotations.length) % demoState.annotations.length;
-  highlightAnnotation(demoState.annotationIndex);
-}
-
-function highlightAnnotation(idx) {
-  document.querySelectorAll('.annotation-bubble').forEach(el => {
-    el.style.opacity = '0.5';
-    el.style.transform = 'scale(0.95)';
-  });
-  const target = document.querySelector(`.annotation-bubble[data-anno-idx="${idx}"]`);
-  if (target) {
-    target.style.opacity = '1';
-    target.style.transform = 'scale(1.05)';
-    target.style.zIndex = '20';
-  }
+  renderAnnoBar();
 }
 
 function hideAnnotation() {
-  document.getElementById('annotationOverlay').innerHTML = '';
-  document.getElementById('annotationCtrls').classList.remove('show');
+  const bar = document.getElementById('annoBar');
+  const textEl = document.getElementById('annoBarText');
+  const iconEl = document.getElementById('annoBarIcon');
+  const navEl = document.getElementById('annoBarNav');
+  if (bar) bar.classList.remove('show');
+  if (textEl) textEl.textContent = '';
+  if (iconEl) iconEl.textContent = '';
+  if (navEl) navEl.innerHTML = '';
   demoState.annotations = [];
   demoState.annotationIndex = -1;
+  demoState.annoReview = false;
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

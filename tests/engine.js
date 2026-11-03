@@ -67,7 +67,9 @@ const EXPORTS = [
   'renderCategories', 'renderQuickReplies', 'updatePlaceholder'
 ];
 // 尚未落地的导出：用 typeof 保护，缺失时为 undefined，测试据此给出明确断言而非加载崩溃
-const OPTIONAL_EXPORTS = ['PRODUCT_CHIPS', 'selectCategory', 'currentProductId'];
+const OPTIONAL_EXPORTS = ['PRODUCT_CHIPS', 'selectCategory', 'currentProductId',
+  'DEMO_SCENARIOS', 'demoState', 'renderAnnoBar', 'showAnnotationSingle', 'showAllAnnotations',
+  'nextAnnotation', 'prevAnnotation', 'hideAnnotation'];
 
 function loadEngine() {
   const html = fs.readFileSync(INDEX, 'utf8');
