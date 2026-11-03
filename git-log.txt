@@ -6,7 +6,11 @@
 
 ## 提交列表
 
-41b3f57 (HEAD -> main) chore: refresh git-log.txt originality evidence to build b15fb46
+308c975 (HEAD -> main) feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
+d5b9e87 docs: align retrieval-order wording in abstract and clarify fallback-chain comment
+3e1c553 docs(manifest): mark script-verified pre-submission checks as done
+5e83ec6 chore: restore readable Chinese paths in git-log.txt tracked-file list
+41b3f57 chore: refresh git-log.txt originality evidence to build b15fb46
 b15fb46 chore(metrics): re-measure UI latency on build 67bea86 and sync docs
 67bea86 feat(evidence): surface retrieval path in the decision-basis card
 94e63a7 docs: correct stale page/size figures and add git-log originality evidence
@@ -22,6 +26,52 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit 308c975
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 12:00:28 +0800
+
+    feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
+
+
+ docs/作品简介.html             |  65 ++++++++++++++++++++
+ docs/作品简介.pdf              | Bin 0 -> 188301 bytes
+ docs/团队信息与原创性声明.html | 133 +++++++++++++++++++++++++++++++++++++++++
+ docs/团队信息与原创性声明.pdf  | Bin 0 -> 304844 bytes
+ docs/提交物清单.md             |   6 +-
+ 5 files changed, 201 insertions(+), 3 deletions(-)
+
+commit d5b9e87
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:53:25 +0800
+
+    docs: align retrieval-order wording in abstract and clarify fallback-chain comment
+
+
+ docs/作品简介.md   | 2 +-
+ docs/提交物清单.md | 4 ++--
+ index.html         | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 3e1c553
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:51:36 +0800
+
+    docs(manifest): mark script-verified pre-submission checks as done
+
+
+ docs/提交物清单.md | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+commit 5e83ec6
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:48:00 +0800
+
+    chore: restore readable Chinese paths in git-log.txt tracked-file list
+
+
+ git-log.txt | 39 +++++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
 commit 41b3f57
 Author: 竹川南 <19850260536@163.com>
@@ -206,26 +256,26 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 14
+提交总数: 18
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-03 11:43:34 +0800 41b3f57 chore: refresh git-log.txt originality evidence to build b15fb46
-本文件生成时的 HEAD: 41b3f5732390d2e83a2220c7c225b2eabb2e92fe
+最近提交: 2026-11-03 12:00:28 +0800 308c975 feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
+本文件生成时的 HEAD: 308c975068579173e6e9a54ec4196f8a0e604b19
 
 ## 追踪文件清单（按提交次数）
 
-     10 index.html
-      4 docs/提交物清单.md
+     11 index.html
+      7 docs/提交物清单.md
       4 docs/应用效果说明.pdf
       4 docs/应用效果说明.html
       3 tests/report/实测指标报告.md
       3 tests/report/metrics-summary.json
+      3 git-log.txt
       3 docs/演示讲解台词.md
       3 docs/方案设计文档.pdf
       3 docs/方案设计文档.html
+      3 docs/作品简介.md
       2 tests/report/ui-latency.json
-      2 git-log.txt
       2 docs/评审对照与答辩准备.md
-      2 docs/作品简介.md
       1 tests/testset.json
       1 tests/run-tests.js
       1 tests/probes.json
@@ -234,5 +284,9 @@ Date:   2026-10-18 21:41:40 +0800
       1 tests/engine.js
       1 tests/debug.js
       1 tests/changelog.json
+      1 docs/团队信息与原创性声明.pdf
+      1 docs/团队信息与原创性声明.html
+      1 docs/作品简介.pdf
+      1 docs/作品简介.html
       1 docs/assets/print.css
       1 .gitignore
