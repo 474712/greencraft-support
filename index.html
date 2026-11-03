@@ -546,12 +546,28 @@ const I18N = {
   evidenceStrong: { en:'Strong cues', zh:'强特征命中', fr:'Indices forts', de:'Starke Treffer', es:'Claves fuertes', it:'Indizi forti', nl:'Sterke signalen', pt:'Sinais fortes' },
   evidenceWeak: { en:'Weak cues', zh:'弱特征命中', fr:'Indices faibles', de:'Schwache Treffer', es:'Claves débiles', it:'Indizi deboli', nl:'Zwakke signalen', pt:'Sinais fracos' },
   evidenceProduct: { en:'Product', zh:'品类', fr:'Produit', de:'Produkt', es:'Producto', it:'Prodotto', nl:'Product', pt:'Produto' },
+  evidencePath: { en:'Retrieval path', zh:'检索方式', fr:'Voie de recherche', de:'Abrufweg', es:'Vía de búsqueda', it:'Percorso di ricerca', nl:'Zoekpad', pt:'Via de busca' },
   evidenceAlt: { en:'Runner-up', zh:'次优候选', fr:'Alternative', de:'Zweitbeste', es:'Alternativa', it:'Alternativa', nl:'Tweede keuze', pt:'Alternativa' },
   evidenceModel: { en:'Model codes', zh:'型号代码', fr:'Références modèle', de:'Modellcodes', es:'Códigos de modelo', it:'Codici modello', nl:'Modelcodes', pt:'Códigos de modelo' },
   evidenceLow: { en:'insufficient evidence — clarifying question sent', zh:'证据不足 · 已发起澄清追问', fr:'preuves insuffisantes — question de clarification envoyée', de:'unzureichende Evidenz — Rückfrage gestellt', es:'evidencia insuficiente — pregunta de aclaración enviada', it:'evidenza insufficiente — richiesta di chiarimento inviata', nl:'onvoldoende bewijs — verduidelijkingsvraag gesteld', pt:'evidência insuficiente — pergunta de esclarecimento enviada' },
   evidenceGreeting: { en:'greeting handled directly — no knowledge-base lookup', zh:'寒暄/情绪直接应答 · 未走知识库', fr:'formule de politesse traitée directement — sans base de connaissances', de:'Begrüßung direkt beantwortet — ohne Wissensdatenbank', es:'saludo atendido directamente — sin base de conocimiento', it:'saluto gestito direttamente — senza base di conoscenza', nl:'begroeting direct beantwoord — zonder kennisbank', pt:'saudação tratada diretamente — sem base de conhecimento' },
   evidenceHandoff: { en:'human-handoff rule triggered — ticket created', zh:'触发转人工规则 · 已生成工单', fr:'règle de transfert humain déclenchée — ticket créé', de:'Übergabe-an-mensch ausgelöst — Ticket erstellt', es:'regla de derivación a humano activada — ticket creado', it:'regola di passaggio a un operatore umano attivata — ticket creato', nl:'overdracht aan mens geactiveerd — ticket aangemaakt', pt:'regra de transferência para humano acionada — ticket criado' },
   evidenceConfirm: { en:'clarification confirmed — previous answer resumed', zh:'澄清已确认 · 续答上一轮', fr:'clarification confirmée — reprise de la réponse précédente', de:'Rückfrage bestätigt — vorherige Antwort fortgesetzt', es:'aclaración confirmada — se retoma la respuesta anterior', it:'chiarimento confermato — ripresa della risposta precedente', nl:'verduidelijking bevestigd — vorig antwoord hervat', pt:'esclarecimento confirmado — retomando a resposta anterior' }
+};
+
+// 检索方式标签：把「判定依据」卡片与方案设计文档 §2.7 的检索方式枚举逐项对齐
+const KB_PATH_LABEL = {
+  'exact':      { en:'exact hit — category + language', zh:'精确命中 · 品类+语种', fr:'correspondance exacte — catégorie + langue', de:'Exakter Treffer — Kategorie + Sprache', es:'coincidencia exacta — categoría + idioma', it:'corrispondenza esatta — categoria + lingua', nl:'exacte treffer — categorie + taal', pt:'correspondência exata — categoria + idioma' },
+  'general':    { en:'general entry — same language', zh:'同语种通用条目', fr:'entrée générale — même langue', de:'Allgemeineintrag — gleiche Sprache', es:'entrada general — mismo idioma', it:'voce generale — stessa lingua', nl:'algemene item — dezelfde taal', pt:'entrada geral — mesmo idioma' },
+  'default':    { en:'default entry — same language', zh:'默认条目 · 同语种', fr:'entrée par défaut — même langue', de:'Standardeintrag — gleiche Sprache', es:'entrada predeterminada — mismo idioma', it:'voce predefinita — stessa lingua', nl:'standaarditem — dezelfde taal', pt:'entrada padrão — mesmo idioma' },
+  'en-fallback':{ en:'English fallback entry', zh:'英文回落条目', fr:'entrée de repli en anglais', de:'Englischer Fallback-Eintrag', es:'entrada de reserva en inglés', it:'voce di fallback in inglese', nl:'Engelse terugvaloptie', pt:'entrada de fallback em inglês' },
+  'fuzzy':      { en:'fuzzy score match', zh:'模糊评分命中', fr:'correspondance par score flou', de:'Unscharfer Score-Treffer', es:'coincidencia por puntuación difusa', it:'corrispondenza per punteggio fuzzy', nl:'fuzzy score-tref', pt:'correspondência por pontuação fuzzy' },
+  'smalltalk':  { en:'no intent or product matched — no lookup', zh:'未命中意图/品类特征 · 未检索知识库', fr:'aucune intention ni produit reconnu — sans recherche', de:'weder Absicht noch Produkt erkannt — ohne Suche', es:'sin intención ni producto detectados — sin búsqueda', it:'nessuna intenzione né prodotto rilevato — senza ricerca', nl:'geen intentie of product herkend — zonder zoeken', pt:'sem intenção ou produto identificados — sem consulta' },
+  'handoff':    { en:'handoff rule fired — knowledge base skipped', zh:'转人工规则命中 · 跳过知识库检索', fr:'règle de transfert — base de connaissances ignorée', de:'Übergaberegel — Wissensdatenbank übersprungen', es:'regla de derivación — base de conocimiento omitida', it:'regola di passaggio — knowledge base saltata', nl:'overdrachtregel — kennisbank overgeslagen', pt:'regra de transferência — base de conhecimento ignorada' },
+  'clarify':    { en:'clarifying question — insufficient evidence', zh:'证据不足 · 发起澄清追问', fr:'question de clarification — preuves insuffisantes', de:'Rückfrage — unzureichende Evidenz', es:'pregunta de aclaración — evidencia insuficiente', it:'richiesta di chiarimento — evidenza insufficiente', nl:'verduidelijkingsvraag — onvoldoende bewijs', pt:'pergunta de esclarecimento — evidência insuficiente' },
+  'weak':       { en:'weak cues only — clarifying question sent', zh:'仅弱特征命中 · 发起澄清追问', fr:'indices faibles seuls — question de clarification envoyée', de:'nur schwache Treffer — Rückfrage gestellt', es:'solo claves débiles — pregunta de aclaración enviada', it:'solo indizi deboli — richiesta di chiarimento inviata', nl:'alleen zwakke signalen — verduidelijkingsvraag gesteld', pt:'apenas sinais fracos — pergunta de esclarecimento enviada' },
+  'model-pair': { en:'model-code pairing → comparison', zh:'型号代码对举 → 选型对比', fr:'paire de références modèle → comparaison', de:'Modellcode-Paar → Vergleich', es:'par de códigos de modelo → comparación', it:'coppia di codici modello → confronto', nl:'modelcode-paar → vergelijking', pt:'par de códigos de modelo → comparação' },
+  'none':       { en:'no knowledge entry matched', zh:'未命中知识库条目', fr:'aucune entrée trouvée', de:'kein Wissenseintrag getroffen', es:'no se encontró ninguna entrada', it:'nessuna voce trovata', nl:'geen kennisitem gevonden', pt:'nenhuma entrada encontrada' }
 };
 
 const PRODUCTS = [
@@ -922,16 +938,16 @@ function _matchP(p, lower) {
 
 // ── 判定证据外露：记录本轮的命中过程，供前端「判定依据」透明化展示与答辩讲解 ──
 const _decision = { intent:null, product:null, strong:[], weak:[], runnerUp:null,
-  confidence:0, productHit:[], route:'none' };
+  confidence:0, productHit:[], route:'none', kbPath:'none' };
 function resetDecision() {
   _decision.intent = null; _decision.product = null; _decision.strong = []; _decision.weak = [];
   _decision.runnerUp = null; _decision.confidence = 0; _decision.productHit = [];
-  _decision.route = 'none';
+  _decision.route = 'none'; _decision.kbPath = 'none';
 }
 function snapshotDecision() {
   return { intent:_decision.intent, product:_decision.product, strong:_decision.strong.slice(),
     weak:_decision.weak.slice(), runnerUp:_decision.runnerUp, confidence:_decision.confidence,
-    productHit:_decision.productHit.slice(), route:_decision.route, lang:state.lang };
+    productHit:_decision.productHit.slice(), route:_decision.route, kbPath:_decision.kbPath, lang:state.lang };
 }
 
 // 意图打分：strong 最长命中为主分 ×3.0、其余命中 ×1.0 累加；weak 仅按 ×0.4 累加
@@ -969,7 +985,7 @@ function detectIntent(text) {
   const modelCodes = detectModelCodes(lower);
   if (!solidWinner && modelCodes.length >= 2) {
     _decision.intent = 'compare'; _decision.strong = modelCodes.slice();
-    _decision.confidence = 1; _decision.route = 'model-pair';
+    _decision.confidence = 1; _decision.route = 'model-pair'; _decision.kbPath = 'model-pair';
     return 'compare';
   }
   if (!top) { _decision.route = 'none'; return null; }
@@ -977,7 +993,7 @@ function detectIntent(text) {
   if (!solidWinner) {
     _decision.weak = hits[top[0]].weak;
     _decision.runnerUp = second ? second[0] : null;
-    _decision.confidence = 0; _decision.route = 'weak-only';
+    _decision.confidence = 0; _decision.route = 'weak-only'; _decision.kbPath = 'weak';
     return null;
   }
   _decision.intent = top[0];
@@ -1110,6 +1126,8 @@ function detectHandoff(text) {
   const viaRequest = (HANDOFF_REQUEST[L] || HANDOFF_REQUEST.en).some(w => _hMatch(lower, w));
   return viaVerb || viaRequest;
 }
+// 检索降级链各档位对应的「检索方式」标识：品类精确 → 同语种通用 → 默认 → 英文回落
+const _KB_PATH_BY_STEP = ['exact', 'general', 'default', 'en-fallback', 'en-fallback', 'en-fallback'];
 function findKBResponse(intent, product) {
   const lang = state.lang; const kbSec = KB[intent];
   if (!kbSec) return null;
@@ -1124,7 +1142,10 @@ function findKBResponse(intent, product) {
     kbSec['general'] && kbSec['general']['en'],
     kbSec['default'] && kbSec['default']['en']
   ];
-  for (const e of chain) { const r = pick(e); if (r) return r; }
+  for (let i = 0; i < chain.length; i++) {
+    const r = pick(chain[i]);
+    if (r) { _decision.kbPath = _KB_PATH_BY_STEP[i]; return r; }
+  }
   return null;
 }
 
@@ -1259,6 +1280,11 @@ function renderEvidence(ev) {
     rows.push('<div class="ev-row"><span class="ev-k">' + evl('evidenceProduct') + '</span>'
       + '<span class="ev-v">' + escapeHtml(getProductName(ev.product, L)) + '</span>'
       + (ev.productHit || []).map(chip).join('') + '</div>');
+  }
+  if (ev.kbPath) {
+    const pl = KB_PATH_LABEL[ev.kbPath];
+    rows.push('<div class="ev-row"><span class="ev-k">' + evl('evidencePath') + '</span>'
+      + '<span class="ev-v">' + escapeHtml(pl ? (pl[L] || pl['en']) : ev.kbPath) + '</span></div>');
   }
   if (ev.runnerUp) rows.push('<div class="ev-row"><span class="ev-k">' + evl('evidenceAlt') + '</span><span class="ev-v">' + escapeHtml(intentName(ev.runnerUp)) + '</span></div>');
   let head;
@@ -1820,7 +1846,7 @@ function generateEnhancedResponse(text, forcedIntent, forcedProduct) {
   // 1) 转人工请求优先于一切意图判定（红线5：人工复核入口；评分点：转人工率）
   if (!forcedIntent && detectHandoff(text)) {
     state.context.missCount = 0; state.context.pending = null;
-    _decision.route = 'handoff';
+    _decision.route = 'handoff'; _decision.kbPath = 'handoff';
     const tpl = I18N.handoff[state.lang] || I18N.handoff['en'];
     return tpl.replace('{ticket}', makeTicket());
   }
@@ -1833,11 +1859,13 @@ function generateEnhancedResponse(text, forcedIntent, forcedProduct) {
       state.context.intent = pend.intent; state.context.product = pend.product;
       _decision.route = 'clarify-confirm';
       _decision.intent = pend.intent; _decision.product = pend.product;
+      _decision.kbPath = 'fuzzy';
       return pend.answer;
     }
     if (isDeny(text)) {
       state.context.pending = null;
       state.context.missCount = (state.context.missCount || 0) + 1;
+      _decision.kbPath = 'clarify';
       if (state.context.missCount >= 2) { state.context.missCount = 0; return I18N.handoffHint[state.lang] || I18N.handoffHint['en']; }
       return DENY_ASK[state.lang] || DENY_ASK['en'];
     }
@@ -1852,7 +1880,7 @@ function generateEnhancedResponse(text, forcedIntent, forcedProduct) {
   // 4) 寒暄与情绪路由：无意图无产品且无弱信号时独立应答，不污染 missCount 与故障上下文
   if (!forcedIntent && !rawIntent && !rawProduct && !(_decision.weak && _decision.weak.length)) {
     const st = detectSmalltalk(text);
-    if (st) { _decision.route = 'smalltalk'; return SMALLTALK_REPLY[st][state.lang] || SMALLTALK_REPLY[st]['en']; }
+    if (st) { _decision.route = 'smalltalk'; _decision.kbPath = 'smalltalk'; return SMALLTALK_REPLY[st][state.lang] || SMALLTALK_REPLY[st]['en']; }
     if (emotion === 'angry') return EMPATHY_HANDOFF[state.lang] || EMPATHY_HANDOFF['en'];
   }
 
@@ -1868,8 +1896,9 @@ function generateEnhancedResponse(text, forcedIntent, forcedProduct) {
     const fs = findFuzzyScored(intent, product, text);
     if (fs) {
       state.context.missCount = 0;
-      if (fs.conf >= 0.5 || fs.score >= 10) return wrap(fs.a, intent);
+      if (fs.conf >= 0.5 || fs.score >= 10) { _decision.kbPath = 'fuzzy'; return wrap(fs.a, intent); }
       // 低置信度 → 澄清式追问，挂起等待用户确认（避免硬答错答）
+      _decision.kbPath = 'clarify';
       state.context.pending = { answer: wrap(fs.a, intent), intent, product };
       return (CONFIRM_ASK[state.lang] || CONFIRM_ASK['en']).replace('{q}', fs.q);
     }

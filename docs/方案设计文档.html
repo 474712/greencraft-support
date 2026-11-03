@@ -259,7 +259,7 @@
 <p>由于当前状态（<code>state.context</code>）在多轮中保持，用户的追问（"I tried charging it but still nothing"）即使不再重复产品名，也能继承上一轮的品类，不会掉入通用兜底。</p>
 
 <h3>2.6 知识检索链路</h3>
-<p>知识库以 <code>KB[意图][品类][语种]</code> 三维组织，每条为一组问句与答复（<code>{q, a}</code>）。检索顺序为一条固定的降级链：</p>
+<p>知识库以 <code>KB[意图][品类][语种]</code> 三维组织，每条为一组问句与答复（<code>{q, a}</code>）。检索分两级执行：先在「意图 × 品类 × 语种」单元内对全部候选条目打分排序——命中且置信度达标则直接答复，命中但置信度不足则发起澄清追问（挂起等待用户确认），单元内无候选时再沿「同语种通用 → 默认 → 英文回落」三级降级链兜底。每次实际命中的档位都会记录在「判定依据」卡片的「检索方式」一行：</p>
 <figure>
 <svg viewBox="0 0 900 168" xmlns="http://www.w3.org/2000/svg" font-family="Microsoft YaHei, sans-serif">
   <defs><marker id="ar3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#2f6b3f"/></marker></defs>
@@ -285,20 +285,20 @@
   <path d="M332,132 L364,108" stroke="#2f6b3f" stroke-width="1.2" marker-end="url(#ar3)"/>
 
   <rect x="368" y="52" width="150" height="62" rx="4" fill="#eef2ea" stroke="#2f6b3f" stroke-width="1.4"/>
-  <text x="443" y="74" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">模糊评分检索</text>
-  <text x="443" y="89" font-size="8" text-anchor="middle" fill="#6b7360">findFuzzyScored</text>
+  <text x="443" y="74" font-size="10" text-anchor="middle" fill="#1c2318" font-weight="bold">命中判定与档位记录</text>
+  <text x="443" y="89" font-size="7" text-anchor="middle" fill="#6b7360">findFuzzyScored · findKBResponse</text>
   <text x="443" y="102" font-size="8" text-anchor="middle" fill="#6b7360">CJK 二元组 · 拉丁词边界</text>
 
   <path d="M522,83 L556,83" stroke="#2f6b3f" stroke-width="1.4" marker-end="url(#ar3)"/>
   <rect x="560" y="20" width="150" height="40" rx="4" fill="#fff" stroke="#2f6b3f"/>
   <text x="635" y="37" font-size="9" text-anchor="middle" fill="#1c2318">精确条目命中</text>
-  <text x="635" y="51" font-size="8" text-anchor="middle" fill="#6b7360">直接返回标准答复</text>
+  <text x="635" y="51" font-size="8" text-anchor="middle" fill="#6b7360">品类+语种单元首条</text>
   <rect x="560" y="66" width="150" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
   <text x="635" y="83" font-size="9" text-anchor="middle" fill="#1c2318">模糊条目命中</text>
-  <text x="635" y="97" font-size="8" text-anchor="middle" fill="#6b7360">按置信度加权排序</text>
+  <text x="635" y="97" font-size="8" text-anchor="middle" fill="#6b7360">单元内按置信度排序</text>
   <rect x="560" y="112" width="150" height="40" rx="4" fill="#fff" stroke="#6b8f4e"/>
-  <text x="635" y="129" font-size="9" text-anchor="middle" fill="#1c2318">同语种通用条目</text>
-  <text x="635" y="143" font-size="8" text-anchor="middle" fill="#6b7360">跨品类兜底</text>
+  <text x="635" y="129" font-size="9" text-anchor="middle" fill="#1c2318">通用 / 默认条目</text>
+  <text x="635" y="143" font-size="8" text-anchor="middle" fill="#6b7360">跨品类与语种兜底</text>
 
   <path d="M714,83 L748,83" stroke="#2f6b3f" stroke-width="1.4" marker-end="url(#ar3)"/>
   <rect x="752" y="52" width="132" height="62" rx="4" fill="#eef4ec" stroke="#2f6b3f" stroke-width="1.4"/>
@@ -306,7 +306,7 @@
   <text x="818" y="92" font-size="8" text-anchor="middle" fill="#6b7360">含命中特征与检索方式</text>
   <text x="818" y="105" font-size="8" text-anchor="middle" fill="#6b7360">用户可核验</text>
 </svg>
-<figcaption>图 2-2　知识检索降级链与模糊匹配</figcaption>
+<figcaption>图 2-2　知识检索的两级机制：单元内打分与三级降级兜底</figcaption>
 </figure>
 <p>模糊检索对中文采用<b>二元组（bigram）</b>重叠度，对拉丁语种采用<b>词边界</b>重叠度，置信度 = 命中片段数 / 分母，条目得分 = 基础分 × (1 + 置信度 × 0.5)。该链路保证：在 241 条条目规模下，任何一个能判定意图的问题都能命中至少一条同语种条目。</p>
 
@@ -317,7 +317,7 @@
   <li>命中的<b>弱特征</b>（如有）；</li>
   <li>识别出的<b>品类</b>；</li>
   <li>识别出的<b>型号</b>（如 <code>GC-480E</code>）；</li>
-  <li><b>检索方式</b>：精确命中 / 模糊命中 / 同语种通用条目 / 冷启动问候 / 触发转人工规则；</li>
+  <li><b>检索方式</b>：精确命中 / 模糊命中 / 同语种通用条目 / 默认条目 / 英文回落 / 澄清追问 / 冷启动问候 / 触发转人工规则；</li>
   <li><b>置信度百分比</b>。</li>
 </ul>
 <p>这一设计把智能体的决策过程从"黑箱"变成"可审计对象"，同时也是演示中最有说服力的一段——评委可以指着任意一条答复追问"它为什么这么答"，答案就在卡片里。</p>
