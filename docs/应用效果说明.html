@@ -17,7 +17,7 @@
     <div><b>参赛赛道</b>　第三届江苏省高校"丝路电商"创新挑战赛 · 赛道一 OPC 智能体创新应用</div>
     <div><b>参赛团队</b>　丝路智算队</div>
     <div><b>验证对象</b>　线上产物 <code>index.html</code> 中的真实引擎（未使用 mock）</div>
-    <div><b>报告版本</b>　v2.0（口径对齐版 · 2026-11-03）</div>
+    <div><b>报告版本</b>　v2.1（品类动态快捷提问版 · 2026-11-03）</div>
   </div>
   <div class="badges">
     <span class="badge">意图准确率 100%</span>
@@ -55,6 +55,7 @@
     ├── holdout.json         # 留出集  72 条（调优完成后新写）
     ├── probes.json          # 流程探针 72 条
     ├── run-tests.js         # 意图与品类回归
+    ├── quick-replies.js     # 品类动态快捷提问回归（240 条卡片）
     ├── metrics.js           # 实测指标生成器
     └── report/              # 本报告的生成产物</code></pre>
 
@@ -65,9 +66,12 @@ node tests/run-tests.js
 # 2) 留出集泛化验证（72 条）
 node tests/run-tests.js --set holdout.json
 
-# 3) 生成本报告的全部数字（输出 metrics-summary.json 与本文件的数据源）
+# 3) 品类动态快捷提问回归（240 条卡片，2171 条断言）
+node tests/quick-replies.js
+
+# 4) 生成本报告的全部数字（输出 metrics-summary.json 与本文件的数据源）
 node tests/metrics.js</code></pre>
-<p>三条命令均无需安装任何依赖（仅需 Node ≥ 16），且直接读取仓库中的 <code>index.html</code>。</p>
+<p>四条命令均无需安装任何依赖（仅需 Node ≥ 16），且直接读取仓库中的 <code>index.html</code>。</p>
 
 <!-- ══════════════════ 二、样本构成 ══════════════════ -->
 <h2>二、样本构成</h2>
@@ -104,7 +108,7 @@ node tests/metrics.js</code></pre>
     <tr><td>澄清追问流程探针</td><td><b>100%</b></td><td>24 / 24</td><td>触发追问或答复中主动反问（含问号）</td></tr>
     <tr><td>寒暄直答流程探针</td><td><b>100%</b></td><td>16 / 16</td><td>走寒暄通道直接应答，未进入业务知识库</td></tr>
     <tr><td>引擎决策时延（均值）</td><td><b>0.05 ms</b></td><td>352</td><td>意图 + 品类 + 检索 + 答复生成总耗时；预热后 3 轮取中位轮</td></tr>
-    <tr><td>引擎决策时延（P95）</td><td><b>0.09 ms</b></td><td>352</td><td>95 分位</td></tr>
+    <tr><td>引擎决策时延（P95）</td><td><b>0.08–0.10 ms</b></td><td>352</td><td>95 分位；该统计量随机器负载抖动，不取单点值</td></tr>
     <tr><td>端到端首字可见</td><td><b>838 ms</b></td><td>4 次采样</td><td>浏览器实测：提交到首字渲染</td></tr>
     <tr><td>端到端全量渲染</td><td><b>3085 ms</b></td><td>4 次采样</td><td>浏览器实测：提交到答复完整渲染</td></tr>
     <tr><td>外部网络请求数</td><td><b>0</b></td><td>—</td><td>浏览器 Performance 资源条目为空</td></tr>
@@ -332,6 +336,36 @@ node tests/metrics.js</code></pre>
   <li><b>导出与清空</b>：顶栏提供对话导出与清空，便于运营留存与演示复位。</li>
 </ul>
 
+<h3>8.4 品类动态快捷提问</h3>
+<p>底部快捷提问卡随<b>所选品类</b>与<b>对话意图</b>变化。改造前只有"全部"一套通用文案（8 语种共 128 条），切品类不换卡——用户反馈"僵化"。改造后建立 <b>品类 × 意图</b>专属库：</p>
+<table class="compact">
+  <thead><tr><th style="width:26%">维度</th><th>口径</th></tr></thead>
+  <tbody>
+    <tr><td>卡片规模</td><td>8 语种 × 10 品类 × 3 条 = <b>240 条</b>，各语种独立撰写（非机器翻译）</td></tr>
+    <tr><td>文案来源</td><td>取自该品类知识库真实覆盖的症状与部件，不写库中没有的问题</td></tr>
+    <tr><td>排序规则</td><td>当前对话意图命中的那条置顶，其余按"故障 → 保养 → 配件"排</td></tr>
+    <tr><td>刷新时机</td><td>点击品类标签、切换界面语种、每轮答复完成后</td></tr>
+    <tr><td>回退行为</td><td>未选品类（"全部"）时沿用原通用卡，与改造前完全一致</td></tr>
+  </tbody>
+</table>
+<p><b>回归断言（<code>node tests/quick-replies.js</code>，2171 条全部通过）</b>：</p>
+<table class="compact">
+  <thead><tr><th style="width:34%">断言</th><th class="num">条数</th><th>结果</th></tr></thead>
+  <tbody>
+    <tr><td>数据完整性与条目结构（8 语种 × 10 品类 × 3 条）</td><td class="num">329</td><td>全部通过</td></tr>
+    <tr><td>卡片能路由到正确品类与正确意图（各 240 条）</td><td class="num">480</td><td>480 / 480</td></tr>
+    <tr><td>该品类该意图确有知识条目</td><td class="num">240</td><td>240 / 240</td></tr>
+    <tr><td>点击后<b>直接作答</b>（不落进澄清追问回路）</td><td class="num">240</td><td>240 / 240</td></tr>
+    <tr><td>各品类文案互不相同、与通用卡无重复</td><td class="num">88</td><td>全部通过</td></tr>
+    <tr><td>卡片选取逻辑（按意图置顶、按品类切换、切回"全部"恢复通用卡）</td><td class="num">768</td><td>全部通过</td></tr>
+    <tr><td>界面联动（DOM 层：切换品类确实重绘卡片、标签高亮跟随语境）</td><td class="num">26</td><td>全部通过</td></tr>
+  </tbody>
+</table>
+<div class="callout warn">
+<span class="callout-title">⚠ 覆盖边界（如实标注）</span>
+卡片文案覆盖 10 个品类，但知识库的<b>品类级条目只覆盖 7 个品类</b>（草坪机 / 修枝剪 / 链锯 / 绿篱修剪机 / 吹叶机 / 高压清洗机 / 割草机器人）。割灌机、微耕机、碎木机三类点击后命中<b>同语种通用条目</b>，给出通用处置建议而非专属故障清单。
+</div>
+
 <!-- ══════════════════ 九、边界 ══════════════════ -->
 <h2>九、已知边界与未采集指标</h2>
 <div class="callout warn">
@@ -364,14 +398,10 @@ node tests/metrics.js</code></pre>
 
 <!-- ══════════════════ 十、结论 ══════════════════ -->
 <h2>十、结论</h2>
-<p>在可复现的回归口径下，GreenCraft Pro 的意图识别准确率 100%、品类识别准确率 100%、知识库命中率 100%、一次解决率 98.6%，三类流程探针触发率均为 100%，单次引擎决策 0.05 ms（P95 0.09 ms），且全程零外部网络请求。</p>
-<p>比数字更重要的是这些数字的<b>可核验性</b>：测试直接运行在生产产物上，脚本随代码提交，任何人执行三条命令即可复现全部结论；对无法在本阶段实测的指标，本报告选择留白而非填充估算值。</p>
+<p>在可复现的回归口径下，GreenCraft Pro 的意图识别准确率 100%、品类识别准确率 100%、知识库命中率 100%、一次解决率 98.6%，三类流程探针触发率均为 100%，单次引擎决策 0.05 ms（P95 0.08–0.10 ms），且全程零外部网络请求。</p>
+<p>比数字更重要的是这些数字的<b>可核验性</b>：测试直接运行在生产产物上，脚本随代码提交，任何人执行四条命令即可复现全部结论；对无法在本阶段实测的指标，本报告选择留白而非填充估算值。</p>
 <p>这一取舍本身即是本作品对"OPC 智能体"命题的回答——在售后这类<b>答错代价不对称</b>的场景里，一个能被审计、能被证伪、能被部署到客户自己服务器上的智能体，比一个更能"自由发挥"的智能体更有商业价值。</p>
-
-<div class="note" style="margin-top:20pt;">
-<span class="note-title">报告生成与版本</span>
-本报告数据由 <code>node tests/metrics.js</code> 于 2026-11-02 生成，代码版本见 <code>tests/report/metrics-summary.json</code> 的 <code>build</code> 字段。失败用例：<b>0 条</b>。
-</div>
+<p class="small" style="margin-top:14pt;">报告数据由 <code>node tests/metrics.js</code> 于 2026-11-03 生成，代码版本见 <code>tests/report/metrics-summary.json</code> 的 <code>build</code> 字段；失败用例 <b>0 条</b>。</p>
 
 </body>
 </html>

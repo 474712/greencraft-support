@@ -26,10 +26,16 @@ function makeStub() {
     focus: noop, blur: noop, click: noop, scrollIntoView: noop,
     getContext: () => null, remove: noop, cloneNode: () => el()
   });
+  // 元素登记表：同一个 id 永远返回同一个元素，便于断言「渲染是否真的刷新了」
+  const registry = new Map();
+  const getEl = (id) => {
+    if (!registry.has(id)) registry.set(id, el());
+    return registry.get(id);
+  };
   const document = {
     body: el(), head: el(), documentElement: el(),
     createElement: el, createTextNode: () => ({}), createDocumentFragment: el,
-    getElementById: () => null, querySelector: () => null, querySelectorAll: () => [],
+    getElementById: getEl, querySelector: () => null, querySelectorAll: () => [],
     addEventListener: noop, removeEventListener: noop,
     activeElement: null, fonts: { check: () => true }, hidden: false, visibilityState: 'visible'
   };
@@ -57,8 +63,11 @@ const EXPORTS = [
   'detectIntent', 'detectProduct', 'detectHandoff', 'detectSmalltalk', 'detectEmotion',
   'findKBResponse', 'findFuzzyScored', 'findFuzzy', 'generateResponse', 'getQuickReplies',
   'makeTicket', '_normText', '_decision', 'resetDecision',
-  '_normCache', '_foldCache'
+  '_normCache', '_foldCache',
+  'renderCategories', 'renderQuickReplies', 'updatePlaceholder'
 ];
+// 尚未落地的导出：用 typeof 保护，缺失时为 undefined，测试据此给出明确断言而非加载崩溃
+const OPTIONAL_EXPORTS = ['PRODUCT_CHIPS', 'selectCategory', 'currentProductId'];
 
 function loadEngine() {
   const html = fs.readFileSync(INDEX, 'utf8');
@@ -74,14 +83,20 @@ function loadEngine() {
   const engineSrc = code.slice(start, end);
 
   const stub = makeStub();
+  const opt = OPTIONAL_EXPORTS.map(k => `${k}: (typeof ${k} !== 'undefined' ? ${k} : undefined)`).join(', ');
   const factory = new Function(
     'window', 'document', 'navigator', 'console', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'requestAnimationFrame',
-    `${engineSrc}\n;return { ${EXPORTS.join(', ')} };`
+    `${engineSrc}\n;return { ${EXPORTS.join(', ')}, ${opt} };`
   );
-  return factory(
+  const engine = factory(
     stub.window, stub.document, stub.navigator, console,
     setTimeout, clearTimeout, setInterval, clearInterval, stub.window.requestAnimationFrame
   );
+  engine.__dom = {
+    get: (id) => stub.document.getElementById(id),
+    html: (id) => stub.document.getElementById(id).innerHTML
+  };
+  return engine;
 }
 
 module.exports = { loadEngine, ROOT, INDEX };

@@ -1230,15 +1230,147 @@ const QUICK_REPLY_SETS = {
   nl: { welcome:['Mijn maaier start niet','Hoe onderhoud ik mijn snoeischaar?','Accu loopt snel leeg','Wat is het garantiebeleid?'], troubleshoot:['Motor maakt lawaai','Accu snel leeg','Mes zit vast'], maintenance:['Hoe vaak slijpen?','Tips voor winteropslag','Accu onderhouden'], parts:['Prijs van het mes','Nieuwe accu bestellen','Compatibele opladers'], warranty:['Garantieclaim indienen','Garantiedekking','Garantieduur'] },
   pt: { welcome:['Meu cortador não liga','Como manter minha podadora?','A bateria acaba rápido','Qual é a política de garantia?'], troubleshoot:['O motor faz barulho','A bateria dura pouco','Lâmina presa'], maintenance:['Com que frequência afiar?','Armazenamento no inverno','Cuidados com a bateria'], parts:['Preço da lâmina','Encomendar bateria nova','Carregadores compatíveis'], warranty:['Como fazer uma reclamação','Cobertura da garantia','Duração da garantia'] }
 };
-function getQuickReplies() { const sets = QUICK_REPLY_SETS[state.lang] || QUICK_REPLY_SETS['en']; const ctx = state.context; if (ctx.intent === 'troubleshoot') return sets.troubleshoot; if (ctx.intent === 'maintenance') return sets.maintenance; if (ctx.intent === 'parts') return sets.parts; if (ctx.intent === 'warranty') return sets.warranty; return sets.welcome; }
+// 品类专属快捷提问：8 语种各自独立撰写，不使用机译。
+// 每条附意图标签 i（troubleshoot / maintenance / parts），对话推进时按当前意图把同类文案置顶。
+// 文案取材于该品类知识库真实覆盖的症状与部件，保证点击后直接命中对应品类的知识条目。
+const PRODUCT_CHIPS = {
+  zh: {
+    lawn_mower: [{ q:'割草机无法启动', i:'troubleshoot' }, { q:'割草机刀片多久磨一次', i:'maintenance' }, { q:'割草机刀片多少钱', i:'parts' }],
+    pruner: [{ q:'修枝剪剪不动', i:'troubleshoot' }, { q:'修枝剪刀片多久磨一次', i:'maintenance' }, { q:'修枝剪配件怎么订购', i:'parts' }],
+    chainsaw: [{ q:'链锯链条不动了', i:'troubleshoot' }, { q:'链锯链条多久上一次油', i:'maintenance' }, { q:'链锯链条多少钱', i:'parts' }],
+    hedge_trimmer: [{ q:'绿篱修剪机刀片不动了', i:'troubleshoot' }, { q:'绿篱修剪机刀片多久磨一次', i:'maintenance' }, { q:'绿篱修剪机刀片多少钱', i:'parts' }],
+    leaf_blower: [{ q:'吹叶机风力小', i:'troubleshoot' }, { q:'吹叶机滤芯多久清洗一次', i:'maintenance' }, { q:'吹叶机配件怎么订购', i:'parts' }],
+    pressure_washer: [{ q:'高压清洗机没压力', i:'troubleshoot' }, { q:'高压清洗机多久冲洗一次', i:'maintenance' }, { q:'高压清洗机配件怎么订购', i:'parts' }],
+    brush_cutter: [{ q:'割灌机打不着火', i:'troubleshoot' }, { q:'割灌机每次用完怎么清洁', i:'maintenance' }, { q:'割灌机刀头多少钱', i:'parts' }],
+    tiller: [{ q:'微耕机启动不了', i:'troubleshoot' }, { q:'微耕机多久上一次油', i:'maintenance' }, { q:'微耕机配件怎么订购', i:'parts' }],
+    wood_chipper: [{ q:'碎木机启动不了', i:'troubleshoot' }, { q:'碎木机冬天怎么存放', i:'maintenance' }, { q:'碎木机刀片多少钱', i:'parts' }],
+    robot_mower: [{ q:'割草机器人边界线故障', i:'troubleshoot' }, { q:'割草机器人怎么保养', i:'maintenance' }, { q:'割草机器人配件怎么订购', i:'parts' }]
+  },
+  en: {
+    lawn_mower: [{ q:"Lawn mower won't start", i:'troubleshoot' }, { q:'How often to sharpen the lawn mower blade?', i:'maintenance' }, { q:'How much does a lawn mower blade cost?', i:'parts' }],
+    pruner: [{ q:'Pruner not cutting', i:'troubleshoot' }, { q:'How often to sharpen pruner blades?', i:'maintenance' }, { q:'Where can I buy a pruner replacement blade?', i:'parts' }],
+    chainsaw: [{ q:'Chainsaw chain not moving', i:'troubleshoot' }, { q:'How often to oil the chainsaw chain?', i:'maintenance' }, { q:'How much does a chainsaw chain cost?', i:'parts' }],
+    hedge_trimmer: [{ q:'Hedge trimmer blades not moving', i:'troubleshoot' }, { q:'How often to clean the hedge trimmer blades?', i:'maintenance' }, { q:'How much does a hedge trimmer blade cost?', i:'parts' }],
+    leaf_blower: [{ q:'Leaf blower low power', i:'troubleshoot' }, { q:'How often to clean the leaf blower filter?', i:'maintenance' }, { q:'Where can I buy a leaf blower replacement part?', i:'parts' }],
+    pressure_washer: [{ q:'Pressure washer loses pressure', i:'troubleshoot' }, { q:'How often to maintain a pressure washer?', i:'maintenance' }, { q:'Where can I buy pressure washer spare parts?', i:'parts' }],
+    brush_cutter: [{ q:"Brush cutter won't start", i:'troubleshoot' }, { q:'How often to sharpen brush cutter blades?', i:'maintenance' }, { q:'How much does a brush cutter blade cost?', i:'parts' }],
+    tiller: [{ q:"Tiller won't start", i:'troubleshoot' }, { q:'How often to oil my tiller?', i:'maintenance' }, { q:'Where can I buy a tiller replacement part?', i:'parts' }],
+    wood_chipper: [{ q:"Wood chipper won't start", i:'troubleshoot' }, { q:'How often to sharpen wood chipper blades?', i:'maintenance' }, { q:'How much does a wood chipper blade cost?', i:'parts' }],
+    robot_mower: [{ q:'Robot mower boundary wire not working', i:'troubleshoot' }, { q:'How often to clean the robot mower?', i:'maintenance' }, { q:'Where can I buy robot mower replacement parts?', i:'parts' }]
+  },
+  de: {
+    lawn_mower: [{ q:'Rasenmäher startet nicht', i:'troubleshoot' }, { q:'Wie oft Rasenmäher Messer schärfen?', i:'maintenance' }, { q:'Was kostet ein Rasenmäher Ersatzmesser?', i:'parts' }],
+    pruner: [{ q:'Astschere schneidet nicht', i:'troubleshoot' }, { q:'Wie oft Astschere Messer schärfen?', i:'maintenance' }, { q:'Wie bestelle ich ein Ersatzmesser für die Astschere?', i:'parts' }],
+    chainsaw: [{ q:'Kettensäge Kette steckt fest und bewegt sich nicht', i:'troubleshoot' }, { q:'Wie oft Kettensäge schmieren?', i:'maintenance' }, { q:'Was kostet ein Ersatzteil für die Kettensäge?', i:'parts' }],
+    hedge_trimmer: [{ q:'Heckenschere Messer stecken fest und bewegen sich nicht', i:'troubleshoot' }, { q:'Wie oft Heckenschere reinigen?', i:'maintenance' }, { q:'Was kostet ein Ersatzmesser für die Heckenschere?', i:'parts' }],
+    leaf_blower: [{ q:'Laubbläser hat keine Leistung', i:'troubleshoot' }, { q:'Wie oft Laubbläser Filter reinigen?', i:'maintenance' }, { q:'Wie bestelle ich Ersatzteile für den Laubbläser?', i:'parts' }],
+    pressure_washer: [{ q:'Hochdruckreiniger verliert Druck', i:'troubleshoot' }, { q:'Wie oft Hochdruckreiniger warten?', i:'maintenance' }, { q:'Wo kann ich Ersatzteile für den Hochdruckreiniger kaufen?', i:'parts' }],
+    brush_cutter: [{ q:'Freischneider startet nicht', i:'troubleshoot' }, { q:'Wie oft Freischneider Messer schärfen?', i:'maintenance' }, { q:'Was kostet ein Freischneider Ersatzmesser?', i:'parts' }],
+    tiller: [{ q:'Gartenfräse startet nicht', i:'troubleshoot' }, { q:'Wie oft Gartenfräse schmieren?', i:'maintenance' }, { q:'Wie bestelle ich Ersatzteile für die Gartenfräse?', i:'parts' }],
+    wood_chipper: [{ q:'Häcksler startet nicht', i:'troubleshoot' }, { q:'Wie oft Häcksler Messer schärfen?', i:'maintenance' }, { q:'Was kostet ein Häcksler Ersatzmesser?', i:'parts' }],
+    robot_mower: [{ q:'Mähroboter bleibt stehen', i:'troubleshoot' }, { q:'Wie oft Mähroboter reinigen?', i:'maintenance' }, { q:'Wie bestelle ich Ersatzteile für den Mähroboter?', i:'parts' }]
+  },
+  fr: {
+    lawn_mower: [{ q:'Tondeuse ne démarre pas', i:'troubleshoot' }, { q:'À quelle fréquence affûter la lame de tondeuse?', i:'maintenance' }, { q:'Combien coûte une lame de tondeuse?', i:'parts' }],
+    pruner: [{ q:'Sécateur ne coupe plus', i:'troubleshoot' }, { q:'Comment nettoyer le sécateur?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour le sécateur?', i:'parts' }],
+    chainsaw: [{ q:'Tronçonneuse ne tourne pas', i:'troubleshoot' }, { q:'Comment nettoyer la chaîne de tronçonneuse?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour la tronçonneuse?', i:'parts' }],
+    hedge_trimmer: [{ q:'Taille-haie ne coupe plus', i:'troubleshoot' }, { q:'Comment nettoyer le taille-haie?', i:'maintenance' }, { q:'Combien coûte une lame pour taille-haie?', i:'parts' }],
+    leaf_blower: [{ q:'Souffleur pas de puissance', i:'troubleshoot' }, { q:'Comment nettoyer le filtre du souffleur?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour le souffleur?', i:'parts' }],
+    pressure_washer: [{ q:'Nettoyeur haute pression perd de la pression', i:'troubleshoot' }, { q:'Comment nettoyer le nettoyeur haute pression?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour le nettoyeur?', i:'parts' }],
+    brush_cutter: [{ q:'Débroussailleuse ne démarre pas', i:'troubleshoot' }, { q:'Comment nettoyer la débroussailleuse?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour la débroussailleuse?', i:'parts' }],
+    tiller: [{ q:'Motoculteur ne démarre pas', i:'troubleshoot' }, { q:'Comment huiler le motoculteur?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour le motoculteur?', i:'parts' }],
+    wood_chipper: [{ q:'Broyeur de végétaux ne démarre pas', i:'troubleshoot' }, { q:'Comment nettoyer le broyeur de végétaux?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour le broyeur?', i:'parts' }],
+    robot_mower: [{ q:'Robot tondeuse reste bloqué', i:'troubleshoot' }, { q:'Comment nettoyer le robot tondeuse?', i:'maintenance' }, { q:'Où commander une pièce de rechange pour le robot tondeuse?', i:'parts' }]
+  },
+  es: {
+    lawn_mower: [{ q:'Cortacésped no arranca', i:'troubleshoot' }, { q:'¿Cada cuánto afilar la cuchilla del cortacésped?', i:'maintenance' }, { q:'¿Cuánto cuesta la cuchilla del cortacésped?', i:'parts' }],
+    pruner: [{ q:'Podadora no corta', i:'troubleshoot' }, { q:'¿Cómo mantener la podadora?', i:'maintenance' }, { q:'¿Dónde comprar un repuesto para la podadora?', i:'parts' }],
+    chainsaw: [{ q:'Motosierra se atasca', i:'troubleshoot' }, { q:'¿Cada cuánto lubricar la cadena de la motosierra?', i:'maintenance' }, { q:'¿Cuánto cuesta la cadena de la motosierra?', i:'parts' }],
+    hedge_trimmer: [{ q:'Cortasetos no corta', i:'troubleshoot' }, { q:'¿Cómo limpiar el cortasetos?', i:'maintenance' }, { q:'¿Cuánto cuesta la cuchilla del cortasetos?', i:'parts' }],
+    leaf_blower: [{ q:'Soplador no tiene fuerza', i:'troubleshoot' }, { q:'¿Cómo limpiar el filtro del soplador?', i:'maintenance' }, { q:'¿Dónde comprar un repuesto para el soplador?', i:'parts' }],
+    pressure_washer: [{ q:'Hidrolimpiadora pierde presión', i:'troubleshoot' }, { q:'¿Cómo mantener la hidrolimpiadora?', i:'maintenance' }, { q:'¿Dónde comprar un repuesto para la hidrolimpiadora?', i:'parts' }],
+    brush_cutter: [{ q:'Desbrozadora no arranca', i:'troubleshoot' }, { q:'¿Cada cuánto afilar la cuchilla de la desbrozadora?', i:'maintenance' }, { q:'¿Cuánto cuesta la cuchilla de la desbrozadora?', i:'parts' }],
+    tiller: [{ q:'Motoazada no arranca', i:'troubleshoot' }, { q:'¿Cómo lubricar la motoazada?', i:'maintenance' }, { q:'¿Dónde comprar un repuesto para la motoazada?', i:'parts' }],
+    wood_chipper: [{ q:'Biotrituradora no arranca', i:'troubleshoot' }, { q:'¿Cómo limpiar la biotrituradora?', i:'maintenance' }, { q:'¿Cuánto cuesta la cuchilla de la biotrituradora?', i:'parts' }],
+    robot_mower: [{ q:'Robot cortacésped se para', i:'troubleshoot' }, { q:'¿Cómo limpiar el robot cortacésped?', i:'maintenance' }, { q:'¿Cuánto cuesta la cuchilla del robot cortacésped?', i:'parts' }]
+  },
+  it: {
+    lawn_mower: [{ q:'Tosaerba non si avvia', i:'troubleshoot' }, { q:'Ogni quanto affilare la lama della tosaerba?', i:'maintenance' }, { q:'Quanto costa la lama della tosaerba?', i:'parts' }],
+    pruner: [{ q:'Potatrice non taglia', i:'troubleshoot' }, { q:'Ogni quanto affilare le lame della potatrice?', i:'maintenance' }, { q:'Dove posso ordinare un ricambio per la potatrice?', i:'parts' }],
+    chainsaw: [{ q:'Motosega si blocca', i:'troubleshoot' }, { q:'Ogni quanto lubrificare la catena della motosega?', i:'maintenance' }, { q:'Quanto costa la catena della motosega?', i:'parts' }],
+    hedge_trimmer: [{ q:'Tagliasiepi non taglia, le lame non si muovono', i:'troubleshoot' }, { q:'Come pulire il tagliasiepi?', i:'maintenance' }, { q:'Quanto costa la lama del tagliasiepi?', i:'parts' }],
+    leaf_blower: [{ q:'Soffiatore non ha forza', i:'troubleshoot' }, { q:'Come pulire il filtro del soffiatore?', i:'maintenance' }, { q:'Dove posso ordinare un ricambio per il soffiatore?', i:'parts' }],
+    pressure_washer: [{ q:'Idropulitrice perde pressione', i:'troubleshoot' }, { q:"Ogni quanto lavare l'idropulitrice?", i:'maintenance' }, { q:"Dove posso ordinare un ricambio per l'idropulitrice?", i:'parts' }],
+    brush_cutter: [{ q:'Decespugliatore non si avvia', i:'troubleshoot' }, { q:'Ogni quanto affilare la lama del decespugliatore?', i:'maintenance' }, { q:'Quanto costa la lama del decespugliatore?', i:'parts' }],
+    tiller: [{ q:'Motozappa non si avvia', i:'troubleshoot' }, { q:'Ogni quanto oliare la motozappa?', i:'maintenance' }, { q:'Dove posso ordinare un ricambio per la motozappa?', i:'parts' }],
+    wood_chipper: [{ q:'Cippatrice non si avvia', i:'troubleshoot' }, { q:'Come pulire la cippatrice?', i:'maintenance' }, { q:'Quanto costa la lama della cippatrice?', i:'parts' }],
+    robot_mower: [{ q:'Robot tosaerba si ferma: allarme, pendenza o terreno accidentato', i:'troubleshoot' }, { q:'Come pulire il robot tosaerba?', i:'maintenance' }, { q:'Dove posso ordinare un ricambio per il robot tosaerba?', i:'parts' }]
+  },
+  nl: {
+    lawn_mower: [{ q:'Grasmaaier start niet', i:'troubleshoot' }, { q:'Hoe vaak moet ik het grasmaaier mes slijpen?', i:'maintenance' }, { q:'Hoeveel kost een grasmaaier mes?', i:'parts' }],
+    pruner: [{ q:'Snoeischaar doet niets', i:'troubleshoot' }, { q:'Hoe vaak moet ik de snoeischaar smeren?', i:'maintenance' }, { q:'Waar kan ik een reserveonderdeel voor de snoeischaar bestellen?', i:'parts' }],
+    chainsaw: [{ q:'Kettingzaag ketting draait niet', i:'troubleshoot' }, { q:'Hoe vaak moet ik de kettingzaag smeren?', i:'maintenance' }, { q:'Hoeveel kost een ketting voor de kettingzaag?', i:'parts' }],
+    hedge_trimmer: [{ q:'Heggenschaar blijft steken', i:'troubleshoot' }, { q:'Hoe vaak moet ik de heggenschaar slijpen?', i:'maintenance' }, { q:'Hoeveel kost een mes voor de heggenschaar?', i:'parts' }],
+    leaf_blower: [{ q:'Bladblazer bijna geen kracht', i:'troubleshoot' }, { q:'Hoe vaak moet ik het bladblazer filter reinigen?', i:'maintenance' }, { q:'Waar kan ik een reserveonderdeel voor de bladblazer bestellen?', i:'parts' }],
+    pressure_washer: [{ q:'Hogedrukreiniger verliest druk', i:'troubleshoot' }, { q:'Hoe vaak moet ik de hogedrukreiniger doorspoelen?', i:'maintenance' }, { q:'Waar kan ik reserveonderdelen voor de hogedrukreiniger bestellen?', i:'parts' }],
+    brush_cutter: [{ q:'Bosmaaier start niet', i:'troubleshoot' }, { q:'Hoe vaak moet ik het bosmaaier mes slijpen?', i:'maintenance' }, { q:'Hoeveel kost een bosmaaier mes?', i:'parts' }],
+    tiller: [{ q:'Tuinfrees start niet', i:'troubleshoot' }, { q:'Hoe vaak moet ik de tuinfrees smeren?', i:'maintenance' }, { q:'Waar kan ik een reserveonderdeel voor de tuinfrees bestellen?', i:'parts' }],
+    wood_chipper: [{ q:'Houtversnipperaar start niet', i:'troubleshoot' }, { q:'Hoe vaak moet ik de houtversnipperaar reinigen?', i:'maintenance' }, { q:'Hoeveel kost een mes voor de houtversnipperaar?', i:'parts' }],
+    robot_mower: [{ q:'Robotmaaier stopt steeds: alarm op helling of oneffen terrein', i:'troubleshoot' }, { q:'Hoe vaak moet ik de robotmaaier reinigen?', i:'maintenance' }, { q:'Waar kan ik een reserveonderdeel voor de robotmaaier bestellen?', i:'parts' }]
+  },
+  pt: {
+    lawn_mower: [{ q:'Cortador de relva não liga', i:'troubleshoot' }, { q:'De quanto em quanto devo afiar a lâmina do cortador?', i:'maintenance' }, { q:'Quanto custa a lâmina do cortador de relva?', i:'parts' }],
+    pruner: [{ q:'Tesoura de poda não corta', i:'troubleshoot' }, { q:'De quanto em quanto devo lubrificar a tesoura de poda?', i:'maintenance' }, { q:'Onde eu peço uma peça de reposição para a tesoura de poda?', i:'parts' }],
+    chainsaw: [{ q:'Motosserra travou', i:'troubleshoot' }, { q:'De quanto em quanto devo afiar a corrente da motosserra?', i:'maintenance' }, { q:'Quanto custa a corrente da motosserra?', i:'parts' }],
+    hedge_trimmer: [{ q:'Cortador de sebes não corta: as lâminas não se movem', i:'troubleshoot' }, { q:'De quanto em quanto devo limpar o cortador de sebes?', i:'maintenance' }, { q:'Quanto custa a lâmina do cortador de sebes?', i:'parts' }],
+    leaf_blower: [{ q:'Soprador quase não tem mais força', i:'troubleshoot' }, { q:'De quanto em quanto devo limpar o filtro do soprador?', i:'maintenance' }, { q:'Onde eu peço uma peça de reposição para o soprador?', i:'parts' }],
+    pressure_washer: [{ q:'Lavadora de pressão perde pressão', i:'troubleshoot' }, { q:'De quanto em quanto devo lavar a lavadora de pressão?', i:'maintenance' }, { q:'Onde eu peço uma peça de reposição para a lavadora de pressão?', i:'parts' }],
+    brush_cutter: [{ q:'Roçadora não liga', i:'troubleshoot' }, { q:'De quanto em quanto devo afiar a lâmina da roçadora?', i:'maintenance' }, { q:'Quanto custa a lâmina da roçadora?', i:'parts' }],
+    tiller: [{ q:'Motoenxada não liga', i:'troubleshoot' }, { q:'De quanto em quanto devo lubrificar a motoenxada?', i:'maintenance' }, { q:'Onde eu peço uma peça de reposição para a motoenxada?', i:'parts' }],
+    wood_chipper: [{ q:'Triturador não liga', i:'troubleshoot' }, { q:'De quanto em quanto devo limpar o triturador?', i:'maintenance' }, { q:'Quanto custa a lâmina do triturador?', i:'parts' }],
+    robot_mower: [{ q:'Robô cortador desliga', i:'troubleshoot' }, { q:'De quanto em quanto devo limpar o robô cortador?', i:'maintenance' }, { q:'Onde eu peço uma peça de reposição para o robô cortador?', i:'parts' }]
+  }
+};
+// 当前生效品类：优先取对话语境中已识别的品类，其次取用户选中的品类标签（「全部」视为无品类）
+function currentProductId() {
+  if (state.context.product) return state.context.product;
+  if (state.activeCategory && state.activeCategory !== 'all') return state.activeCategory;
+  return null;
+}
+function getProductChips(pid) {
+  const set = (PRODUCT_CHIPS[state.lang] || PRODUCT_CHIPS['en']) || {};
+  return set[pid] || null;
+}
+// 快捷提问选取：只要语境里有品类，就显示该品类的专属问题（意图命中的一条置顶）；
+// 没有品类时才回落到与意图匹配的通用卡，与原实现保持一致
+function getQuickReplies() {
+  const sets = QUICK_REPLY_SETS[state.lang] || QUICK_REPLY_SETS['en']; const ctx = state.context;
+  const pid = currentProductId();
+  const chips = pid ? getProductChips(pid) : null;
+  if (chips && chips.length) {
+    const hit = ctx.intent && chips.find(c => c.i === ctx.intent);
+    if (hit) return [hit].concat(chips.filter(c => c !== hit)).map(c => c.q);
+    return chips.map(c => c.q);
+  }
+  if (ctx.intent === 'troubleshoot') return sets.troubleshoot; if (ctx.intent === 'maintenance') return sets.maintenance; if (ctx.intent === 'parts') return sets.parts; if (ctx.intent === 'warranty') return sets.warranty; return sets.welcome;
+}
 
 function t(key) { return (I18N[key] && I18N[key][state.lang]) ? I18N[key][state.lang] : (I18N[key] ? I18N[key]['en'] : key); }
 function formatTime() { const now = new Date(); return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0'); }
 
 function renderCategories() {
   const c = document.getElementById('categoryTags');
-  c.innerHTML = CATEGORIES.map(cat => { const n = cat.names[state.lang] || cat.names['en']; const sel = cat.id === state.activeCategory ? ' selected' : ''; return `<span class="category-tag${sel}" data-cat="${cat.id}">${n}</span>`; }).join('');
-  c.querySelectorAll('.category-tag').forEach(t => t.addEventListener('click', () => { state.activeCategory = t.dataset.cat; state.context.product = (t.dataset.cat === 'all') ? null : t.dataset.cat; renderCategories(); }));
+  const cur = currentProductId() || state.activeCategory;
+  c.innerHTML = CATEGORIES.map(cat => { const n = cat.names[state.lang] || cat.names['en']; const sel = cat.id === cur ? ' selected' : ''; return `<span class="category-tag${sel}" data-cat="${cat.id}">${n}</span>`; }).join('');
+  c.querySelectorAll('.category-tag').forEach(t => t.addEventListener('click', () => selectCategory(t.dataset.cat)));
+}
+// 切换品类：更新语境 → 重绘标签 → 重绘快捷提问卡与占位提示语
+function selectCategory(pid) {
+  state.activeCategory = pid;
+  state.context.product = (pid === 'all') ? null : pid;
+  renderCategories();
+  renderQuickReplies();
+  updatePlaceholder();
 }
 function renderLangButtons() {
   const g = document.getElementById('langGrid');
@@ -1432,6 +1564,7 @@ async function sendMessage(forceText, forceIntent, forceProduct) {
     hideTyping();
     await addMessage('bot', chunks[i], { stream: true, evidence: (i === chunks.length - 1) ? ev : null });
   }
+  renderCategories();
   renderQuickReplies();
 }
 
