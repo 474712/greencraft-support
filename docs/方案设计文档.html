@@ -25,7 +25,7 @@
     <span class="badge">10 品类</span>
     <span class="badge">6 意图</span>
     <span class="badge">241 条知识条目</span>
-    <span class="badge">决策时延 0.05 ms</span>
+    <span class="badge">决策时延 0.05–0.10 ms</span>
     <span class="badge">零外部请求</span>
   </div>
 </div>
@@ -220,7 +220,7 @@
     <tr><td>大模型 API 直答</td><td class="num">高</td><td class="num">慢</td><td class="num">否</td><td class="num">按量</td><td class="num">中</td><td class="num">否</td><td>成本随会话线性增长，数据出域，错误不可控</td></tr>
     <tr><td>RAG + 大模型</td><td class="num">高</td><td class="num">慢</td><td class="num">否</td><td class="num">高</td><td class="num">高</td><td class="num">否</td><td>知识库仍需维护，且引入向量库与外部依赖</td></tr>
     <tr><td>本地小模型（7B 级）</td><td class="num">中</td><td class="num">慢</td><td class="num">是</td><td class="num">高</td><td class="num">中</td><td class="num">是</td><td>需 GPU 与运维，售后 PC 场景不现实</td></tr>
-    <tr style="background:#eef4ec !important;"><td><b>本方案：规则引擎 + 加权评分 + 词边界模糊检索</b></td><td class="num"><b>100%</b></td><td class="num"><b>0.05 ms</b></td><td class="num"><b>是</b></td><td class="num"><b>近零</b></td><td class="num"><b>高</b></td><td class="num"><b>是</b></td><td>选它：售后场景下<b>可核验</b>与<b>可离线</b>比"生成上限"更重要</td></tr>
+    <tr style="background:#eef4ec !important;"><td><b>本方案：规则引擎 + 加权评分 + 词边界模糊检索</b></td><td class="num"><b>100%</b></td><td class="num"><b>0.05–0.10 ms</b></td><td class="num"><b>是</b></td><td class="num"><b>近零</b></td><td class="num"><b>高</b></td><td class="num"><b>是</b></td><td>选它：售后场景下<b>可核验</b>与<b>可离线</b>比"生成上限"更重要</td></tr>
   </tbody>
 </table>
 <div class="callout warn">
@@ -496,7 +496,7 @@ node tests/metrics.js</code></pre>
   <g font-size="9.5" text-anchor="middle" fill="#1c2318">
     <text x="685" y="59">用户提问（8 语种）</text>
     <text x="685" y="107">浏览器内归一化 + 意图判定</text>
-    <text x="685" y="155">知识检索（0.05 ms）</text>
+    <text x="685" y="155">知识检索（0.05–0.1 ms）</text>
     <text x="685" y="203">直答 / 追问 / 转人工工单</text>
     <text x="685" y="251">原语种答复 + 判定依据可核验</text>
   </g>
@@ -522,7 +522,7 @@ node tests/metrics.js</code></pre>
     <text x="504" y="344" fill="#6b7360">可审计</text><text x="570" y="344" fill="#6b7360">不可查</text>
     <text x="640" y="344" fill="#6b7360">→</text><text x="656" y="344" fill="#2f6b3f" font-weight="bold">判定依据卡片</text>
   </g>
-  <text x="30" y="362" font-size="7.5" fill="#8a6d3b">注：首次响应 838 ms 为浏览器实测值（4 次采样均值，含产品刻意设计的拟人化思考停顿与逐字流式呈现）；引擎决策本身为 0.05 ms。</text>
+  <text x="30" y="362" font-size="7.5" fill="#8a6d3b">注：首次响应 838 ms 为浏览器实测值（4 次采样均值，含产品刻意设计的拟人化思考停顿与逐字流式呈现）；引擎决策本身为 0.05–0.1 ms。</text>
 </svg>
 <figcaption>图 5-1　售后处理流程 Before / After 对比</figcaption>
 </figure>
@@ -676,7 +676,7 @@ node tests/metrics.js</code></pre>
     <tr><td>转人工流程探针</td><td><b>100%</b></td><td>32 条真实问法，正确生成工单并转出</td></tr>
     <tr><td>澄清追问流程探针</td><td><b>100%</b></td><td>24 条信息不足问法，正确触发追问或主动反问</td></tr>
     <tr><td>寒暄直答流程探针</td><td><b>100%</b></td><td>16 条寒暄问法，正确走寒暄通道且未污染业务上下文</td></tr>
-    <tr><td>引擎决策时延（均值 / P95）</td><td><b>0.05 / 0.08–0.10 ms</b></td><td>单条输入的意图 + 品类 + 检索 + 答复生成总耗时；预热后 3 轮取中位轮，本机实测区间 0.04–0.05 ms（P95 在 0.08–0.10 ms 间随机器负载抖动）</td></tr>
+    <tr><td>引擎决策时延（均值 / P95）</td><td><b>0.05–0.10 / 0.07–0.21 ms</b></td><td>单条输入的意图 + 品类 + 检索 + 答复生成总耗时；预热后 3 轮取中位轮，本机 20 次实测均值区间 0.05–0.10 ms（P95 在 0.07–0.21 ms 间随机器负载抖动，不取单点值）</td></tr>
     <tr><td>端到端首字可见</td><td><b>838 ms</b></td><td>浏览器实测 4 次采样均值；含刻意设计的思考停顿与逐字流式呈现</td></tr>
     <tr><td>端到端全量渲染</td><td><b>3085 ms</b></td><td>浏览器实测；答复长度不同则数值不同</td></tr>
     <tr><td>外部网络请求</td><td><b>0</b></td><td>浏览器 Performance 资源条目为空；无 fetch / XHR / 第三方脚本</td></tr>
@@ -817,7 +817,7 @@ node tests/metrics.js</code></pre>
 
 <!-- ══════════════════ 结语 ══════════════════ -->
 <h2>十二、结语</h2>
-<p>GreenCraft Pro 解决的是一个边界清晰、需求真实、却长期被多语种人力成本卡住的问题。我们没有把"AI"理解为必须调用大模型，而是把它理解为<b>让每一条售后结论都可核验、让每一次判断都可追溯、让每一个数据都不出用户设备</b>。在此基础上，它已经是一套可运行、可复现、可离线部署的完整系统：8 语种、10 品类、6 类意图、241 条知识条目、1939 条意图词条，352 条真实多语问法上的意图与品类识别准确率均为 100%，一次解决率 98.6%，三类流程探针触发率均为 100%，单次决策 0.05 毫秒，零外部请求。</p>
+<p>GreenCraft Pro 解决的是一个边界清晰、需求真实、却长期被多语种人力成本卡住的问题。我们没有把"AI"理解为必须调用大模型，而是把它理解为<b>让每一条售后结论都可核验、让每一次判断都可追溯、让每一个数据都不出用户设备</b>。在此基础上，它已经是一套可运行、可复现、可离线部署的完整系统：8 语种、10 品类、6 类意图、241 条知识条目、1939 条意图词条，352 条真实多语问法上的意图与品类识别准确率均为 100%，一次解决率 98.6%，三类流程探针触发率均为 100%，单次决策 0.05–0.1 毫秒，零外部请求。</p>
 <p>我们清楚地知道边界在哪里：知识库仍是百条级小样本，跨语种输入仍需手动切换语种，IoT 与大模型仍在路线图上。因此我们把下一步押在两件事上——<b>把知识库做到万级</b>，以及<b>让一次真实的企业试点提供第一批 CSAT 真实数据</b>。前者决定这套系统能服务多深的行业，后者决定我们能不能用真实数据而不是测算值说话。</p>
 
 </body>
