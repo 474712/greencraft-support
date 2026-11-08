@@ -6,7 +6,11 @@
 
 ## 提交列表
 
-254cea8 (HEAD -> main) docs: 作品简介 PDF 精简为仅标题与摘要正文
+b6baa4c (HEAD -> main) chore: refresh 实测指标报告 with 2026-11-08 run at build 80fa485
+ffb9c4c feat(i18n): 开场提示语随界面语种重译，并补语种切换引导
+d97e4a4 docs: 方案设计文档行文重写，去除模型腔并修正两处旧稿错处
+80fa485 chore: refresh git-log.txt originality evidence to build e01695a
+254cea8 docs: 作品简介 PDF 精简为仅标题与摘要正文
 e01695a chore: refresh git-log.txt originality evidence to build 255520f
 255520f chore: 团队信息与原创性声明 HTML 移出仓库
 2611d4e chore: refresh git-log.txt originality evidence to build 2d0449f
@@ -48,6 +52,45 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit b6baa4c31dc566190c2d43bbbf67c162f1c2bb84
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 13:19:05 +0800
+
+    chore: refresh 实测指标报告 with 2026-11-08 run at build 80fa485
+
+ tests/report/metrics-summary.json | 36 ++++++++++++++++++------------------
+ tests/report/实测指标报告.md      | 26 +++++++++++++-------------
+ 2 files changed, 31 insertions(+), 31 deletions(-)
+
+commit ffb9c4c8a13a292137ceae2e7dd90e56eb6105fb
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 13:18:43 +0800
+
+    feat(i18n): 开场提示语随界面语种重译，并补语种切换引导
+
+ index.html            |  44 ++++++++++++++++--
+ tests/engine.js       |   3 +-
+ tests/welcome-i18n.js | 124 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 165 insertions(+), 6 deletions(-)
+
+commit d97e4a4149220a2a0c00c87fa4a9ad7b6c17ccd6
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 13:16:21 +0800
+
+    docs: 方案设计文档行文重写，去除模型腔并修正两处旧稿错处
+
+ docs/方案设计文档.html | 329 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 164 insertions(+), 165 deletions(-)
+
+commit 80fa4859cc0905e3b6586b5280012a0741630571
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 11:19:09 +0800
+
+    chore: refresh git-log.txt originality evidence to build e01695a
+
+ git-log.txt | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
 commit 254cea8a0ef2c1b11a3023bfe712afaf6778a31a
 Author: 竹川南 <19850260536@163.com>
@@ -619,31 +662,40 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 40
+提交总数: 44
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-08 11:19:04 +0800 254cea8 docs: 作品简介 PDF 精简为仅标题与摘要正文
-本文件生成时的 HEAD: 254cea8a0ef2c1b11a3023bfe712afaf6778a31a
+最近提交: 2026-11-08 13:19:05 +0800 b6baa4c chore: refresh 实测指标报告 with 2026-11-08 run at build 80fa485
+本文件生成时的 HEAD: b6baa4c31dc566190c2d43bbbf67c162f1c2bb84
 
 ## 追踪文件清单（按提交次数）
 
-    14 index.html
-    13 git-log.txt
-     9 docs/方案设计文档.html
-     9 docs/应用效果说明.html
-     7 tests/report/实测指标报告.md
-     7 tests/report/metrics-summary.json
-     7 docs/作品简介.md
-     4 docs/作品简介.html
-     3 tests/engine.js
-     3 .gitignore
-     2 tests/report/ui-latency.json
-     2 tests/quick-replies.js
-     1 tests/testset.json
-     1 tests/run-tests.js
-     1 tests/probes.json
-     1 tests/metrics.js
-     1 tests/holdout.json
-     1 tests/debug.js
-     1 tests/changelog.json
-     1 tests/annotations.js
-     1 docs/assets/print.css
+     16 docs/提交物清单.md
+     15 index.html
+     14 git-log.txt
+     10 docs/方案设计文档.pdf
+     10 docs/方案设计文档.html
+     10 docs/应用效果说明.pdf
+      9 docs/演示讲解台词.md
+      9 docs/应用效果说明.html
+      8 tests/report/实测指标报告.md
+      8 tests/report/metrics-summary.json
+      7 docs/作品简介.md
+      6 docs/评审对照与答辩准备.md
+      4 tests/engine.js
+      4 docs/团队信息与原创性声明.pdf
+      4 docs/作品简介.pdf
+      4 docs/作品简介.html
+      3 docs/团队信息与原创性声明.html
+      3 .gitignore
+      2 tests/report/ui-latency.json
+      2 tests/quick-replies.js
+      1 tests/welcome-i18n.js
+      1 tests/testset.json
+      1 tests/run-tests.js
+      1 tests/probes.json
+      1 tests/metrics.js
+      1 tests/holdout.json
+      1 tests/debug.js
+      1 tests/changelog.json
+      1 tests/annotations.js
+      1 docs/assets/print.css
