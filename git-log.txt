@@ -6,209 +6,577 @@
 
 ## 提交列表
 
-
-0fa2474 (HEAD -> main) chore: 从公开仓库移除内部准备材料
- ...272\244\347\211\251\346\270\205\345\215\225.md" | 149 -----------
- ...256\262\350\247\243\345\217\260\350\257\215.md" | 213 ---------------
- ...255\224\350\276\251\345\207\206\345\244\207.md" | 288 ---------------------
- 3 files changed, 650 deletions(-)
+00cc5ff (HEAD -> main) chore: refresh git-log.txt originality evidence to build 0fa2474
+0fa2474 chore: 从公开仓库移除内部准备材料
 3ec4bd6 docs: 移除指向内部准备材料的交叉引用
- ...275\234\345\223\201\347\256\200\344\273\213.md" |   2 +-
- ...5\210\346\236\234\350\257\264\346\230\216.html" |   5 +----
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 792533 -> 789663 bytes
- ...6\276\350\256\241\346\226\207\346\241\243.html" |   2 +-
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1126156 -> 1125975 bytes
- 5 files changed, 3 insertions(+), 6 deletions(-)
 e48361a docs: 统一工单口径为「浏览器端生成工单号，不落库、不派发坐席」
- ...275\234\345\223\201\347\256\200\344\273\213.md" |   2 +-
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   2 +-
- ...6\276\350\256\241\346\226\207\346\241\243.html" |   8 ++++----
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1124281 -> 1126156 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" |  20 +++++++++++---------
- ...255\224\350\276\251\345\207\206\345\244\207.md" |   4 ++--
- 6 files changed, 19 insertions(+), 17 deletions(-)
 15de798 (origin/main, origin/HEAD) chore: refresh git-log.txt originality evidence
+a31be2f docs(manifest): sync verified submission zip size
+b7b80e5 chore: refresh git-log.txt originality evidence to build 652927b
+652927b fix(quick-replies): 统一草坪机中文快捷卡术语
+c55da6f chore: refresh git-log.txt originality evidence to build f16d92a
+f16d92a feat(demo): 把演示讲解气泡改为对话区顶部解说条
+1659ac1 docs(manifest): sync submission zip size after re-verification
+f1106df docs: 把引擎时延改为区间口径，避免评委复现时对不上
+ca296ca chore: refresh git-log.txt originality evidence to build 8b0c6ae
+8b0c6ae feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
+7348c3f docs(manifest): record package verification in pre-submission checklist
+05d8ded chore: refresh git-log.txt originality evidence
+308c975 feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
+d5b9e87 docs: align retrieval-order wording in abstract and clarify fallback-chain comment
+3e1c553 docs(manifest): mark script-verified pre-submission checks as done
+5e83ec6 chore: restore readable Chinese paths in git-log.txt tracked-file list
+41b3f57 chore: refresh git-log.txt originality evidence to build b15fb46
+b15fb46 chore(metrics): re-measure UI latency on build 67bea86 and sync docs
+67bea86 feat(evidence): surface retrieval path in the decision-basis card
+94e63a7 docs: correct stale page/size figures and add git-log originality evidence
+61611f9 chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
+2f3c373 v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
+8f60cd4 v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
+5c03b40 v9: interaction-layer humanization (incremental insert / semantic split / streaming)
+b839ac1 v8: smarter engine (typo tolerance, emotion routing, clarify loop, smalltalk, dynamic quick replies)
+4bf7264 v7g: engine matching algorithm upgrade (CJK bigram, word boundary, pattern cache)
+3f2fa6f v7: expand KB +72 entries (8 langs x 9 scenarios from manufacturer docs), fix 7 routing patterns
+a20db8e v6: KB expansion (+70 entries, 8 langs x 7 categories)
+b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unchanged)
+56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
+
+## 变更统计
+
+commit 00cc5ffe68e02219e22be3f819beb6b5c93f6879
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 10:00:19 +0800
+
+    chore: refresh git-log.txt originality evidence to build 0fa2474
+
+ git-log.txt | 573 +++++++++++++++++-------------------------------------------
+ 1 file changed, 162 insertions(+), 411 deletions(-)
+
+commit 0fa247424f61e00f533f83f43ae6448c06c3226a
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 09:59:44 +0800
+
+    chore: 从公开仓库移除内部准备材料
+    
+    提交物清单、演示讲解台词、评审对照与答辩准备为团队内部工作材料
+    （打包核对、路演逐字稿、评分维度自评与答辩话术），不属于作品交付物，
+    移出公开仓库。仓库保留：产品本体 index.html、四份对外文档、
+    tests/ 可复现测试与 git-log.txt 原创性证据。
+
+ docs/提交物清单.md         | 149 -----------------------
+ docs/演示讲解台词.md       | 213 ---------------------------------
+ docs/评审对照与答辩准备.md | 288 ---------------------------------------------
+ 3 files changed, 650 deletions(-)
+
+commit 3ec4bd683db8c8f89324ed3d3c7d88878cd2c4e0
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 09:59:24 +0800
+
+    docs: 移除指向内部准备材料的交叉引用
+    
+    - 方案设计文档 §1.2 删除「具体得分预估见随附《评审对照与答辩准备》」
+    - 应用效果说明 §1.2 仓库结构树不再列出三份内部文档
+    - 作品简介 §四 标题去掉对外部文档的指引
+    方案设计文档与应用效果说明 PDF 同步重生成（17 页 / 9 页，字体全嵌入）
+
+ docs/作品简介.md       |   2 +-
+ docs/应用效果说明.html |   5 +----
+ docs/应用效果说明.pdf  | Bin 792533 -> 789663 bytes
+ docs/方案设计文档.html |   2 +-
+ docs/方案设计文档.pdf  | Bin 1126156 -> 1125975 bytes
+ 5 files changed, 3 insertions(+), 6 deletions(-)
+
+commit e48361a036fbc44c36819c0e8f676d0cbce0fe62
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 09:54:55 +0800
+
+    docs: 统一工单口径为「浏览器端生成工单号，不落库、不派发坐席」
+    
+    原文档多处写成工单携带完整上下文与建议摘要，超出实现范围。
+    按《应用效果说明》§9.1 的技术边界逐条对齐，方案设计文档 PDF 同步重生成。
+
+ docs/作品简介.md           |   2 +-
+ docs/提交物清单.md         |   2 +-
+ docs/方案设计文档.html     |   8 ++++----
+ docs/方案设计文档.pdf      | Bin 1124281 -> 1126156 bytes
+ docs/演示讲解台词.md       |  20 +++++++++++---------
+ docs/评审对照与答辩准备.md |   4 ++--
+ 6 files changed, 19 insertions(+), 17 deletions(-)
+
+commit 15de798511c6c9e48852a867fa2288336ca30ecd
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 22:27:31 +0800
+
+    chore: refresh git-log.txt originality evidence
+
  git-log.txt | 34 ++++++++++++++++++++++++++++------
  1 file changed, 28 insertions(+), 6 deletions(-)
-a31be2f docs(manifest): sync verified submission zip size
- "docs/\346\217\220\344\272\244\347\211\251\346\270\205\345\215\225.md" | 2 +-
+
+commit a31be2f7f88a8e879b28bcbe82d15088f4b6763d
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 22:27:29 +0800
+
+    docs(manifest): sync verified submission zip size
+
+ docs/提交物清单.md | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
-b7b80e5 chore: refresh git-log.txt originality evidence to build 652927b
+
+commit b7b80e569841a59e2f0e6265306e524b421fb84d
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 22:26:33 +0800
+
+    chore: refresh git-log.txt originality evidence to build 652927b
+
  git-log.txt | 63 +++++++++++++++++++++++++++++++++++++++++++++----------------
  1 file changed, 47 insertions(+), 16 deletions(-)
-652927b fix(quick-replies): 统一草坪机中文快捷卡术语
- ...5\210\346\236\234\350\257\264\346\230\216.html" |   4 +--
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 792533 -> 792533 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   6 ++--
- ...6\276\350\256\241\346\226\207\346\241\243.html" |   2 +-
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1124281 -> 1124281 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" |   2 +-
- index.html                                         |   2 +-
- tests/quick-replies.js                             |  15 +++++++++
- tests/report/metrics-summary.json                  |  36 ++++++++++-----------
- ...214\207\346\240\207\346\212\245\345\221\212.md" |  26 +++++++--------
+
+commit 652927bb24bfe472551764cf5c06321764b5ca11
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 22:26:23 +0800
+
+    fix(quick-replies): 统一草坪机中文快捷卡术语
+
+ docs/应用效果说明.html            |   4 ++--
+ docs/应用效果说明.pdf             | Bin 792533 -> 792533 bytes
+ docs/提交物清单.md                |   6 +++---
+ docs/方案设计文档.html            |   2 +-
+ docs/方案设计文档.pdf             | Bin 1124281 -> 1124281 bytes
+ docs/演示讲解台词.md              |   2 +-
+ index.html                        |   2 +-
+ tests/quick-replies.js            |  15 +++++++++++++++
+ tests/report/metrics-summary.json |  36 ++++++++++++++++++------------------
+ tests/report/实测指标报告.md      |  26 +++++++++++++-------------
  10 files changed, 54 insertions(+), 39 deletions(-)
-c55da6f chore: refresh git-log.txt originality evidence to build f16d92a
+
+commit c55da6f529f8034116ac730fc40ba921d0018b4c
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 21:18:53 +0800
+
+    chore: refresh git-log.txt originality evidence to build f16d92a
+
  git-log.txt | 109 ++++++++++++++++++++++++++++++++++++++++++++++++------------
  1 file changed, 88 insertions(+), 21 deletions(-)
-f16d92a feat(demo): 把演示讲解气泡改为对话区顶部解说条
- ...5\210\346\236\234\350\257\264\346\230\216.html" |   8 +-
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 791761 -> 792533 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   6 +-
- ...6\276\350\256\241\346\226\207\346\241\243.html" |   7 +-
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1114325 -> 1124281 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" |   2 +
- index.html                                         | 209 ++++++++++++---------
- tests/annotations.js                               | 132 +++++++++++++
- tests/engine.js                                    |   4 +-
- tests/report/metrics-summary.json                  |  36 ++--
- ...214\207\346\240\207\346\212\245\345\221\212.md" |  26 +--
+
+commit f16d92aa58c2cb9acfc2fac4475a2c3e4f66744f
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 21:18:39 +0800
+
+    feat(demo): 把演示讲解气泡改为对话区顶部解说条
+    
+    浮动气泡（position:fixed/absolute）会压在对话内容上，录屏时答案被遮挡，
+    演示结束还会一次性铺满全屏。改为 chat-main 内的普通流元素，排在消息区之前，
+    消息区自动让位，物理上不可能遮挡答案；同一时刻只显示一条讲解，结束后折叠为
+    序号徽标可翻阅，控制按钮收进条内。另修正侧栏 1px 溢出导致的横向滚动条。
+    
+    回归：tests/annotations.js（71 条断言）+ 原有 280/72/2171 套件全绿。
+
+ docs/应用效果说明.html            |   8 +-
+ docs/应用效果说明.pdf             | Bin 791761 -> 792533 bytes
+ docs/提交物清单.md                |   6 +-
+ docs/方案设计文档.html            |   7 +-
+ docs/方案设计文档.pdf             | Bin 1114325 -> 1124281 bytes
+ docs/演示讲解台词.md              |   2 +
+ index.html                        | 209 ++++++++++++++++++++++----------------
+ tests/annotations.js              | 132 ++++++++++++++++++++++++
+ tests/engine.js                   |   4 +-
+ tests/report/metrics-summary.json |  36 +++----
+ tests/report/实测指标报告.md      |  26 ++---
  11 files changed, 301 insertions(+), 129 deletions(-)
-1659ac1 docs(manifest): sync submission zip size after re-verification
- "docs/\346\217\220\344\272\244\347\211\251\346\270\205\345\215\225.md" | 2 +-
+
+commit 1659ac1d70996118e11e870b28142cc4e3ba66e9
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:19:55 +0800
+
+    docs(manifest): sync submission zip size after re-verification
+
+ docs/提交物清单.md | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
-f1106df docs: 把引擎时延改为区间口径，避免评委复现时对不上
- ...5\234\345\223\201\347\256\200\344\273\213.html" |   2 +-
- ...275\234\345\223\201\347\256\200\344\273\213.md" |   4 +--
- ...75\234\345\223\201\347\256\200\344\273\213.pdf" | Bin 189323 -> 188113 bytes
- ...10\233\346\200\247\345\243\260\346\230\216.pdf" | Bin 305970 -> 305970 bytes
- ...5\210\346\236\234\350\257\264\346\230\216.html" |  16 ++++-----
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 790496 -> 791761 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   6 ++--
- ...6\276\350\256\241\346\226\207\346\241\243.html" |  12 +++----
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1114164 -> 1114325 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" |   4 +--
- ...255\224\350\276\251\345\207\206\345\244\207.md" |  12 +++----
- tests/report/metrics-summary.json                  |  36 ++++++++++-----------
- ...214\207\346\240\207\346\212\245\345\221\212.md" |  26 +++++++--------
+
+commit f1106df7b014ce422e0952a60bedd90d403dd006
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:17:41 +0800
+
+    docs: 把引擎时延改为区间口径，避免评委复现时对不上
+    
+    同一份代码在本机 20 次实测，均值在 0.05–0.10 ms、P95 在 0.07–0.21 ms 之间
+    波动，负载越高数字越大。此前材料一律引用单点 0.05 ms，评委当场跑脚本若得到
+    0.08 ms 就会对数字产生怀疑。按"宁可给区间也不给复现不出的点值"的口径，
+    全部材料改为区间引用：作品简介摘要、方案设计文档、应用效果说明、提交物清单、
+    演示讲解台词与答辩口径同步更新，摘要字数仍为 298 字。
+    
+    同时把演示讲解台词第二幕补上"切换品类 → 快捷提问卡整卡替换"的镜头，把
+    复现命令由三条改为四条（新增 tests/quick-replies.js）。
+
+ docs/作品简介.html                |   2 +-
+ docs/作品简介.md                  |   4 ++--
+ docs/作品简介.pdf                 | Bin 189323 -> 188113 bytes
+ docs/团队信息与原创性声明.pdf     | Bin 305970 -> 305970 bytes
+ docs/应用效果说明.html            |  16 ++++++++--------
+ docs/应用效果说明.pdf             | Bin 790496 -> 791761 bytes
+ docs/提交物清单.md                |   6 ++++--
+ docs/方案设计文档.html            |  12 ++++++------
+ docs/方案设计文档.pdf             | Bin 1114164 -> 1114325 bytes
+ docs/演示讲解台词.md              |   4 ++--
+ docs/评审对照与答辩准备.md        |  12 ++++++------
+ tests/report/metrics-summary.json |  36 ++++++++++++++++++------------------
+ tests/report/实测指标报告.md      |  26 +++++++++++++-------------
  13 files changed, 60 insertions(+), 58 deletions(-)
-ca296ca chore: refresh git-log.txt originality evidence to build 8b0c6ae
+
+commit ca296ca710b9d614cb29641e7605297ef4cc5d46
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:12:57 +0800
+
+    chore: refresh git-log.txt originality evidence to build 8b0c6ae
+
  git-log.txt | 84 +++++++++++++++++++++++++++++++++++++++++++++----------------
  1 file changed, 62 insertions(+), 22 deletions(-)
-8b0c6ae feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
- ...5\234\345\223\201\347\256\200\344\273\213.html" |   2 +-
- ...275\234\345\223\201\347\256\200\344\273\213.md" |   7 +-
- ...75\234\345\223\201\347\256\200\344\273\213.pdf" | Bin 188301 -> 189323 bytes
- ...0\233\346\200\247\345\243\260\346\230\216.html" |   2 +-
- ...10\233\346\200\247\345\243\260\346\230\216.pdf" | Bin 304844 -> 305970 bytes
- ...5\210\346\236\234\350\257\264\346\230\216.html" |  52 ++++--
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 736911 -> 790496 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" |  19 +-
- ...6\276\350\256\241\346\226\207\346\241\243.html" |  25 ++-
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1076160 -> 1114164 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" |  31 ++--
- ...255\224\350\276\251\345\207\206\345\244\207.md" |  10 +-
- index.html                                         | 139 +++++++++++++-
- tests/engine.js                                    |  23 ++-
- tests/quick-replies.js                             | 206 +++++++++++++++++++++
- tests/report/metrics-summary.json                  |  36 ++--
- ...214\207\346\240\207\346\212\245\345\221\212.md" |  26 +--
+
+commit 8b0c6aec64a798f6cb5ef8a82bf98b345bf1db13
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 14:12:46 +0800
+
+    feat(ui): 快捷提问卡按品类动态替换（240 条专属问题）
+    
+    用户反馈切换品类后底部快捷提问仍是同一张卡，交互"僵化"。根因有两处：
+    getQuickReplies() 只按 state.context.intent 取卡，renderCategories() 的点击
+    回调从不重绘卡片——品类切换在结构上就不可能换卡。
+    
+    改造：
+    - 新增 PRODUCT_CHIPS：8 语种 × 10 品类 × 3 条 = 240 条品类专属问题，
+      逐条手写、均带机型名，文案只取该品类知识库真实覆盖的症状与部件。
+    - getQuickReplies() 优先返回当前品类的专属卡，并把当前意图命中的那条置顶；
+      未选品类（"全部"）时沿用原通用卡，行为与改造前完全一致。
+    - 新增 selectCategory()：切换品类即重绘标签、重绘快捷提问卡与输入框提示语。
+    - sendMessage() 后补一次 renderCategories()，让标签高亮跟随引擎识别出的品类。
+    
+    每条卡片都必须"点了就有答案"：新增 tests/quick-replies.js，断言卡片能路由到
+    正确品类与意图、该品类该意图确有知识条目、且点击后直接作答而不落进澄清追问
+    回路，共 2171 条断言全部通过；引擎加载器改为持久 DOM 桩以便断言界面联动。
+
+ docs/作品简介.html                |   2 +-
+ docs/作品简介.md                  |   7 +-
+ docs/作品简介.pdf                 | Bin 188301 -> 189323 bytes
+ docs/团队信息与原创性声明.html    |   2 +-
+ docs/团队信息与原创性声明.pdf     | Bin 304844 -> 305970 bytes
+ docs/应用效果说明.html            |  52 ++++++++--
+ docs/应用效果说明.pdf             | Bin 736911 -> 790496 bytes
+ docs/提交物清单.md                |  19 ++--
+ docs/方案设计文档.html            |  25 ++++-
+ docs/方案设计文档.pdf             | Bin 1076160 -> 1114164 bytes
+ docs/演示讲解台词.md              |  31 +++---
+ docs/评审对照与答辩准备.md        |  10 +-
+ index.html                        | 139 ++++++++++++++++++++++++-
+ tests/engine.js                   |  23 ++++-
+ tests/quick-replies.js            | 206 ++++++++++++++++++++++++++++++++++++++
+ tests/report/metrics-summary.json |  36 +++----
+ tests/report/实测指标报告.md      |  26 ++---
  17 files changed, 497 insertions(+), 81 deletions(-)
-7348c3f docs(manifest): record package verification in pre-submission checklist
- ...\272\244\347\211\251\346\270\205\345\215\225.md" |  2 +-
- git-log.txt                                         | 21 ++++++++++++++++-----
+
+commit 7348c3f58d2dcf6514dd0f26dc718198b78b5981
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 12:00:59 +0800
+
+    docs(manifest): record package verification in pre-submission checklist
+
+ docs/提交物清单.md |  2 +-
+ git-log.txt        | 21 ++++++++++++++++-----
  2 files changed, 17 insertions(+), 6 deletions(-)
-05d8ded chore: refresh git-log.txt originality evidence
+
+commit 05d8ded7eec0bab44b3322b2eb27f9f999ee6c49
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 12:00:30 +0800
+
+    chore: refresh git-log.txt originality evidence
+
  git-log.txt | 70 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
  1 file changed, 62 insertions(+), 8 deletions(-)
-308c975 feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
- ...5\234\345\223\201\347\256\200\344\273\213.html" |  65 ++++++++++
- ...75\234\345\223\201\347\256\200\344\273\213.pdf" | Bin 0 -> 188301 bytes
- ...0\233\346\200\247\345\243\260\346\230\216.html" | 133 +++++++++++++++++++++
- ...10\233\346\200\247\345\243\260\346\230\216.pdf" | Bin 0 -> 304844 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   6 +-
+
+commit 308c975068579173e6e9a54ec4196f8a0e604b19
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 12:00:28 +0800
+
+    feat(docs): add 作品简介 PDF and signable 团队信息与原创性声明
+
+ docs/作品简介.html             |  65 ++++++++++++++++++++
+ docs/作品简介.pdf              | Bin 0 -> 188301 bytes
+ docs/团队信息与原创性声明.html | 133 +++++++++++++++++++++++++++++++++++++++++
+ docs/团队信息与原创性声明.pdf  | Bin 0 -> 304844 bytes
+ docs/提交物清单.md             |   6 +-
  5 files changed, 201 insertions(+), 3 deletions(-)
-d5b9e87 docs: align retrieval-order wording in abstract and clarify fallback-chain comment
- "docs/\344\275\234\345\223\201\347\256\200\344\273\213.md"            | 2 +-
- .../\346\217\220\344\272\244\347\211\251\346\270\205\345\215\225.md"  | 4 ++--
- index.html                                                            | 2 +-
+
+commit d5b9e8736abb71cd9c86be826e3c2b6b65eae4b5
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:53:25 +0800
+
+    docs: align retrieval-order wording in abstract and clarify fallback-chain comment
+
+ docs/作品简介.md   | 2 +-
+ docs/提交物清单.md | 4 ++--
+ index.html         | 2 +-
  3 files changed, 4 insertions(+), 4 deletions(-)
-3e1c553 docs(manifest): mark script-verified pre-submission checks as done
- ...272\244\347\211\251\346\270\205\345\215\225.md" | 26 ++++++++++++----------
+
+commit 3e1c553118e57a3a9888c38aac0e0434a3b7c468
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:51:36 +0800
+
+    docs(manifest): mark script-verified pre-submission checks as done
+
+ docs/提交物清单.md | 26 ++++++++++++++------------
  1 file changed, 14 insertions(+), 12 deletions(-)
-5e83ec6 chore: restore readable Chinese paths in git-log.txt tracked-file list
+
+commit 5e83ec68c9bd47ec14641730dae9b4414e642f87
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:48:00 +0800
+
+    chore: restore readable Chinese paths in git-log.txt tracked-file list
+
  git-log.txt | 39 +++++++++++++++++++++++++--------------
  1 file changed, 25 insertions(+), 14 deletions(-)
-41b3f57 chore: refresh git-log.txt originality evidence to build b15fb46
+
+commit 41b3f5732390d2e83a2220c7c225b2eabb2e92fe
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:43:34 +0800
+
+    chore: refresh git-log.txt originality evidence to build b15fb46
+
  git-log.txt | 116 ++++++++++++++++++++++++++++++++++++++++++++++--------------
  1 file changed, 89 insertions(+), 27 deletions(-)
-b15fb46 chore(metrics): re-measure UI latency on build 67bea86 and sync docs
- ...275\234\345\223\201\347\256\200\344\273\213.md" |   4 +-
- ...5\210\346\236\234\350\257\264\346\230\216.html" |  12 ++--
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 736907 -> 736911 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   2 +-
- ...6\276\350\256\241\346\226\207\346\241\243.html" |  10 ++--
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1076167 -> 1076160 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" |   2 +-
- ...255\224\350\276\251\345\207\206\345\244\207.md" |   6 +-
- tests/report/metrics-summary.json                  |  66 ++++++++++-----------
- tests/report/ui-latency.json                       |  42 +++++++++++--
- ...214\207\346\240\207\346\212\245\345\221\212.md" |  28 ++++-----
+
+commit b15fb464c4242b87de5a067b678b23eeed68d466
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:42:52 +0800
+
+    chore(metrics): re-measure UI latency on build 67bea86 and sync docs
+    
+    引擎加了检索档位埋点后重跑实测：意图/品类/KB 命中 100%、一次解决 98.6%、
+    三类流程探针 100% 均未变；引擎决策 0.048 ms（P95 0.092 ms）。
+    端到端首字可见 838 ms、全量渲染 3085 ms（4 次采样，原 802/3065）。
+    文档与 PDF 中的引用数字同步更新，并修正 ui-latency 备注里把引擎时延
+    写成 0.5 ms 的笔误（实为 0.05 ms）。
+
+ docs/作品简介.md                  |   4 +--
+ docs/应用效果说明.html            |  12 +++----
+ docs/应用效果说明.pdf             | Bin 736907 -> 736911 bytes
+ docs/提交物清单.md                |   2 +-
+ docs/方案设计文档.html            |  10 +++---
+ docs/方案设计文档.pdf             | Bin 1076167 -> 1076160 bytes
+ docs/演示讲解台词.md              |   2 +-
+ docs/评审对照与答辩准备.md        |   6 ++--
+ tests/report/metrics-summary.json |  66 +++++++++++++++++++-------------------
+ tests/report/ui-latency.json      |  42 ++++++++++++++++++++----
+ tests/report/实测指标报告.md      |  28 ++++++++--------
  11 files changed, 101 insertions(+), 71 deletions(-)
-67bea86 feat(evidence): surface retrieval path in the decision-basis card
- ...5\210\346\236\234\350\257\264\346\230\216.html" |   2 +-
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 735828 -> 736907 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   4 +-
- ...6\276\350\256\241\346\226\207\346\241\243.html" |  18 ++++----
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 1073557 -> 1076167 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" |   4 +-
- index.html                                         |  47 +++++++++++++++++----
+
+commit 67bea86430ce6097d633d8eaeeab9445401bb80e
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 11:37:15 +0800
+
+    feat(evidence): surface retrieval path in the decision-basis card
+    
+    设计文档 §2.7 要求卡片展示"检索方式"，但实现从未渲染，三份文档却都声称已展示。
+    现在引擎在每条答复上记录实际命中的检索档位，并按当前语种渲染：
+    
+    - 精确命中 / 模糊评分命中 / 同语种通用条目 / 默认条目 / 英文回落
+    - 澄清追问 / 冷启动问候 / 触发转人工规则
+    
+    顺带修正 §2.6 图 2-2 与实现的顺序口径——代码是单元内打分优先、无候选再降级，
+    原文案"固定的降级链"与之相反。演示脚本补上"点击展开卡片"的镜头指令，
+    因为卡片默认折叠，只露出意图与置信度两项。
+
+ docs/应用效果说明.html |   2 +-
+ docs/应用效果说明.pdf  | Bin 735828 -> 736907 bytes
+ docs/提交物清单.md     |   4 ++--
+ docs/方案设计文档.html |  18 +++++++++---------
+ docs/方案设计文档.pdf  | Bin 1073557 -> 1076167 bytes
+ docs/演示讲解台词.md   |   4 ++--
+ index.html             |  47 ++++++++++++++++++++++++++++++++++++++---------
  7 files changed, 52 insertions(+), 23 deletions(-)
-94e63a7 docs: correct stale page/size figures and add git-log originality evidence
- ...272\244\347\211\251\346\270\205\345\215\225.md" |   8 +-
- git-log.txt                                        | 165 +++++++++++++++++++++
+
+commit 94e63a7d9072eddc283ce908971437e2ee7e5d77
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 05:29:31 +0800
+
+    docs: correct stale page/size figures and add git-log originality evidence
+    
+    提交物清单里的方案设计文档页数是打印样式修复前的 18 页，实际产物已是 16 页；
+    index.html 体积标注 558 KB 与实际 559,121 字节（546 KB）不符。评委按清单核对
+    文件时会直接对不上，因此改为实测值。
+    
+    打包结构里引用的 git-log.txt 此前并不存在，一并生成，作为原创性证据。
+
+ docs/提交物清单.md |   8 +--
+ git-log.txt        | 165 +++++++++++++++++++++++++++++++++++++++++++++++++++++
  2 files changed, 169 insertions(+), 4 deletions(-)
-61611f9 chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
- ...5\210\346\236\234\350\257\264\346\230\216.html" |  16 ++++-----
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 735834 -> 735828 bytes
- tests/report/metrics-summary.json                  |  36 ++++++++++-----------
- ...214\207\346\240\207\346\212\245\345\221\212.md" |  26 +++++++--------
+
+commit 61611f9335ebba536e7e4e146eb962cb856012e6
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 00:34:38 +0800
+
+    chore(metrics): refresh latency snapshot against build 2f3c373 and sync per-language table
+    
+    The metrics snapshot's build field now points at the commit that contains the
+    measured code, and the per-language latency column in 应用效果说明 matches it.
+    index.html is unchanged in this commit, so the recorded build stays accurate.
+
+ docs/应用效果说明.html            |  16 ++++++++--------
+ docs/应用效果说明.pdf             | Bin 735834 -> 735828 bytes
+ tests/report/metrics-summary.json |  36 ++++++++++++++++++------------------
+ tests/report/实测指标报告.md      |  26 +++++++++++++-------------
  4 files changed, 39 insertions(+), 39 deletions(-)
-2f3c373 v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
- .gitignore                                         |   2 +
- docs/assets/print.css                              | 137 ++++
- ...275\234\345\223\201\347\256\200\344\273\213.md" |  96 +++
- ...5\210\346\236\234\350\257\264\346\230\216.html" | 377 ++++++++++
- ...25\210\346\236\234\350\257\264\346\230\216.pdf" | Bin 0 -> 735834 bytes
- ...272\244\347\211\251\346\270\205\345\215\225.md" | 140 ++++
- ...6\276\350\256\241\346\226\207\346\241\243.html" | 803 +++++++++++++++++++++
- ...56\276\350\256\241\346\226\207\346\241\243.pdf" | Bin 0 -> 1073557 bytes
- ...256\262\350\247\243\345\217\260\350\257\215.md" | 202 ++++++
- ...255\224\350\276\251\345\207\206\345\244\207.md" | 288 ++++++++
- index.html                                         | 540 +++++++++++---
- tests/changelog.json                               |  35 +
- tests/debug.js                                     |  95 +++
- tests/engine.js                                    |  87 +++
- tests/holdout.json                                 |  99 +++
- tests/metrics.js                                   | 454 ++++++++++++
- tests/probes.json                                  |  86 +++
- tests/report/metrics-summary.json                  | 257 +++++++
- tests/report/ui-latency.json                       |  14 +
- ...214\207\346\240\207\346\212\245\345\221\212.md" | 129 ++++
- tests/run-tests.js                                 | 146 ++++
- tests/testset.json                                 | 348 +++++++++
+
+commit 2f3c3731646f97473a8f1142be0580c22006a578
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-03 00:34:04 +0800
+
+    v10: complete submission package (10-product UI coverage + reproducible metrics + full doc set)
+    
+    Frontend
+    - index.html: category filter bar now exposes all 10 products; tiller / wood_chipper /
+      robot_mower were unreachable, which also hid the existing robot_mower KB entries
+    
+    Tests (reproducible by judges)
+    - tests/: 352-case multilingual regression set (280 tuning + 72 holdout), 72 flow probes,
+      metrics script that extracts the real engine from the shipped index.html
+    - tests/metrics.js: fixed the latency methodology. Timing now covers only
+      generateResponse() -- the actual online decision chain -- instead of also counting a
+      redundant second detection pass. Added warmup + 3 fresh-text rounds with the median
+      round reported, so the figure is reproducible rather than load-dependent.
+      Engine decision latency: 0.05 ms avg / 0.10 ms P95 (was measured 7x higher).
+    
+    Docs (all figures traced to the real implementation)
+    - docs/方案设计文档 (16p) + 应用效果说明 (9p) + 作品简介 (298 chars) +
+      演示讲解台词 + 评审对照与答辩准备 + 提交物清单
+    - every capability labelled 已实现/规划中, every number labelled 实测/测算;
+      removed claims the implementation does not support (LLM, realtime translation, IoT, AR)
+
+ .gitignore                        |   2 +
+ docs/assets/print.css             | 137 +++++++
+ docs/作品简介.md                  |  96 +++++
+ docs/应用效果说明.html            | 377 ++++++++++++++++++
+ docs/应用效果说明.pdf             | Bin 0 -> 735834 bytes
+ docs/提交物清单.md                | 140 +++++++
+ docs/方案设计文档.html            | 803 ++++++++++++++++++++++++++++++++++++++
+ docs/方案设计文档.pdf             | Bin 0 -> 1073557 bytes
+ docs/演示讲解台词.md              | 202 ++++++++++
+ docs/评审对照与答辩准备.md        | 288 ++++++++++++++
+ index.html                        | 540 ++++++++++++++++++++-----
+ tests/changelog.json              |  35 ++
+ tests/debug.js                    |  95 +++++
+ tests/engine.js                   |  87 +++++
+ tests/holdout.json                |  99 +++++
+ tests/metrics.js                  | 454 +++++++++++++++++++++
+ tests/probes.json                 |  86 ++++
+ tests/report/metrics-summary.json | 257 ++++++++++++
+ tests/report/ui-latency.json      |  14 +
+ tests/report/实测指标报告.md      | 129 ++++++
+ tests/run-tests.js                | 146 +++++++
+ tests/testset.json                | 348 +++++++++++++++++
  22 files changed, 4236 insertions(+), 99 deletions(-)
-8f60cd4 v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
+
+commit 8f60cd4bb649414773e24aa1568733a35a57bed3
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-19 22:59:14 +0800
+
+    v9.1: unify real-query pacing with demo mode (thinkTime 360ms base, cap 1.2s; stream too-long notice)
+
  index.html | 11 +++++------
  1 file changed, 5 insertions(+), 6 deletions(-)
-5c03b40 v9: interaction-layer humanization (incremental insert / semantic split / streaming)
+
+commit 5c03b40eb50f4ed35d6278abb9de8c21cc7ce0c0
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-19 12:06:06 +0800
+
+    v9: interaction-layer humanization (incremental insert / semantic split / streaming)
+
  index.html | 182 +++++++++++++++++++++++++++++++++++++++++++++++++++++++------
  1 file changed, 166 insertions(+), 16 deletions(-)
-b839ac1 v8: smarter engine (typo tolerance, emotion routing, clarify loop, smalltalk, dynamic quick replies)
+
+commit b839ac1e3849c80f38cbc1019cfb09091767ef2b
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-19 07:47:46 +0800
+
+    v8: smarter engine (typo tolerance, emotion routing, clarify loop, smalltalk, dynamic quick replies)
+
  index.html | 265 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
  1 file changed, 235 insertions(+), 30 deletions(-)
-4bf7264 v7g: engine matching algorithm upgrade (CJK bigram, word boundary, pattern cache)
+
+commit 4bf7264db86c1b9ed43769b23615b84eb9578abc
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 23:58:24 +0800
+
+    v7g: engine matching algorithm upgrade (CJK bigram, word boundary, pattern cache)
+
  index.html | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-------
  1 file changed, 60 insertions(+), 7 deletions(-)
-3f2fa6f v7: expand KB +72 entries (8 langs x 9 scenarios from manufacturer docs), fix 7 routing patterns
+
+commit 3f2fa6fee27cba881b16edee41412ac15cb0b597
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 23:33:36 +0800
+
+    v7: expand KB +72 entries (8 langs x 9 scenarios from manufacturer docs), fix 7 routing patterns
+
  index.html | 2404 ++++++++++++++++++++++++++++++------------------------------
  1 file changed, 1202 insertions(+), 1202 deletions(-)
-a20db8e v6: KB expansion (+70 entries, 8 langs x 7 categories)
+
+commit a20db8ece68619d3aa20d0a42ce340374b3e166a
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 22:33:37 +0800
+
+    v6: KB expansion (+70 entries, 8 langs x 7 categories)
+
  index.html | 68 +++++++++++++++++++++++++++++++++++++++++++++++++-------------
  1 file changed, 54 insertions(+), 14 deletions(-)
-b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unchanged)
+
+commit b64871994d670f7f68c5a6880065e5fca9bcea1a
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 21:58:20 +0800
+
+    UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unchanged)
+
  index.html | 361 ++++++++++++++++++++++++++++++++++++++++++++-----------------
  1 file changed, 260 insertions(+), 101 deletions(-)
-56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
+
+commit 56f33e5a24870bfe100142cf7d22116b810e380e
+Author: 474712 <19850260536@163.com>
+Date:   2026-10-18 21:41:40 +0800
+
+    deploy: GreenCraft multilingual AI support agent (v5)
+
  index.html | 1004 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 1004 insertions(+)
+
+## 统计
+
+提交总数: 34
+首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
+最近提交: 2026-11-08 10:00:19 +0800 00cc5ff chore: refresh git-log.txt originality evidence to build 0fa2474
+本文件生成时的 HEAD: 00cc5ffe68e02219e22be3f819beb6b5c93f6879
+
+## 追踪文件清单（按提交次数）
+
+    14 index.html
+    10 git-log.txt
+     9 docs/方案设计文档.pdf
+     9 docs/方案设计文档.html
+     9 docs/应用效果说明.pdf
+     9 docs/应用效果说明.html
+     7 tests/report/实测指标报告.md
+     7 tests/report/metrics-summary.json
+     7 docs/作品简介.md
+     3 tests/engine.js
+     3 docs/团队信息与原创性声明.pdf
+     3 docs/作品简介.pdf
+     3 docs/作品简介.html
+     2 tests/report/ui-latency.json
+     2 tests/quick-replies.js
+     2 docs/团队信息与原创性声明.html
+     1 tests/testset.json
+     1 tests/run-tests.js
+     1 tests/probes.json
+     1 tests/metrics.js
+     1 tests/holdout.json
+     1 tests/debug.js
+     1 tests/changelog.json
+     1 tests/annotations.js
+     1 docs/assets/print.css
+     1 .gitignore
