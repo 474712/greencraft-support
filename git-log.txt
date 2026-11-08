@@ -6,7 +6,9 @@
 
 ## 提交列表
 
-2d0449f (HEAD -> main) chore: PDF 改为本地构建产物，不再入库
+255520f (HEAD -> main) chore: 团队信息与原创性声明 HTML 移出仓库
+2611d4e chore: refresh git-log.txt originality evidence to build 2d0449f
+2d0449f chore: PDF 改为本地构建产物，不再入库
 9e84112 chore: regenerate git-log.txt in four-section format to build 0fa2474
 00cc5ff chore: refresh git-log.txt originality evidence to build 0fa2474
 0fa2474 chore: 从公开仓库移除内部准备材料
@@ -44,6 +46,28 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit 255520fbd7765d029a671020f3f33f94929b05f1
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 10:24:44 +0800
+
+    chore: 团队信息与原创性声明 HTML 移出仓库
+    
+    该文件含成员联系邮箱、Git 署名与待填字段，属本地工作底稿而非公开源码；
+    签字盖章后的 PDF 随提交包交付。磁盘副本保留于 work/internal-docs/ 与归档。
+
+ .gitignore                     |   3 +
+ docs/团队信息与原创性声明.html | 133 -----------------------------------------
+ 2 files changed, 3 insertions(+), 133 deletions(-)
+
+commit 2611d4e399c8cf2bcbeff5f1834ed176011252e3
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 10:13:05 +0800
+
+    chore: refresh git-log.txt originality evidence to build 2d0449f
+
+ git-log.txt | 44 ++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 34 insertions(+), 10 deletions(-)
 
 commit 2d0449fe2df51dd42795bbc93a868466b12a9ef4
 Author: 竹川南 <19850260536@163.com>
@@ -575,15 +599,15 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 36
+提交总数: 38
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-08 10:12:48 +0800 2d0449f chore: PDF 改为本地构建产物，不再入库
-本文件生成时的 HEAD: 2d0449fe2df51dd42795bbc93a868466b12a9ef4
+最近提交: 2026-11-08 10:24:44 +0800 255520f chore: 团队信息与原创性声明 HTML 移出仓库
+本文件生成时的 HEAD: 255520fbd7765d029a671020f3f33f94929b05f1
 
 ## 追踪文件清单（按提交次数）
 
     14 index.html
-    11 git-log.txt
+    12 git-log.txt
      9 docs/方案设计文档.html
      9 docs/应用效果说明.html
      7 tests/report/实测指标报告.md
@@ -591,10 +615,9 @@ Date:   2026-10-18 21:41:40 +0800
      7 docs/作品简介.md
      3 tests/engine.js
      3 docs/作品简介.html
+     3 .gitignore
      2 tests/report/ui-latency.json
      2 tests/quick-replies.js
-     2 docs/团队信息与原创性声明.html
-     2 .gitignore
      1 tests/testset.json
      1 tests/run-tests.js
      1 tests/probes.json
