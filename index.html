@@ -512,6 +512,8 @@ const I18N = {
   inputPlaceholder: { en:'Describe your issue...', zh:'请描述您的问题，或选择话题开始咨询...', fr:'Décrivez votre problème...', de:'Beschreiben Sie Ihr Problem...', es:'Describa su problema...', it:'Descrivi il tuo problema...', nl:'Beschrijf uw probleem...', pt:'Descreva o seu problema...' },
   welcomeTitle: { en:'Welcome to GreenCraft AI Support 🌿', zh:'欢迎使用 GreenCraft 智能客服 🌿', fr:'Bienvenue chez GreenCraft 🌿', de:'Willkommen bei GreenCraft 🌿', es:'Bienvenido a GreenCraft 🌿', it:'Benvenuto in GreenCraft 🌿', nl:'Welkom bij GreenCraft 🌿', pt:'Bem-vindo ao GreenCraft 🌿' },
   welcomeMsg: { en:'I am your garden power tools support specialist, fluent in 8 languages and available 24/7.\n\nI can help you with:\n🔧 Troubleshooting\n🛢️ Maintenance\n🔩 Spare Parts\n📋 Warranty\n⚖️ Product Comparison\n🛡️ Safety\n\nDescribe your issue or click a quick topic below.', zh:'您好！我是园林电动工具专属智能客服，精通中英法德西意荷葡八种语言，7×24小时全天候为您提供售后服务支持。\n\n我能帮您处理：\n🔧 故障诊断与排除\n🛢️ 日常养护与保养\n🔩 配件查询与订购\n📋 保修政策咨询\n⚖️ 产品对比与推荐\n🛡️ 安全操作规范\n\n请直接描述您遇到的问题，或点击下方快捷话题开始咨询。', fr:'Je suis votre spécialiste en outils de jardin motorisés. Je peux vous aider avec le dépannage, l\'entretien, les pièces détachées, la garantie et les comparaisons de produits. Comment puis-je vous aider?', de:'Ich bin Ihr Spezialist für Garten-Elektrowerkzeuge. Ich helfe bei Fehlerbehebung, Wartung, Ersatzteilen, Garantie und Produktvergleichen. Wie kann ich Ihnen helfen?', es:'Soy su especialista en herramientas eléctricas de jardín. Puedo ayudar con solución de problemas, mantenimiento, repuestos, garantía y comparaciones. ¿Cómo puedo ayudarle?', it:'Sono il tuo specialista in attrezzi da giardino. Posso aiutarti con risoluzione problemi, manutenzione, ricambi, garanzia e confronti. Come posso aiutarti?', nl:'Ik ben uw specialist in tuingereedschap. Ik help met probleemoplossing, onderhoud, reserveonderdelen, garantie en productvergelijkingen. Hoe kan ik u helpen?', pt:'Sou o seu especialista em ferramentas elétricas de jardim. Posso ajudar com resolução de problemas, manutenção, peças, garantia e comparações. Como posso ajudar?' },
+  // 切换引导：拼在 welcomeMsg 末尾，不写进 welcomeMsg 源串，便于单独重译与后续调整
+  langHint: { en:'You can switch the interface language in the left sidebar at any time.', zh:'界面语言可在左侧随时切换。', fr:'Vous pouvez changer la langue de l\'interface à tout moment dans la barre latérale.', de:'Sie können die Sprache der Oberfläche jederzeit in der linken Seitenleiste wechseln.', es:'Puede cambiar el idioma de la interfaz en la barra lateral en cualquier momento.', it:'Puoi cambiare la lingua dell\'interfaccia in qualsiasi momento nella barra laterale.', nl:'U kunt de interfacetaal op elk moment wijzigen in de zijbalk.', pt:'Pode alterar o idioma da interface a qualquer momento na barra lateral.' },
   thinking: { en:'Analyzing...', zh:'正在分析中...', fr:'Réflexion...', de:'Denkt nach...', es:'Pensando...', it:'Sto pensando...', nl:'Denken...', pt:'A pensar...' },
   noMatch: { en:'I couldn\'t quite understand. Please provide more details:\n• Which tool is the issue with?\n• What are the symptoms (won\'t start / noise / leak)?\n• What is the model number?\n\nYou can also click a topic on the left sidebar.', zh:'未能完全理解您的问题，请您提供更多细节：\n• 具体是什么设备出现问题？\n• 故障表现是什么（无法启动 / 异响 / 漏油等）？\n• 设备的型号是什么？\n\n您也可以点击左侧快捷话题选择对应服务类型。', fr:'Je n\'ai pas bien compris. Donnez plus de détails sur votre problème.', de:'Das habe ich nicht verstanden. Bitte geben Sie mehr Details an.', es:'No lo he entendido bien. ¿Podría dar más detalles?', it:'Non ho capito bene. Puoi fornire più dettagli?', nl:'Ik begreep dat niet helemaal. Kunt u meer details geven?', pt:'Não entendi bem. Pode dar mais detalhes?' },
   tooLong: { en:'Your message exceeds the 500-character limit. Please shorten it and try again.', zh:'您的消息超过 500 字上限，请精简后再发送。', fr:'Votre message dépasse la limite de 500 caractères. Veuillez le raccourcir.', de:'Ihre Nachricht überschreitet das Limit von 500 Zeichen. Bitte kürzen Sie sie.', es:'Su mensaje supera el límite de 500 caracteres. Acórtelo e inténtelo de nuevo.', it:'Il messaggio supera il limite di 500 caratteri. Accorcialo e riprova.', nl:'Uw bericht overschrijdt de limiet van 500 tekens. Kort het in en probeer opnieuw.', pt:'Sua mensagem excede o limite de 500 caracteres. Encurte-a e tente novamente.' },
@@ -1376,9 +1378,28 @@ function selectCategory(pid) {
 function renderLangButtons() {
   const g = document.getElementById('langGrid');
   g.innerHTML = Object.entries(LANGUAGES).map(([code, info]) => { const a = code === state.lang ? ' active' : ''; return `<button class="lang-btn${a}" data-lang="${code}">${info.flag} ${info.native}</button>`; }).join('');
-  g.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; renderLangButtons(); renderCategories(); updateAllI18n(); updatePlaceholder(); renderQuickReplies(); }));
+  g.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; renderLangButtons(); renderCategories(); updateAllI18n(); updateWelcomeI18n(); updatePlaceholder(); renderQuickReplies(); }));
 }
 function updateAllI18n() { document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (I18N[k] && I18N[k][state.lang]) el.textContent = I18N[k][state.lang]; }); }
+function welcomeText(lang) {
+  return (I18N.welcomeMsg[lang] || I18N.welcomeMsg.en) + '\n\n' + (I18N.langHint[lang] || I18N.langHint.en);
+}
+// 开场两条气泡跟随界面语种就地重译。按 data-i18n-bubble 定位而非按序号，
+// 避免与 typing 指示器等临时节点错位；不走 renderMessages，因此不拽滚动位置、不动对话历史。
+function updateWelcomeI18n() {
+  state.messages.forEach(m => {
+    if (!m.i18nKey) return;
+    if (m.i18nKey === 'welcomeMsg') { m.text = welcomeText(state.lang); return; }
+    const dict = I18N[m.i18nKey];
+    if (dict) m.text = dict[state.lang] || dict.en;
+  });
+  document.querySelectorAll('[data-i18n-bubble]').forEach(node => {
+    const key = node.dataset.i18nBubble;
+    const m = state.messages.find(x => x.i18nKey === key);
+    const bubble = node.querySelector ? node.querySelector('.msg-bubble') : null;
+    if (m && bubble) bubble.innerHTML = formatMsg(m.text);
+  });
+}
 function updatePlaceholder() {
   const inp = document.getElementById('chatInput'); const k = inp.dataset.i18nPlaceholder;
   const base = (I18N[k] && I18N[k][state.lang]) || '';
@@ -1442,6 +1463,7 @@ function messageNode(m, isNew) {
     + '<div class="msg-body"><div class="msg-bubble ' + (m.type==='user'?'user-bubble':'bot-bubble') + '">' + formatMsg(m.text) + '</div>'
     + (m.evidence ? renderEvidence(m.evidence) : '')
     + '<div class="msg-time">' + m.time + '</div></div>';
+  if (m.i18nKey) w.dataset.i18nBubble = m.i18nKey;
   return w;
 }
 function appendRaw(type, text, meta) {
@@ -1682,6 +1704,11 @@ async function startDemo(scenarioId) {
   const scenario = DEMO_SCENARIOS[scenarioId];
   if (!scenario) return;
 
+  // 语种要在 clearChat 之前落定。clearChat 会同步触发 initWelcome，
+  // 开场两条气泡的文案在那一刻就已按 state.lang 取好，之后再改语种追不回来。
+  const wantLang = (scenario.lang && LANGUAGES[scenario.lang]) ? scenario.lang : null;
+  if (wantLang) state.lang = wantLang;
+
   clearChat();
   demoState.running = true;
   demoState.scenarioId = scenarioId;
@@ -1695,8 +1722,7 @@ async function startDemo(scenarioId) {
   document.getElementById('demoProgress').classList.add('show');
   hideAnnotation();
 
-  if (scenario.lang && LANGUAGES[scenario.lang]) {
-    state.lang = scenario.lang;
+  if (wantLang) {
     renderLangButtons();
     renderCategories();
     updateAllI18n();
@@ -2114,9 +2140,17 @@ function initParticles() { const c = document.getElementById('particles'); for (
 
 async function initWelcome() {
   // 欢迎语拆两条：AI 服务披露单独成条（合规可见），再送问候与能力清单，避免开场"一堵墙"
-  await addMessage('bot', I18N.aiNotice[state.lang] || I18N.aiNotice['en'], { stream: true });
+  // 两条都打 i18nKey，切换界面语言时由 updateWelcomeI18n() 就地重译
+  const tag = (node, key) => {
+    const m = state.messages[state.messages.length - 1];
+    if (m) m.i18nKey = key;
+    if (node && node.dataset) node.dataset.i18nBubble = key;
+  };
+  const notice = await addMessage('bot', I18N.aiNotice[state.lang] || I18N.aiNotice['en'], { stream: true });
+  tag(notice, 'aiNotice');
   await sleep(260);
-  await addMessage('bot', I18N.welcomeMsg[state.lang] || I18N.welcomeMsg['en'], { stream: true });
+  const welcome = await addMessage('bot', welcomeText(state.lang), { stream: true });
+  tag(welcome, 'welcomeMsg');
   renderQuickReplies();
 }
 
