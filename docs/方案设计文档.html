@@ -392,7 +392,7 @@ node tests/metrics.js</code></pre>
 <h3>3.6 转人工工单</h3>
 <p>转人工由<b>复合规则</b>判定，而非固定短语表：</p>
 <p class="mono">(人工对象词 ∨ 服务渠道词) ∧ (联系动词 ∨ 请求词)</p>
-<p>例如"人工 / 真人 / 客服 / 专员"、"hotline / help desk"、"sprechen / verbinden"、"转接 / 联系 / 对接"、"quiero / por favor"、"vorrei / per favore"、"ik wil / graag"、"quero / por favor" 等 8 语种词族，与连接词组合命中。转人工时系统生成结构化工单（工单号形如 <code>GC-XXXXXX</code>），附带用户问题、已识别意图与品类、已给建议摘要，并给出等待期自助路径。</p>
+<p>例如"人工 / 真人 / 客服 / 专员"、"hotline / help desk"、"sprechen / verbinden"、"转接 / 联系 / 对接"、"quiero / por favor"、"vorrei / per favore"、"ik wil / graag"、"quero / por favor" 等 8 语种词族，与连接词组合命中。转人工时系统在浏览器端生成工单号（形如 <code>GC-XXXXXX</code>），用当前语种告知人工响应时段、RMA 退件衔接与等待期自助路径，并提示对话记录已同步给专员；工单<b>不落库、不派发坐席</b>，真实落地需接工单 API（见《应用效果说明》§9.1）。</p>
 <div class="note">
 <span class="note-title">为什么要改成复合规则</span>
 初版采用"8 语种各 6–9 条固定短语"的白名单表，在 32 条真实问法探针上仅 <b>43.8%</b> 触发率——像"我想找真人聊一下""Pásame con un asesor"这类自然表达全部漏判。改为复合规则后，同一探针集触发率升至 <b>100%</b>。这一改动已在《应用效果说明》第 5.1 节以"改进前后对照"形式公开。
@@ -441,7 +441,7 @@ node tests/metrics.js</code></pre>
     <tr><td>IoT 联动</td><td><b>无</b></td><td>接入设备端遥测（电池循环次数、电机温度）做预测性主动服务</td><td>演示中出现"电池 145 次循环"等内容属于<b>场景脚本设定</b>，非真实数据采集</td></tr>
     <tr><td>AR 远程指导</td><td><b>无</b></td><td>AR 标注式远程指导（后续版本）</td><td>不作为当前能力宣称</td></tr>
     <tr><td>配件交易</td><td>配件型号 / 料号 / 自换步骤 / 下单链接占位</td><td>对接配件商城与真实下单、支付、物流</td><td>当前不产生真实订单</td></tr>
-    <tr><td>工单</td><td>前端生成结构化工单号与摘要</td><td>写入工单系统并对接坐席工作台</td><td>工单不落库、不派发</td></tr>
+    <tr><td>工单</td><td>前端生成工单号与转接说明（响应时段 / RMA / 自助路径）</td><td>写入工单系统并对接坐席工作台</td><td>工单不落库、不派发</td></tr>
     <tr><td>数据采集</td><td><b>零外部请求</b>：无 fetch / XHR / 第三方脚本</td><td>可选埋点（默认关闭）</td><td>全部数据留在浏览器，可离线运行</td></tr>
     <tr><td>品牌</td><td>GreenCraft Pro 为<strong>自建演示品牌</strong></td><td>换用真实合作品牌商标与产品库</td><td>GreenCraft 非真实注册商标，型号与料号均为演示虚构</td></tr>
   </tbody>
@@ -651,7 +651,7 @@ node tests/metrics.js</code></pre>
   <text x="750" y="118" font-size="7.5" fill="#6b7360">原语种输出</text>
   <text x="750" y="170" font-size="7.5" fill="#6b7360">记 missCount</text>
   <text x="750" y="182" font-size="7.5" fill="#6b7360">两次未中转人工</text>
-  <text x="750" y="234" font-size="7.5" fill="#6b7360">工单含完整上下文</text>
+  <text x="750" y="234" font-size="7.5" fill="#6b7360">生成工单号与同步告知</text>
   <text x="750" y="298" font-size="7.5" fill="#6b7360">反问缺失信息</text>
 </svg>
 <figcaption>图 5-3　售后答复工作流状态机</figcaption>
@@ -659,7 +659,7 @@ node tests/metrics.js</code></pre>
 
 <div class="note">
 <span class="note-title">规范要点</span>
-① 寒暄通道<b>不</b>进入知识库检索，<b>不</b>累加未命中计数；② 情绪命中时先安抚再给方案；③ 只有强特征命中才允许直接出答案，弱特征一律转 CLARIFY；④ HANDOFF 与 FALLBACK 两条路径互不重叠，工单一旦生成即携带完整上下文摘要。
+① 寒暄通道<b>不</b>进入知识库检索，<b>不</b>累加未命中计数；② 情绪命中时先安抚再给方案；③ 只有强特征命中才允许直接出答案，弱特征一律转 CLARIFY；④ HANDOFF 与 FALLBACK 两条路径互不重叠，工单生成即给出工单号与同步告知，工单不落库、不派发坐席。
 </div>
 
 <!-- ══════════════════ 六、实测效果 ══════════════════ -->
