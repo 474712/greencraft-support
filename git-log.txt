@@ -6,7 +6,9 @@
 
 ## 提交列表
 
-00cc5ff (HEAD -> main) chore: refresh git-log.txt originality evidence to build 0fa2474
+2d0449f (HEAD -> main) chore: PDF 改为本地构建产物，不再入库
+9e84112 chore: regenerate git-log.txt in four-section format to build 0fa2474
+00cc5ff chore: refresh git-log.txt originality evidence to build 0fa2474
 0fa2474 chore: 从公开仓库移除内部准备材料
 3ec4bd6 docs: 移除指向内部准备材料的交叉引用
 e48361a docs: 统一工单口径为「浏览器端生成工单号，不落库、不派发坐席」
@@ -42,6 +44,32 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit 2d0449fe2df51dd42795bbc93a868466b12a9ef4
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 10:12:48 +0800
+
+    chore: PDF 改为本地构建产物，不再入库
+    
+    四份 PDF 由 Edge headless 打印对应 HTML 生成，属构建产物而非源码，
+    移出 Git 跟踪并加入 .gitignore；磁盘副本保留，提交包内另附。
+    仓库保留 HTML 源文件，评审可在线查看与打印。
+
+ .gitignore                    |   3 +++
+ docs/作品简介.pdf             | Bin 188113 -> 0 bytes
+ docs/团队信息与原创性声明.pdf | Bin 305970 -> 0 bytes
+ docs/应用效果说明.pdf         | Bin 789663 -> 0 bytes
+ docs/方案设计文档.pdf         | Bin 1125975 -> 0 bytes
+ 5 files changed, 3 insertions(+)
+
+commit 9e841129199373cec72026aa7f38a0a448ca1605
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 10:03:31 +0800
+
+    chore: regenerate git-log.txt in four-section format to build 0fa2474
+
+ git-log.txt | 682 ++++++++++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 525 insertions(+), 157 deletions(-)
 
 commit 00cc5ffe68e02219e22be3f819beb6b5c93f6879
 Author: 竹川南 <19850260536@163.com>
@@ -547,29 +575,26 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 34
+提交总数: 36
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-08 10:00:19 +0800 00cc5ff chore: refresh git-log.txt originality evidence to build 0fa2474
-本文件生成时的 HEAD: 00cc5ffe68e02219e22be3f819beb6b5c93f6879
+最近提交: 2026-11-08 10:12:48 +0800 2d0449f chore: PDF 改为本地构建产物，不再入库
+本文件生成时的 HEAD: 2d0449fe2df51dd42795bbc93a868466b12a9ef4
 
 ## 追踪文件清单（按提交次数）
 
     14 index.html
-    10 git-log.txt
-     9 docs/方案设计文档.pdf
+    11 git-log.txt
      9 docs/方案设计文档.html
-     9 docs/应用效果说明.pdf
      9 docs/应用效果说明.html
      7 tests/report/实测指标报告.md
      7 tests/report/metrics-summary.json
      7 docs/作品简介.md
      3 tests/engine.js
-     3 docs/团队信息与原创性声明.pdf
-     3 docs/作品简介.pdf
      3 docs/作品简介.html
      2 tests/report/ui-latency.json
      2 tests/quick-replies.js
      2 docs/团队信息与原创性声明.html
+     2 .gitignore
      1 tests/testset.json
      1 tests/run-tests.js
      1 tests/probes.json
@@ -579,4 +604,3 @@ Date:   2026-10-18 21:41:40 +0800
      1 tests/changelog.json
      1 tests/annotations.js
      1 docs/assets/print.css
-     1 .gitignore
