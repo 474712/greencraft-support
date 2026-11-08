@@ -6,7 +6,9 @@
 
 ## 提交列表
 
-255520f (HEAD -> main) chore: 团队信息与原创性声明 HTML 移出仓库
+254cea8 (HEAD -> main) docs: 作品简介 PDF 精简为仅标题与摘要正文
+e01695a chore: refresh git-log.txt originality evidence to build 255520f
+255520f chore: 团队信息与原创性声明 HTML 移出仓库
 2611d4e chore: refresh git-log.txt originality evidence to build 2d0449f
 2d0449f chore: PDF 改为本地构建产物，不再入库
 9e84112 chore: regenerate git-log.txt in four-section format to build 0fa2474
@@ -46,6 +48,24 @@ b648719 UI v6: botanical luxury visual upgrade (CSS + logo mark only, engine unc
 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
 
 ## 变更统计
+
+commit 254cea8a0ef2c1b11a3023bfe712afaf6778a31a
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 11:19:04 +0800
+
+    docs: 作品简介 PDF 精简为仅标题与摘要正文
+
+ docs/作品简介.html | 38 ++------------------------------------
+ 1 file changed, 2 insertions(+), 36 deletions(-)
+
+commit e01695a52fe54cf69ee53e6b2d55d6f5deff292e
+Author: 竹川南 <19850260536@163.com>
+Date:   2026-11-08 10:29:02 +0800
+
+    chore: refresh git-log.txt originality evidence to build 255520f
+
+ git-log.txt | 37 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 7 deletions(-)
 
 commit 255520fbd7765d029a671020f3f33f94929b05f1
 Author: 竹川南 <19850260536@163.com>
@@ -599,22 +619,22 @@ Date:   2026-10-18 21:41:40 +0800
 
 ## 统计
 
-提交总数: 38
+提交总数: 40
 首次提交: 2026-10-18 21:41:40 +0800 56f33e5 deploy: GreenCraft multilingual AI support agent (v5)
-最近提交: 2026-11-08 10:24:44 +0800 255520f chore: 团队信息与原创性声明 HTML 移出仓库
-本文件生成时的 HEAD: 255520fbd7765d029a671020f3f33f94929b05f1
+最近提交: 2026-11-08 11:19:04 +0800 254cea8 docs: 作品简介 PDF 精简为仅标题与摘要正文
+本文件生成时的 HEAD: 254cea8a0ef2c1b11a3023bfe712afaf6778a31a
 
 ## 追踪文件清单（按提交次数）
 
     14 index.html
-    12 git-log.txt
+    13 git-log.txt
      9 docs/方案设计文档.html
      9 docs/应用效果说明.html
      7 tests/report/实测指标报告.md
      7 tests/report/metrics-summary.json
      7 docs/作品简介.md
+     4 docs/作品简介.html
      3 tests/engine.js
-     3 docs/作品简介.html
      3 .gitignore
      2 tests/report/ui-latency.json
      2 tests/quick-replies.js
