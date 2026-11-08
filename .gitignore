@@ -3,3 +3,6 @@ tests/report/metrics-*T*.json
 
 # PDF 为本地构建产物（Edge headless 打印 HTML 生成），不入库；提交包内另附
 docs/*.pdf
+
+# 含成员联系方式与待填字段，仅本地持有；签字盖章后以 PDF 随提交包交付
+docs/团队信息与原创性声明.html
