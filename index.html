@@ -968,12 +968,13 @@ const AI_I18N = {
 };
 function aiT(key) { const m = AI_I18N[key]; return (m && (m[state.lang] || m.en)) || ''; }
 
-// 是否走 AI 兜底：规则引擎未命中 + 非演示/快捷话题 + 未挂起澄清 + 有 Key
+// 是否走 AI 兜底：规则引擎未识别意图 + 非演示/快捷话题 + 未挂起澄清 + 有 Key
+// 判据用 route 而非 kbPath：产品词命中默认条目时 kbPath='exact' 但 route='none'，仍属未命中
 function shouldUseAI(ev, forcedIntent) {
   if (!AI_CONFIG.apiKey || forcedIntent || !ev) return false;
   if (ev.route === 'handoff' || ev.route === 'smalltalk' || ev.route === 'clarify-confirm') return false;
   if (ev.kbPath === 'clarify' || ev.kbPath === 'handoff' || ev.kbPath === 'model-pair') return false;
-  return ev.kbPath === 'none';
+  return ev.route === 'none' || ev.kbPath === 'none';
 }
 
 // 浏览器直连 DeepSeek。任何失败都静默返回 null，前端自动回退到本地原答案。
